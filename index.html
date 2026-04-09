@@ -1,0 +1,3430 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>대전생활과학고등학교 수업 교환 시스템</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#F0F4FA;--white:#FFFFFF;--border:#E2E8F0;
+  --blue:#1E40AF;--blue-mid:#2563EB;--blue2:#EFF6FF;--blue3:#BFDBFE;
+  --green:#065F46;--green2:#ECFDF5;
+  --red:#991B1B;--red2:#FEF2F2;
+  --yellow:#92400E;--yellow2:#FFFBEB;
+  --purple:#5B21B6;--purple2:#F5F3FF;
+  --text:#0F172A;--text2:#475569;--text3:#94A3B8;
+  --r:10px;--r2:14px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow:0 4px 16px rgba(15,23,42,.10);
+  --shadow-lg:0 10px 40px rgba(15,23,42,.14);
+  --shadow-xl:0 20px 60px rgba(15,23,42,.18);
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:13px;}
+
+/* ────── 상단 헤더 ────── */
+.topbar{
+  background:linear-gradient(135deg,#1E3A8A 0%,#1D4ED8 55%,#2563EB 100%);
+  color:#FFF;padding:0 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 4px 24px rgba(30,64,175,.35);
+  position:sticky;top:0;z-index:10;
+  min-height:64px;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.topbar-brand{display:flex;align-items:center;gap:12px;}
+.topbar-logo{
+  width:40px;height:40px;border-radius:12px;
+  background:rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex:0 0 40px;
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.25);
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+.topbar-title-group{display:flex;flex-direction:column;}
+.topbar-school{font-size:11px;font-weight:600;opacity:.75;letter-spacing:.3px;line-height:1;}
+.topbar h1{font-size:16px;font-weight:800;letter-spacing:-.3px;line-height:1.3;}
+.topbar-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end;}
+.topbar-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(255,255,255,.1);padding:6px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.15);}
+.topbar-controls label{font-size:11px;font-weight:700;opacity:.85;display:flex;align-items:center;gap:4px;}
+.topbar-controls label i{font-size:11px;opacity:.8;}
+.topbar-controls select{
+  padding:5px 10px;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:8px;background:rgba(255,255,255,.15);
+  color:#FFF;font-size:12px;font-weight:700;outline:none;
+  font-family:'Noto Sans KR',sans-serif;
+  backdrop-filter:blur(4px);
+  min-width:80px;
+  cursor:pointer;
+}
+.topbar-controls select option{color:#0F172A;background:#FFF;}
+.topbar-meta{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.12);
+  padding:8px 14px;border-radius:12px;
+  border:1px solid rgba(255,255,255,.15);
+}
+.topbar-meta i{font-size:13px;opacity:.8;}
+#todayTxt{font-weight:700;font-size:13px;letter-spacing:-.1px;}
+.date-label{display:block;font-size:10px;font-weight:600;color:var(--text3);margin-top:2px;}
+@media(max-width:900px){
+  .topbar{align-items:flex-start;gap:10px;flex-direction:column;padding:14px 16px;}
+  .topbar-right{width:100%;justify-content:space-between;}
+}
+
+/* ────── 탭 ────── */
+.tabs{
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  display:flex;padding:0 24px;
+  gap:2px;
+  box-shadow:var(--shadow-sm);
+}
+.tab{
+  padding:14px 16px;font-size:13px;font-weight:600;
+  color:var(--text3);cursor:pointer;
+  border-bottom:2.5px solid transparent;
+  transition:all .18s;
+  display:flex;align-items:center;gap:6px;
+  white-space:nowrap;
+}
+.tab i{font-size:13px;}
+.tab:hover{color:var(--text2);background:#F8FAFF;}
+.tab.on{
+  color:var(--blue-mid);border-bottom-color:var(--blue-mid);
+  font-weight:800;
+  background:linear-gradient(180deg,#F0F7FF 0%,#FFFFFF 100%);
+}
+
+/* ────── 본문 ────── */
+.body{padding:24px 20px 32px;max-width:1720px;margin:0 auto;}
+.page{display:none;}
+.page.on{display:block;}
+
+/* ────── 시간표 테이블 ────── */
+.tt-wrap{
+  overflow-x:auto;background:var(--white);
+  border-radius:20px;border:1px solid var(--border);
+  box-shadow:var(--shadow-lg);
+}
+.tt-table{border-collapse:collapse;width:100%;min-width:1500px;table-layout:fixed;}
+.tt-table th{
+  background:linear-gradient(180deg,#F1F5F9 0%,#E8EDF5 100%);
+  font-size:10px;font-weight:700;color:var(--text2);
+  padding:8px 2px;text-align:center;border:1px solid var(--border);
+  letter-spacing:.2px;
+}
+.tt-table td{border:1px solid var(--border);padding:2px;vertical-align:stretch;min-width:0;height:52px;}
+.tt-table .td-name{
+  padding:8px 10px;font-weight:700;font-size:12px;
+  background:linear-gradient(180deg,#F8FAFC 0%,#F1F5F9 100%);
+  color:var(--text);white-space:nowrap;min-width:95px;width:95px;max-width:95px;
+  text-align:center;vertical-align:middle;
+}
+.tt-table .remark-head{min-width:58px;width:58px;background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F7 100%);color:#64748B;}
+.tt-table .remark-cell{min-width:58px;width:58px;background:#FAFBFC;border-left:2px solid #E2E8F0;}
+.tt-table .remark-cell::after{content:'';display:block;height:100%;min-height:40px;border-radius:6px;background:linear-gradient(180deg,rgba(255,255,255,.78),rgba(241,245,249,.9));}
+.teacher-no{display:block;font-size:10px;color:var(--text3);font-weight:800;line-height:1.1;margin-bottom:2px;}
+.teacher-name{display:block;font-size:12px;color:var(--text);font-weight:700;line-height:1.2;}
+.teacher-inline{display:block;font-size:12px;color:var(--text);font-weight:700;line-height:1.3;white-space:normal;word-break:keep-all;}
+
+/* ────── 셀 공통 tooltip 믹스인 ────── */
+/* tooltip은 JS로 처리 (overflow:hidden 우회) */
+.cell[data-tooltip]{position:relative;}
+
+/* ────── 셀 기본 ────── */
+.cell{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;min-height:48px;
+  border-radius:7px;padding:3px 2px;
+  cursor:pointer;transition:transform .12s,box-shadow .12s;
+  font-size:10px;line-height:1.3;text-align:center;
+  overflow:hidden;position:relative;
+}
+.cell:hover{transform:scale(1.04);box-shadow:0 3px 10px rgba(0,0,0,.13);z-index:2;}
+.cell .subj{
+  font-size:11px;font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:100%;display:block;
+}
+.cell .cls{
+  font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:100%;display:block;margin-top:1px;
+}
+.cell .merge-note{
+  font-size:8px;opacity:.8;margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:100%;display:block;
+}
+
+/* ────── 셀 종류별 스타일 ────── */
+.cell.has{background:linear-gradient(180deg,#EFF6FF,#DBEAFE);color:#1E40AF;border:1px solid #BFDBFE;}
+.cell.has .subj{font-weight:700;}
+.cell.has .cls{color:#2563EB;opacity:.85;}
+
+.cell.empty{background:#F8FAFC;color:var(--text3);}
+.cell.empty:hover{transform:none;box-shadow:none;}
+
+.cell.selected{
+  background:linear-gradient(180deg,#2563EB,#1D4ED8);
+  color:#FFF;box-shadow:0 0 0 2.5px #93C5FD,0 4px 12px rgba(37,99,235,.3);
+}
+.cell.selected .cls{color:rgba(255,255,255,.8);}
+.cell.selected .merge-note{color:rgba(255,255,255,.7);}
+
+.cell.candidate{background:linear-gradient(180deg,#FFFDE7,#FFF9C4);color:#78350F;border:1.5px solid #F59E0B;}
+.cell.candidate .cls{color:#78350F;opacity:.8;}
+
+/* 교환된 수업 (주황) */
+.cell.applied{
+  background:linear-gradient(180deg,#FFFBEB,#FEF3C7);
+  color:#92400E;border:2px solid #F59E0B;
+}
+.cell.applied .subj{font-weight:800;}
+.cell.applied .cls{color:#92400E;opacity:.9;}
+.cell.applied .merge-note{color:#B45309;font-size:8px;}
+/* applied tooltip 색상 오버라이드 */
+
+/* 보강 수업 (보라) */
+.cell.makeup-display{
+  background:linear-gradient(180deg,#F5F3FF,#EDE9FE);
+  color:#5B21B6;border:1.5px solid #A78BFA;
+}
+.cell.makeup-display .subj{font-size:10px;font-weight:900;}
+.cell.makeup-display .cls{color:#7C3AED;font-size:8.5px;}
+.cell.makeup-display .merge-note{color:#7C3AED;font-size:8px;}
+.cell.makeup-display:hover{transform:scale(1.04);}
+
+/* 행사 */
+.cell.event{background:linear-gradient(180deg,#FFF7ED,#FFEDD5);color:#9A3412;border:1.5px solid #FB923C;cursor:default;}
+.cell.event .subj{font-weight:800;}
+.cell.event .cls{color:#C2410C;opacity:.92;}
+.cell.event:hover{transform:none;box-shadow:none;}
+
+.cell.locked{cursor:default;}
+.cell.locked:hover{transform:none;box-shadow:none;}
+
+/* 교환 불가 */
+.cell.blocked{background:#F1F5F9;color:#64748B;border:1px dashed #94A3B8;cursor:pointer;}
+.cell.blocked .subj{font-weight:700;}
+
+/* 6·7교시 통합 */
+.cell.day-merged{min-height:48px;}
+.cell.day-merged .subj{font-size:12px;font-weight:800;}
+.cell.day-merged .cls{font-size:10px;}
+.merge-note{font-size:9px;opacity:.8;margin-top:2px;}
+
+/* ────── 필터 바 ────── */
+.filter-bar{
+  display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;
+  background:var(--white);border:1px solid var(--border);
+  padding:14px 18px;border-radius:16px;
+  box-shadow:var(--shadow-sm);
+}
+.filter-bar label{font-size:12px;font-weight:700;color:var(--text2);display:flex;align-items:center;gap:5px;}
+.filter-bar label i{color:var(--blue-mid);font-size:12px;}
+.filter-bar select,.filter-bar input{
+  padding:8px 12px;border:1px solid var(--border);
+  border-radius:var(--r);font-size:12px;background:var(--white);
+  color:var(--text);font-family:'Noto Sans KR',sans-serif;
+  transition:border-color .15s,box-shadow .15s;
+}
+.filter-bar select:focus,.filter-bar input:focus{
+  outline:none;border-color:#93C5FD;
+  box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
+.search-select-input{
+  width:100%;padding:10px 12px;border:1px solid var(--border);
+  border-radius:var(--r);font-size:12px;background:var(--white);
+  color:var(--text);margin-bottom:8px;font-family:'Noto Sans KR',sans-serif;
+}
+.block-helper{font-size:11px;color:var(--text3);margin-top:6px;display:flex;align-items:center;gap:4px;}
+.badge-cnt{
+  background:linear-gradient(135deg,#EF4444,#DC2626);
+  color:#FFF;border-radius:20px;padding:2px 9px;
+  font-size:11px;font-weight:700;
+  box-shadow:0 2px 6px rgba(239,68,68,.3);
+}
+
+/* ────── 패널 ────── */
+.panel-overlay{display:none !important;position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);z-index:100;}
+.panel-overlay.on{display:block !important;}
+.panel{
+  display:none !important;position:fixed;
+  left:50%;top:50%;bottom:auto;
+  width:min(1280px,90vw);max-width:90vw;max-height:88vh;
+  background:var(--white);z-index:101;flex-direction:column;
+  transform:translate(-50%,-50%) scale(.95);
+  transition:all .22s cubic-bezier(.34,1.56,.64,1);
+  border-radius:24px;
+  box-shadow:0 32px 80px rgba(15,23,42,.3);
+  overflow:hidden;
+}
+.panel.panel-candidates{width:min(1180px,86vw);max-width:86vw;}
+.panel.panel-confirm{width:min(700px,72vw);max-width:72vw;}
+.panel.on{display:flex !important;transform:translate(-50%,-50%) scale(1);}
+.panel-head{
+  padding:18px 22px;
+  background:linear-gradient(135deg,#1E3A8A 0%,#1D4ED8 100%);
+  color:#FFF;display:flex;align-items:center;justify-content:space-between;
+}
+.panel-head h3{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.panel-head h3 i{font-size:15px;opacity:.9;}
+.panel-close{
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);
+  color:#FFF;font-size:18px;cursor:pointer;
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;
+  line-height:1;
+}
+.panel-close:hover{background:rgba(255,255,255,.25);}
+.panel-body{flex:1;overflow:auto;padding:20px 22px 12px;}
+.panel-foot{padding:16px 22px;border-top:1px solid var(--border);background:#F8FAFC;}
+
+/* ────── 선택된 수업 카드 ────── */
+.sel-card{
+  background:linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%);
+  border:1px solid var(--blue3);border-radius:var(--r);
+  padding:14px;margin-bottom:16px;
+  box-shadow:0 2px 8px rgba(37,99,235,.1);
+}
+.sel-card .label{font-size:10px;font-weight:700;color:var(--blue-mid);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+.sel-card .label i{font-size:10px;}
+.sel-card .main{font-size:16px;font-weight:800;color:var(--text);}
+.sel-card .sub{font-size:12px;color:var(--text2);margin-top:3px;}
+
+/* ────── 교환 후보 목록 ────── */
+.cand-title{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.cand-item{border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;margin-bottom:7px;cursor:pointer;transition:all .14s;}
+.cand-item:hover{border-color:var(--blue-mid);background:var(--blue2);}
+.cand-item.picked{border-color:var(--blue-mid);background:var(--blue2);box-shadow:0 0 0 2px var(--blue3);}
+.instant-help{font-size:11px;color:var(--text3);margin:-2px 0 10px;}
+.popup-headline{font-size:12px;font-weight:700;color:var(--blue-mid);margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.match-summary{
+  background:linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%);
+  border-left:5px solid var(--blue-mid);
+  padding:16px 18px;border-radius:14px;margin-bottom:16px;
+  box-shadow:0 2px 12px rgba(37,99,235,.12);
+}
+.match-summary .label{font-size:14px;color:#64748B;margin-bottom:6px;font-weight:700;}
+.match-summary .main{font-size:28px;font-weight:900;color:#1E3A8A;line-height:1.15;}
+.match-summary .sub{font-size:17px;font-weight:800;color:#1D4ED8;margin-top:6px;word-break:keep-all;}
+
+.day-group{margin:0;}
+.days-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start;}
+@media(max-width:1100px){.days-grid{grid-template-columns:repeat(5,minmax(180px,1fr));overflow-x:auto;padding-bottom:4px;}}
+.day-group{
+  min-width:0;
+  background:linear-gradient(180deg,#FAFBFC 0%,#F3F4F6 100%);
+  border:1px solid #E5E7EB;border-radius:18px;padding:12px;
+}
+.day-title{
+  text-align:center;font-size:15px;font-weight:800;
+  color:#1E3A8A;margin-bottom:10px;
+  padding:8px 4px;border-bottom:2px solid #E8EDF5;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.day-empty{
+  border:1.5px dashed #D1D5DB;border-radius:12px;
+  padding:24px 10px;background:#FFF;
+  color:#9CA3AF;font-size:13px;text-align:center;
+}
+.slot-item{
+  border:1px solid #E5E7EB;border-radius:14px;
+  padding:13px 13px 11px;margin-bottom:10px;
+  cursor:pointer;transition:all .14s;background:#fff;
+  min-height:110px;
+  box-shadow:var(--shadow-sm);
+}
+.slot-item:hover{border-color:#93C5FD;background:#F0F7FF;transform:translateY(-2px);box-shadow:0 6px 18px rgba(37,99,235,.12);}
+.slot-item.picked{border-color:var(--blue-mid);background:var(--blue2);box-shadow:0 0 0 2px var(--blue3);}
+.slot-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.slot-num{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,#1E3A8A 0%,#1D4ED8 100%);
+  color:#fff;font-size:14px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  flex:0 0 32px;
+  box-shadow:0 2px 6px rgba(30,64,175,.3);
+}
+.slot-teacher{font-weight:800;font-size:20px;color:#1F2937;line-height:1.2;word-break:keep-all;}
+.slot-line{font-size:16px;margin-top:6px;padding-left:0;line-height:1.45;word-break:keep-all;}
+.slot-time{color:#EF4444;font-weight:800;}
+.slot-desc{color:#4B5563;font-weight:600;}
+
+/* ────── 버튼 ────── */
+.btn{
+  padding:11px 18px;border-radius:var(--r);font-size:13px;
+  font-weight:700;cursor:pointer;border:none;width:100%;
+  transition:all .15s;font-family:'Noto Sans KR',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.btn i{font-size:13px;}
+.btn-blue{
+  background:linear-gradient(135deg,#1D4ED8 0%,#1E40AF 100%);
+  color:#FFF;box-shadow:0 4px 12px rgba(29,78,216,.3);
+}
+.btn-blue:hover{background:linear-gradient(135deg,#1E40AF 0%,#1E3A8A 100%);box-shadow:0 6px 16px rgba(29,78,216,.4);transform:translateY(-1px);}
+.btn-blue:disabled{background:#94A3B8;cursor:not-allowed;box-shadow:none;transform:none;}
+.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.btn-outline:hover{background:#F8FAFC;border-color:#94A3B8;}
+.arrow-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,#1D4ED8,#1E40AF);
+  color:#FFF;font-size:14px;font-weight:700;
+  box-shadow:0 2px 8px rgba(29,78,216,.3);
+}
+.reset-btn{
+  padding:10px 18px;border:none;border-radius:10px;
+  background:linear-gradient(135deg,#FEE2E2,#FECACA);
+  color:#991B1B;font-size:12px;font-weight:800;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  transition:all .15s;font-family:'Noto Sans KR',sans-serif;
+  box-shadow:0 2px 8px rgba(153,27,27,.12);
+}
+.reset-btn:hover{background:linear-gradient(135deg,#FECACA,#FCA5A5);transform:translateY(-1px);}
+.btn-print{background:linear-gradient(135deg,#F0F9FF,#E0F2FE);color:#0369A1;border:1px solid #BAE6FD;}
+.btn-print:hover{background:linear-gradient(135deg,#E0F2FE,#BAE6FD);transform:translateY(-1px);}
+
+/* ────── 출력 모달 ────── */
+.print-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(6px);z-index:200;}
+.print-overlay.on{display:flex;align-items:center;justify-content:center;}
+.print-modal{
+  background:#fff;border-radius:20px;box-shadow:0 32px 80px rgba(0,0,0,.25);
+  width:min(720px,92vw);max-height:90vh;overflow:auto;
+  display:flex;flex-direction:column;
+}
+.print-modal-head{
+  padding:16px 22px;background:linear-gradient(135deg,#1E3A8A,#1D4ED8);
+  color:#fff;display:flex;align-items:center;justify-content:space-between;
+  border-radius:20px 20px 0 0;flex-shrink:0;
+}
+.print-modal-head h3{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.print-modal-body{padding:22px;flex:1;overflow:auto;}
+.print-modal-foot{padding:14px 22px;border-top:1px solid #E2E8F0;background:#F8FAFC;border-radius:0 0 20px 20px;display:flex;gap:10px;justify-content:flex-end;flex-shrink:0;}
+
+/* ────── 사유 체크박스 ────── */
+.reason-section{margin-bottom:18px;}
+.reason-title{font-size:12px;font-weight:700;color:#475569;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.reason-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.reason-chip{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:999px;
+  border:1.5px solid #E2E8F0;background:#F8FAFC;
+  font-size:12px;font-weight:600;cursor:pointer;
+  transition:all .14s;user-select:none;
+}
+.reason-chip:hover{border-color:#93C5FD;background:#EFF6FF;}
+.reason-chip.on{border-color:#2563EB;background:#EFF6FF;color:#1E40AF;}
+.reason-chip input{display:none;}
+
+/* ────── 계획서 미리보기 ────── */
+.plan-preview{
+  border:2px solid #1E3A8A;border-radius:8px;padding:0;
+  font-family:'Noto Sans KR',sans-serif;font-size:11px;
+  background:#fff;
+}
+.plan-title-row{
+  text-align:center;padding:14px 8px 10px;
+  border-bottom:1px solid #1E3A8A;
+}
+.plan-title-row h2{font-size:20px;font-weight:900;letter-spacing:1px;}
+.plan-title-row h2 em{color:#C00;font-style:normal;}
+.plan-desc{font-size:10px;color:#C00;padding:6px 10px;border-bottom:1px solid #CBD5E1;font-weight:600;}
+.plan-reason-row{
+  display:flex;align-items:stretch;border-bottom:1px solid #1E3A8A;
+}
+.plan-reason-cells{display:flex;flex:1;}
+.plan-reason-cell{
+  flex:1;text-align:center;padding:5px 2px;
+  border-right:1px solid #CBD5E1;font-size:10px;font-weight:600;
+}
+.plan-reason-cell:last-child{border-right:none;}
+.plan-reason-check{font-size:13px;font-weight:900;display:block;margin-top:2px;}
+.plan-submitter{
+  min-width:130px;text-align:center;padding:5px 10px;
+  font-size:11px;font-weight:700;border-left:2px solid #1E3A8A;
+  display:flex;align-items:center;justify-content:center;
+}
+.plan-table{width:100%;border-collapse:collapse;}
+.plan-table th{
+  background:#EEF2F7;font-size:10px;font-weight:700;
+  text-align:center;padding:5px 3px;
+  border:1px solid #94A3B8;
+}
+.plan-table td{
+  font-size:10px;text-align:center;padding:5px 3px;
+  border:1px solid #CBD5E1;height:28px;
+}
+.plan-table .no-col{width:24px;background:#F8FAFC;}
+.plan-table .arrow-col{width:22px;}
+.plan-table .arrow-td{font-weight:900;font-size:12px;}
+.plan-table .makeup-arrow{background:#F5F0FF;color:#5B21B6;}
+.plan-table .exchange-arrow{background:#EFF6FF;color:#1E40AF;}
+
+/* ────── @media print ────── */
+@media print{
+  body > *{display:none !important;}
+  #printArea{display:block !important;position:fixed;inset:0;background:#fff;z-index:9999;padding:20px;}
+  #printArea .plan-preview{border:1.5px solid #000;}
+  #printArea .plan-table th{background:#eee !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+
+/* ────── 신청 현황 ────── */
+.req-item{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:20px;padding:16px;margin-bottom:12px;
+  box-shadow:var(--shadow-sm);
+  transition:box-shadow .15s;
+}
+.req-item:hover{box-shadow:var(--shadow);}
+.req-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.req-body{display:grid;grid-template-columns:1fr 30px 1fr;gap:8px;align-items:center;}
+.req-slot{background:var(--bg);border-radius:var(--r);padding:10px 12px;border:1px solid var(--border);}
+.req-slot .t{font-weight:700;font-size:13px;}
+.req-slot .d{font-size:11px;color:var(--text2);margin-top:2px;}
+.req-foot{margin-top:12px;display:flex;align-items:center;justify-content:space-between;}
+.req-restore{font-size:11px;color:var(--green);background:var(--green2);padding:4px 10px;border-radius:6px;display:flex;align-items:center;gap:4px;}
+.btn-row{display:flex;gap:6px;}
+.btn-sm{
+  padding:6px 13px;border-radius:8px;font-size:12px;font-weight:700;
+  cursor:pointer;border:none;font-family:'Noto Sans KR',sans-serif;
+  display:flex;align-items:center;gap:4px;transition:all .15s;
+}
+.btn-approve{background:var(--green2);color:var(--green);}
+.btn-approve:hover{background:#D1FAE5;}
+.btn-reject{background:var(--red2);color:var(--red);}
+.btn-reject:hover{background:#FEE2E2;}
+.status-badge{
+  padding:4px 10px;border-radius:20px;
+  font-size:11px;font-weight:700;
+  display:inline-flex;align-items:center;gap:4px;
+}
+.s-wait{background:var(--yellow2);color:var(--yellow);}
+.s-active{background:var(--green2);color:var(--green);}
+.s-done{background:var(--purple2);color:var(--purple);}
+.s-reject{background:var(--red2);color:var(--red);}
+.s-cancel{background:#F1F5F9;color:#64748B;}
+.empty-msg{text-align:center;padding:48px;color:var(--text3);}
+.empty-msg i{font-size:40px;display:block;margin-bottom:12px;opacity:.4;}
+
+/* ────── 통계 ────── */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.stat{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:16px;padding:16px;text-align:center;
+  box-shadow:var(--shadow-sm);
+  transition:all .15s;
+}
+.stat:hover{box-shadow:var(--shadow);transform:translateY(-2px);}
+.stat-icon{font-size:22px;margin-bottom:8px;display:block;}
+.stat-n{font-size:28px;font-weight:900;line-height:1;}
+.stat-l{font-size:11px;color:var(--text3);margin-top:4px;font-weight:600;}
+
+/* ────── 페이지 헤더 ────── */
+.page-title{font-size:22px;font-weight:900;color:#0F172A;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+.page-title i{color:var(--blue-mid);font-size:20px;}
+.page-subtitle{font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.6;}
+
+/* ────── 범례 ────── */
+.legend-row{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 12px;}
+.legend-chip{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--white);border:1px solid var(--border);
+  border-radius:999px;padding:7px 14px;
+  box-shadow:var(--shadow-sm);font-size:12px;color:var(--text2);
+  font-weight:500;
+  transition:all .15s;
+}
+.legend-chip:hover{border-color:#93C5FD;box-shadow:0 2px 8px rgba(37,99,235,.1);}
+.legend-dot{width:12px;height:12px;border-radius:4px;display:inline-block;}
+.legend-dot.normal{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1px solid #BFDBFE;}
+.legend-dot.exchange{background:linear-gradient(135deg,#FFFDE7,#FFF9C4);border:1px solid #F59E0B;}
+.legend-dot.makeup{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border:1px solid #A855F7;}
+.legend-dot.event{background:linear-gradient(135deg,#FFF7ED,#FFEDD5);border:1px solid #FB923C;}
+
+/* ────── 카드 / 폼 ────── */
+.form-card,.event-list-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:24px;padding:28px 30px;
+  box-shadow:var(--shadow);
+}
+.card-title{
+  font-size:18px;font-weight:800;color:#0F172A;
+  margin-bottom:6px;display:flex;align-items:center;gap:8px;
+}
+.card-title i{color:var(--blue-mid);font-size:16px;}
+.card-subtitle{font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.7;}
+.event-layout{display:grid;grid-template-columns:minmax(340px,420px) minmax(0,1fr);gap:28px;align-items:start;padding:6px 4px;}
+.event-form{display:grid;gap:16px;}
+.field label{
+  display:block;font-size:12px;font-weight:700;
+  color:var(--text2);margin-bottom:6px;
+  display:flex;align-items:center;gap:4px;
+}
+.field label i{color:#64748B;font-size:11px;}
+.field input,.field select{
+  width:100%;padding:11px 14px;
+  border:1px solid var(--border);border-radius:12px;
+  background:var(--white);font-size:13px;color:var(--text);
+  outline:none;transition:all .15s;
+  font-family:'Noto Sans KR',sans-serif;
+}
+.field input:focus,.field select:focus{
+  border-color:#93C5FD;
+  box-shadow:0 0 0 4px rgba(37,99,235,.1);
+}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.field-grid.three{grid-template-columns:repeat(3,minmax(0,1fr));}
+.scope-row{display:grid;grid-template-columns:minmax(140px,180px) minmax(220px,1fr);gap:12px;align-items:end;}
+.preview-box{
+  background:linear-gradient(135deg,#F0F7FF 0%,#EFF6FF 100%);
+  border:1px solid #BFDBFE;border-radius:16px;
+  padding:14px 16px;font-size:12px;color:var(--text2);line-height:1.7;
+}
+.preview-box strong{color:#0F172A;}
+.event-card{
+  border:1px solid var(--border);border-radius:16px;
+  padding:14px 16px;margin-bottom:10px;background:var(--white);
+  display:flex;justify-content:space-between;gap:12px;align-items:flex-start;
+  box-shadow:var(--shadow-sm);transition:all .15s;
+}
+.event-card:hover{border-color:#93C5FD;box-shadow:var(--shadow);}
+.event-main{display:grid;gap:4px;}
+.event-name{font-size:15px;font-weight:800;color:#111827;display:flex;align-items:center;gap:6px;}
+.event-name i{color:#F59E0B;font-size:14px;}
+.event-meta{font-size:12px;color:var(--text2);line-height:1.6;}
+.event-empty{
+  padding:44px 12px;border:1.5px dashed #D1D5DB;
+  border-radius:16px;text-align:center;background:#FAFBFD;
+  color:var(--text3);font-size:12px;
+}
+.event-empty i{font-size:32px;display:block;margin-bottom:10px;opacity:.35;}
+.btn-event-delete{
+  background:linear-gradient(135deg,#FFF5F5,#FEE2E2);
+  color:#991B1B;border:none;border-radius:10px;
+  padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;
+  white-space:nowrap;transition:all .15s;
+  font-family:'Noto Sans KR',sans-serif;
+  display:flex;align-items:center;gap:4px;
+  box-shadow:0 1px 4px rgba(153,27,27,.1);
+}
+.btn-event-delete:hover{background:linear-gradient(135deg,#FEE2E2,#FECACA);transform:translateY(-1px);}
+
+/* ────── 행사 날짜 입력 ────── */
+.date-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+.date-group label{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px;}
+.date-group input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;font-family:'Noto Sans KR',sans-serif;}
+
+/* ────── 교환 불가 탭 ────── */
+.block-layout{display:grid;grid-template-columns:minmax(320px,420px) 1fr;gap:20px;align-items:start;}
+@media(max-width:960px){.block-layout{grid-template-columns:1fr;}}
+.block-list-card,.block-form-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:24px;box-shadow:var(--shadow);padding:24px;
+}
+.block-card{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:14px;padding:14px 0;border-bottom:1px solid #F1F5F9;
+}
+.block-card:last-child{border-bottom:none;padding-bottom:0;}
+.block-name{font-size:15px;font-weight:800;color:#111827;display:flex;align-items:center;gap:7px;}
+.block-name i{color:var(--red);font-size:13px;}
+.block-meta{font-size:12px;color:#475569;line-height:1.6;margin-top:4px;}
+.block-empty{
+  padding:44px 12px;border:1.5px dashed #D1D5DB;border-radius:16px;
+  text-align:center;background:#FAFBFD;color:#9CA3AF;font-size:12px;
+}
+.block-empty i{font-size:32px;display:block;margin-bottom:10px;opacity:.35;}
+
+/* ────── 액션 메뉴 ────── */
+.action-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.25);z-index:120;}
+.action-overlay.on{display:block;}
+.action-menu{
+  display:none;position:fixed;left:50%;top:50%;
+  transform:translate(-50%,-50%) scale(.94);
+  width:min(320px,90vw);background:#fff;
+  border:1px solid var(--border);border-radius:22px;
+  box-shadow:var(--shadow-xl);z-index:121;padding:22px;
+}
+.action-menu.on{display:block;transform:translate(-50%,-50%) scale(1);}
+.action-title{
+  font-size:17px;font-weight:900;color:#0F172A;margin-bottom:6px;
+  display:flex;align-items:center;gap:8px;
+}
+.action-title i{color:var(--blue-mid);}
+.action-sub{font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:16px;}
+.action-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.action-btn{
+  border:none;border-radius:16px;padding:16px 12px;
+  font-size:14px;font-weight:800;cursor:pointer;
+  transition:all .14s;font-family:'Noto Sans KR',sans-serif;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.action-btn i{font-size:22px;}
+.action-btn.exchange{
+  background:linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%);
+  color:#1E40AF;box-shadow:0 6px 16px rgba(29,78,216,.12);
+  border:1.5px solid #BFDBFE;
+}
+.action-btn.makeup{
+  background:linear-gradient(135deg,#F5F3FF 0%,#EDE9FE 100%);
+  color:#5B21B6;box-shadow:0 6px 16px rgba(91,33,182,.12);
+  border:1.5px solid #DDD6FE;
+}
+.action-btn:hover{transform:translateY(-2px);filter:brightness(.97);}
+.action-cancel{
+  margin-top:10px;width:100%;border:1px solid var(--border);
+  background:#F8FAFC;color:var(--text2);border-radius:12px;
+  padding:10px 12px;font-size:12px;font-weight:700;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.action-cancel:hover{background:#F1F5F9;}
+
+/* ────── 보강 카드 ────── */
+.makeup-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
+@media(max-width:960px){.makeup-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+.makeup-card{
+  border:1px solid #DDD6FE;
+  background:linear-gradient(135deg,#FAFAFF 0%,#F5F0FF 100%);
+  border-radius:12px;padding:10px 12px;cursor:pointer;
+  transition:all .14s;
+  box-shadow:0 2px 8px rgba(91,33,182,.06);
+}
+.makeup-card:hover{border-color:#A78BFA;transform:translateY(-2px);box-shadow:0 6px 16px rgba(91,33,182,.14);}
+.makeup-card.selected{border-color:#7C3AED;background:linear-gradient(135deg,#EDE9FE,#DDD6FE);box-shadow:0 0 0 2px #A78BFA;}
+.makeup-name{font-size:13px;font-weight:900;color:#4C1D95;display:flex;align-items:center;gap:5px;}
+.makeup-icon{
+  width:22px;height:22px;border-radius:7px;
+  background:linear-gradient(135deg,#EDE9FE,#DDD6FE);
+  color:#6D28D9;display:inline-flex;align-items:center;justify-content:center;
+  font-size:11px;flex:0 0 22px;
+}
+.makeup-meta{font-size:10px;color:#5B4B7A;line-height:1.5;margin-top:3px;}
+.makeup-empty{border:1.5px dashed #D1D5DB;border-radius:14px;padding:24px 12px;text-align:center;color:#9CA3AF;background:#FAFBFD;}
+
+/* ────── 신청 현황 배지 ────── */
+.req-head-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.req-id{font-size:11px;color:var(--text3);}
+.req-type-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 10px;border-radius:999px;
+  font-size:11px;font-weight:800;
+  background:#EFF6FF;color:#1E40AF;
+}
+.req-type-badge i{font-size:11px;}
+.req-type-badge.makeup{background:#F5F3FF;color:#6D28D9;}
+.req-type-badge.exchange{background:#EFF6FF;color:#1E40AF;}
+.req-action-inline{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
+.req-slot .slot-mini-action{margin-top:8px;}
+.conflict-note{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:800;color:#991B1B;
+  background:#FEE2E2;padding:4px 10px;border-radius:999px;
+}
+
+/* ────── 미디어 쿼리 ────── */
+@media(max-width:960px){
+  .event-layout{grid-template-columns:1fr;padding:0;}
+  .field-grid,.field-grid.three,.scope-row{grid-template-columns:1fr;}
+  .tt-table{min-width:1080px;}
+  .stats{grid-template-columns:repeat(3,1fr);}
+}
+
+/* ────── 유틸 ────── */
+.topbar{background:linear-gradient(135deg,#1E3A8A 0%,#1D4ED8 55%,#2563EB 100%);box-shadow:0 4px 24px rgba(30,64,175,.35);position:sticky;top:0;z-index:10;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo"><i class="fa-solid fa-school"></i></div>
+    <div class="topbar-title-group">
+      <span class="topbar-school">대전생활과학고등학교</span>
+      <h1>수업 교환 시스템 — 2026학년도 1학기</h1>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-controls">
+      <button onclick="goToToday()" style="
+        background:rgba(255,255,255,.22);border:1.5px solid rgba(255,255,255,.35);
+        color:#fff;font-size:12px;font-weight:800;padding:5px 13px;border-radius:8px;
+        cursor:pointer;font-family:'Noto Sans KR',sans-serif;
+        display:flex;align-items:center;gap:5px;transition:background .14s;
+        white-space:nowrap;
+      " onmouseover="this.style.background='rgba(255,255,255,.32)'"
+         onmouseout="this.style.background='rgba(255,255,255,.22)'">
+        <i class="fa-solid fa-circle-dot" style="font-size:11px;"></i> 오늘
+      </button>
+      <div style="width:1px;height:18px;background:rgba(255,255,255,.2);margin:0 2px;"></div>
+      <label for="monthSelect"><i class="fa-regular fa-calendar"></i> 월</label>
+      <select id="monthSelect" onchange="onMonthChange()"></select>
+      <label for="weekSelect"><i class="fa-solid fa-list-ol"></i> 주차</label>
+      <select id="weekSelect" onchange="onWeekChange()"></select>
+    </div>
+    <div class="topbar-meta">
+      <i class="fa-regular fa-clock"></i>
+      <span id="todayTxt"></span>
+      <span id="reqCntBadge" class="badge-cnt" style="display:none"></span>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" onclick="goTab('tt')"><i class="fa-regular fa-calendar-days"></i> 전체 시간표</div>
+  <div class="tab" onclick="goTab('req')"><i class="fa-regular fa-clock"></i> 승인 대기 <span id="waitCnt"></span></div>
+  <div class="tab" onclick="goTab('hist')"><i class="fa-solid fa-chart-bar"></i> 수업 결·보강 현황</div>
+  <div class="tab" onclick="goTab('event')"><i class="fa-solid fa-star"></i> 행사 추가 <span id="eventCnt"></span></div>
+  <div class="tab" onclick="goTab('block')"><i class="fa-solid fa-ban"></i> 교환 불가 과목 <span id="blockCnt"></span></div>
+</div>
+
+<div class="body">
+
+  <!-- 시간표 탭 -->
+  <div class="page on" id="page-tt">
+    <div class="page-title"><i class="fa-regular fa-calendar-days"></i> 주간 적용 시간표</div>
+    <div class="page-subtitle">오늘 기준 주차를 먼저 보여주며, 선택한 월/주차에 맞는 실제 날짜와 적용된 교환·행사 시간표를 반영합니다.</div>
+    <div class="filter-bar">
+      <label><i class="fa-solid fa-magnifying-glass"></i> 교사 검색</label>
+      <input type="text" id="searchTeacher" placeholder="이름 입력..." oninput="renderTT()" style="width:120px;">
+      <label><i class="fa-solid fa-user-graduate"></i> 학년</label>
+      <select id="filterGrade" onchange="renderTT()">
+        <option value="">전체</option>
+        <option value="1">1학년</option>
+        <option value="2">2학년</option>
+        <option value="3">3학년</option>
+      </select>
+    </div>
+    <div class="legend-row">
+      <span class="legend-chip"><span class="legend-dot normal"></span>기본 시간표</span>
+      <span class="legend-chip"><span class="legend-dot exchange"></span>승인되어 적용된 교환 수업</span>
+      <span class="legend-chip"><span class="legend-dot makeup"></span>승인되어 적용된 보강 수업</span>
+      <span class="legend-chip"><span class="legend-dot event"></span>행사로 대체된 수업</span>
+    </div>
+    <div class="tt-wrap">
+      <table class="tt-table" id="ttTable"></table>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--text3);">
+      <i class="fa-solid fa-circle-info" style="color:var(--blue-mid)"></i> 기본 시간표 셀만 교환 후보 선택이 가능합니다. 적용된 교환/행사 셀은 조회용으로 표시됩니다.
+    </div>
+  </div>
+
+  <!-- 승인 대기 탭 -->
+  <div class="page" id="page-req">
+    <div id="reqGroupPrintBar" style="display:none;margin-bottom:10px;"></div>
+    <div id="reqList"></div>
+  </div>
+
+
+
+  <!-- 행사 추가 탭 -->
+  <div class="page" id="page-event">
+    <div class="event-layout">
+      <div class="form-card">
+        <div class="card-title"><i class="fa-solid fa-calendar-plus"></i> 행사 추가</div>
+        <div class="card-subtitle">시작일~종료일, 학년, 반, 적용 범위를 선택하면 해당 기간의 시간표가 행사명으로 일괄 대체됩니다. 전체 학년 + 요일 전체는 빈 시간까지 포함해 전체 시간표를 행사로 표시합니다.</div>
+        <div class="event-form">
+          <div class="field-grid">
+            <div class="field">
+              <label for="eventStartDate">시작일</label>
+              <input type="date" id="eventStartDate" onchange="updateEventPeriodOptions();updateEventPreviewDebounced();">
+            </div>
+            <div class="field">
+              <label for="eventEndDate">종료일</label>
+              <input type="date" id="eventEndDate" onchange="updateEventPeriodOptions();updateEventPreviewDebounced();">
+            </div>
+          </div>
+          <div class="field-grid three">
+            <div class="field">
+              <label for="eventGrade">학년</label>
+              <select id="eventGrade" onchange="updateClassOptions();updateEventPreviewDebounced()">
+                <option value="all">전체 학년</option>
+                <option value="1">1학년</option>
+                <option value="2">2학년</option>
+                <option value="3">3학년</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="eventClass">반</label>
+              <select id="eventClass" onchange="updateEventPreviewDebounced()"></select>
+            </div>
+            <div class="field">
+              <label for="eventScope">적용 범위</label>
+              <select id="eventScope" onchange="toggleEventPeriodField();updateEventPreviewDebounced()">
+                <option value="period">특정 교시</option>
+                <option value="day">요일 전체</option>
+              </select>
+            </div>
+          </div>
+          <div class="scope-row">
+            <div class="field" id="eventPeriodField">
+              <label for="eventPeriod">교시</label>
+              <select id="eventPeriod" onchange="updateEventPreviewDebounced()"></select>
+            </div>
+            <div class="field">
+              <label for="eventName">행사명</label>
+              <input type="text" id="eventName" placeholder="예: 체육대회, 진로특강, 학년행사" oninput="updateEventPreviewDebounced()">
+            </div>
+          </div>
+          <div class="preview-box" id="eventPreview"></div>
+          <button class="btn btn-blue" onclick="addEvent()"><i class="fa-solid fa-plus"></i> 행사 등록</button>
+        </div>
+      </div>
+      <div class="event-list-card">
+        <div class="card-title"><i class="fa-solid fa-list-check"></i> 등록된 행사</div>
+        <div class="card-subtitle">현재 적용 중인 행사 목록입니다. 같은 기간에 같은 학년·반·적용 범위가 겹치면 중복 등록되지 않습니다.</div>
+        <div id="eventList"></div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- 교환 불가 과목 탭 -->
+  <div class="page" id="page-block">
+    <!-- 학기 기간 설정 (관리자) -->
+    <div class="form-card" style="margin-bottom:20px;" id="semesterConfigCard">
+      <div class="card-title"><i class="fa-solid fa-calendar-range" style="color:#7C3AED;"></i> 학기 기간 설정</div>
+      <div class="card-subtitle">학기 기간을 등록하면 교환/보강 날짜 선택이 해당 기간으로 제한되고, 상단 헤더도 자동으로 변경됩니다.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end;">
+        <div class="field">
+          <label><i class="fa-regular fa-calendar-days"></i> 학기 시작일</label>
+          <input type="date" id="semesterStartInput">
+        </div>
+        <div class="field">
+          <label><i class="fa-regular fa-calendar-check"></i> 학기 종료일</label>
+          <input type="date" id="semesterEndInput">
+        </div>
+        <div class="field">
+          <label><i class="fa-solid fa-tag"></i> 학기 명칭 (헤더 표시)</label>
+          <input type="text" id="semesterLabelInput" placeholder="예: 2026학년도 1학기">
+        </div>
+        <button class="btn btn-blue" style="white-space:nowrap;padding:11px 18px;" onclick="saveSemesterConfig()">
+          <i class="fa-solid fa-floppy-disk"></i> 저장
+        </button>
+      </div>
+      <div id="semesterPreview" style="margin-top:10px;font-size:12px;color:#7C3AED;background:#F5F3FF;padding:8px 12px;border-radius:8px;display:none;"></div>
+    </div>
+    <div class="block-layout">
+      <div class="block-form-card">
+        <div class="card-title"><i class="fa-solid fa-ban"></i> 교환 불가 과목 등록</div>
+        <div class="card-subtitle">선생님과 과목을 등록하면 해당 학기 동안 그 과목은 교환 후보에서 제외됩니다. 행사가 덮어쓰는 것은 계속 가능합니다.</div>
+        <div class="event-form">
+          <div class="field-grid three">
+            <div class="field">
+              <label for="blockTeacherSearch">선생님 검색</label>
+              <input type="text" id="blockTeacherSearch" class="search-select-input" placeholder="이름 검색..." oninput="filterBlockTeachers()">
+              <label for="blockTeacher">선생님</label>
+              <select id="blockTeacher" onchange="updateBlockedSubjectOptions();updateBlockPeriodOptions();updateBlockPreview()"></select>
+            </div>
+            <div class="field">
+              <label for="blockDate">기준 날짜</label>
+              <input type="date" id="blockDate" onchange="updateBlockedSubjectOptions();updateBlockPeriodOptions();updateBlockPreview()">
+              <div class="block-helper">선택한 날짜 요일 기준으로 과목/교시를 불러옵니다.</div>
+            </div>
+            <div class="field">
+              <label for="blockSubject">과목</label>
+              <select id="blockSubject" onchange="updateBlockPeriodOptions();updateBlockPreview()"></select>
+            </div>
+          </div>
+          <div class="field-grid three" style="margin-top:10px;">
+            <div class="field">
+              <label for="blockPeriod">교시</label>
+              <select id="blockPeriod" onchange="updateBlockPreview()"></select>
+            </div>
+          </div>
+          <div class="preview-box" id="blockPreview"></div>
+          <button class="btn btn-blue" onclick="addBlockedSubject()"><i class="fa-solid fa-lock"></i> 교환 불가 과목 등록</button>
+        </div>
+      </div>
+      <div class="block-list-card">
+        <div class="card-title"><i class="fa-solid fa-circle-xmark"></i> 등록된 교환 불가 과목</div>
+        <div class="card-subtitle">등록된 과목은 학기 종료 전까지 교환이 불가합니다. 필요 시 삭제하면 즉시 다시 교환 가능합니다.</div>
+        <div id="blockList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 수업 결, 보강 현황 탭 -->
+  <div class="page" id="page-hist">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:10px;"><button class="reset-btn" onclick="resetExchanges()"><i class="fa-solid fa-trash"></i> 전체 초기화</button></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-icon" style="color:#64748B"><i class="fa-solid fa-table-list"></i></div><div class="stat-n" id="sAll">0</div><div class="stat-l">전체</div></div>
+      <div class="stat"><div class="stat-icon" style="color:var(--yellow)"><i class="fa-regular fa-hourglass-half"></i></div><div class="stat-n" style="color:var(--yellow)" id="sWait">0</div><div class="stat-l">대기중</div></div>
+      <div class="stat"><div class="stat-icon" style="color:var(--green)"><i class="fa-solid fa-arrows-rotate"></i></div><div class="stat-n" style="color:var(--green)" id="sActive">0</div><div class="stat-l">교환중</div></div>
+      <div class="stat"><div class="stat-icon" style="color:var(--purple)"><i class="fa-solid fa-circle-check"></i></div><div class="stat-n" style="color:var(--purple)" id="sDone">0</div><div class="stat-l">복원완료</div></div>
+      <div class="stat"><div class="stat-icon" style="color:#94A3B8"><i class="fa-solid fa-circle-minus"></i></div><div class="stat-n" style="color:#6B7280" id="sCancel">0</div><div class="stat-l">취소</div></div>
+    </div>
+    <div id="histGroupPrintBar" style="display:none;margin-bottom:10px;"></div>
+    <div id="histList"></div>
+  </div>
+</div>
+
+<!-- 출력 모달 -->
+<div class="print-overlay" id="printOverlay">
+  <div class="print-modal" id="printModal">
+    <div class="print-modal-head">
+      <h3 id="printModalTitle"><i class="fa-solid fa-print"></i> 계획서 출력</h3>
+      <button class="panel-close" onclick="closePrintModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="print-modal-body">
+      <!-- 교환자 선택 (교환 계획서만 표시) -->
+      <div class="reason-section" id="submitterSection" style="display:none;">
+        <div class="reason-title"><i class="fa-solid fa-user-pen"></i> 제출교사 선택 <span style="font-weight:400;color:#94A3B8;">(계획서를 제출하는 교사를 선택하세요)</span></div>
+        <div class="reason-grid" id="submitterGrid"></div>
+      </div>
+      <!-- 사유 선택 -->
+      <div class="reason-section">
+        <div class="reason-title"><i class="fa-solid fa-check-square"></i> 결강/교체 사유 선택 <span style="font-weight:400;color:#94A3B8;">(해당 항목 클릭 — 복수 선택 가능)</span></div>
+        <div id="reasonGrid" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+      </div>
+      <!-- 계획서 미리보기 -->
+      <div id="planPreviewWrap"></div>
+    </div>
+    <div class="print-modal-foot">
+      <div style="font-size:11px;color:#94A3B8;flex:1;display:flex;align-items:center;gap:4px;">
+        <i class="fa-solid fa-circle-info"></i>
+        인쇄 설정에서 <strong style="color:#475569;">머리글/바닥글 해제</strong> 권장
+      </div>
+      <button class="btn-sm" style="background:#F1F5F9;color:#475569;border:none;" onclick="closePrintModal()"><i class="fa-solid fa-xmark"></i> 닫기</button>
+      <button class="btn-sm btn-print" style="padding:8px 18px;font-size:13px;" onclick="doPrint()"><i class="fa-solid fa-print"></i> 인쇄하기</button>
+    </div>
+  </div>
+</div>
+<!-- 인쇄 전용 영역 -->
+<div id="printArea" style="display:none;"></div>
+
+<!-- 오른쪽 패널 -->
+<div class="panel-overlay" id="overlay" onclick="closePanel()"></div>
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <h3 id="panelTitle"><i class="fa-solid fa-magnifying-glass"></i> 수업 매칭 결과</h3>
+    <button class="panel-close" onclick="closePanel()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+  <div class="panel-foot" id="panelFoot"></div>
+</div>
+
+
+<div class="action-overlay" id="actionOverlay" onclick="closeActionMenu()"></div>
+<div class="action-menu" id="actionMenu">
+  <div class="action-title"><i class="fa-solid fa-sliders"></i> 처리 방식을 선택하세요</div>
+  <div class="action-sub" id="actionMenuInfo">선택한 수업에 대해 교환 또는 보강을 진행할 수 있습니다.</div>
+  <div class="action-btns">
+    <button class="action-btn exchange" onclick="startExchangeFromMenu()"><i class="fa-solid fa-arrow-right-arrow-left"></i> 교환</button>
+    <button class="action-btn makeup" onclick="startMakeupFromMenu()"><i class="fa-solid fa-circle-plus"></i> 보강</button>
+  </div>
+  <button class="action-cancel" onclick="closeActionMenu()"><i class="fa-solid fa-xmark"></i> 닫기</button>
+</div>
+
+<script>
+const TT = [{"name":"이근형","schedule":{"월":{"5":{"subject":"국어","class":"1-2"},"6":{"subject":"창체\n(봉,동)","class":""}},"화":{"1":{"subject":"국어","class":"3-7"},"2":{"subject":"국어","class":"3-9"},"3":{"subject":"국어","class":"3-8"},"4":{"subject":"국어","class":"1-1"},"6":{"subject":"국어","class":"1-6"}},"수":{"4":{"subject":"국어","class":"1-1"},"5":{"subject":"국어","class":"3-7"},"6":{"subject":"국어","class":"3-9"},"7":{"subject":"국어","class":"3-8"}},"목":{"4":{"subject":"국어","class":"1-6"},"5":{"subject":"국어","class":"1-2"},"6":{"subject":"국어","class":"1-1"}},"금":{"2":{"subject":"국어","class":"1-2"},"3":{"subject":"국어","class":"1-6"}}}},{"name":"오지현","schedule":{"월":{"1":{"subject":"자율","class":"1-8"},"3":{"subject":"국어","class":"1-9"},"6":{"subject":"창체\n(진,동)","class":""}},"화":{"1":{"subject":"국어","class":"3-1"},"2":{"subject":"국어","class":"3-2"},"3":{"subject":"국어","class":"3-6"}},"수":{"2":{"subject":"국어","class":"1-8"},"3":{"subject":"국어","class":"1-7"},"5":{"subject":"국어","class":"3-1"},"6":{"subject":"국어","class":"3-2"},"7":{"subject":"국어","class":"3-6"}},"목":{"3":{"subject":"국어","class":"1-8"},"4":{"subject":"국어","class":"1-9"},"6":{"subject":"국어","class":"1-7"}},"금":{"1":{"subject":"국어","class":"1-8"},"2":{"subject":"국어","class":"1-7"},"4":{"subject":"국어","class":"1-9"}}}},{"name":"최민경","schedule":{"월":{"3":{"subject":"국어","class":"1-4"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"1":{"subject":"국어","class":"3-4"},"2":{"subject":"국어","class":"3-5"},"3":{"subject":"국어","class":"3-3"},"6":{"subject":"국어","class":"1-5"}},"수":{"1":{"subject":"국어","class":"1-4"},"3":{"subject":"국어","class":"1-3"},"5":{"subject":"국어","class":"3-4"},"6":{"subject":"국어","class":"3-5"},"7":{"subject":"국어","class":"3-3"}},"목":{"4":{"subject":"국어","class":"1-5"},"5":{"subject":"국어","class":"1-3"},"6":{"subject":"국어","class":"1-4"}},"금":{"2":{"subject":"국어","class":"1-3"},"6":{"subject":"국어","class":"1-5"}}}},{"name":"조지혜","schedule":{"월":{"1":{"subject":"자율","class":"3-6"},"4":{"subject":"영어","class":"1-4"},"5":{"subject":"영어","class":"1-5"},"6":{"subject":"창체\n(진,동)","class":""}},"화":{"1":{"subject":"영어","class":"3-6"},"2":{"subject":"영어","class":"3-7"},"3":{"subject":"영어","class":"3-2"},"5":{"subject":"영어","class":"1-4"}},"수":{"1":{"subject":"영어","class":"1-6"},"4":{"subject":"영어","class":"1-5"},"5":{"subject":"영어","class":"3-6"},"6":{"subject":"영어","class":"3-7"},"7":{"subject":"영어","class":"3-2"}},"목":{"4":{"subject":"영어","class":"1-4"},"5":{"subject":"영어","class":"1-6"},"6":{"subject":"영어","class":"1-5"}},"금":{"4":{"subject":"영어","class":"1-6"}}}},{"name":"추송아","schedule":{"월":{"2":{"subject":"영어","class":"1-9"},"3":{"subject":"영어","class":"1-8"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"1":{"subject":"영어","class":"3-8"},"2":{"subject":"영어","class":"3-1"},"3":{"subject":"영어","class":"3-9"},"6":{"subject":"영어","class":"1-3"}},"수":{"1":{"subject":"영어","class":"1-8"},"2":{"subject":"영어","class":"1-3"},"5":{"subject":"영어","class":"3-8"},"6":{"subject":"영어","class":"3-1"},"7":{"subject":"영어","class":"3-9"}},"목":{"5":{"subject":"영어","class":"1-9"}},"금":{"3":{"subject":"영어","class":"1-3"},"4":{"subject":"영어","class":"1-8"},"6":{"subject":"영어","class":"1-9"}}}},{"name":"민규현","schedule":{"월":{"1":{"subject":"자율","class":"1-2"},"2":{"subject":"영어","class":"1-2"},"4":{"subject":"영어","class":"1-7"},"6":{"subject":"창체\n(봉,동)","class":""}},"화":{"1":{"subject":"영어","class":"3-3"},"2":{"subject":"영어","class":"3-4"},"3":{"subject":"영어","class":"3-5"},"5":{"subject":"영어","class":"1-1"},"6":{"subject":"영어","class":"1-2"}},"수":{"1":{"subject":"영어","class":"1-2"},"3":{"subject":"영어","class":"1-1"},"5":{"subject":"영어","class":"3-3"},"6":{"subject":"영어","class":"3-4"},"7":{"subject":"영어","class":"3-5"}},"목":{"3":{"subject":"영어","class":"1-7"}},"금":{"1":{"subject":"영어","class":"1-7"},"4":{"subject":"영어","class":"1-1"}}}},{"name":"권영미","schedule":{"월":{"4":{"subject":"수학","class":"1-5"},"5":{"subject":"수학","class":"1-9"},"6":{"subject":"창체\n(봉)","class":""}},"화":{"1":{"subject":"수학","class":"3-9"},"2":{"subject":"수학","class":"3-3"},"3":{"subject":"수학","class":"3-4"},"4":{"subject":"수학","class":"1-8"}},"수":{"5":{"subject":"수학","class":"3-9"},"6":{"subject":"수학","class":"3-3"},"7":{"subject":"수학","class":"3-4"}},"목":{"2":{"subject":"수학","class":"1-8"},"3":{"subject":"수학","class":"1-9"},"5":{"subject":"수학","class":"1-5"}},"금":{"2":{"subject":"수학","class":"1-5"},"3":{"subject":"수학","class":"1-9"},"5":{"subject":"수학","class":"1-8"}}}},{"name":"김용욱","schedule":{"월":{"1":{"subject":"자율","class":"1-4"},"4":{"subject":"수학","class":"1-2"},"5":{"subject":"수학","class":"1-3"},"6":{"subject":"창체\n(진,동)","class":""}},"화":{"1":{"subject":"수학","class":"3-5"},"2":{"subject":"수학","class":"3-6"},"3":{"subject":"수학","class":"3-7"},"5":{"subject":"수학","class":"1-2"},"6":{"subject":"수학","class":"1-4"}},"수":{"5":{"subject":"수학","class":"3-5"},"6":{"subject":"수학","class":"3-6"},"7":{"subject":"수학","class":"3-7"}},"목":{"3":{"subject":"수학","class":"1-4"},"4":{"subject":"수학","class":"1-2"},"6":{"subject":"수학","class":"1-3"}},"금":{"4":{"subject":"수학","class":"1-3"},"5":{"subject":"수학","class":"1-4"}}}},{"name":"박수영","schedule":{"월":{"2":{"subject":"수학","class":"1-6"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"1":{"subject":"수학","class":"3-2"},"2":{"subject":"수학","class":"3-8"},"3":{"subject":"수학","class":"3-1"},"6":{"subject":"수학","class":"1-1"}},"수":{"2":{"subject":"수학","class":"1-7"},"5":{"subject":"수학","class":"3-2"},"6":{"subject":"수학","class":"3-8"},"7":{"subject":"수학","class":"3-1"}},"목":{"1":{"subject":"수학","class":"1-7"},"3":{"subject":"수학","class":"1-6"},"4":{"subject":"수학","class":"1-1"}},"금":{"2":{"subject":"수학","class":"1-6"},"3":{"subject":"수학","class":"1-7"},"6":{"subject":"수학","class":"1-1"}}}},{"name":"노상균","schedule":{"월":{"2":{"subject":"과학","class":"1-4"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"1":{"subject":"과학","class":"1-9"},"5":{"subject":"과학","class":"1-3"}},"수":{"3":{"subject":"과학","class":"1-9"},"4":{"subject":"경제","class":"1-3"},"6":{"subject":"과학","class":"1-4"},"7":{"subject":"과학","class":"1-8"}},"목":{"2":{"subject":"경제","class":"1-3"},"3":{"subject":"과학","class":"1-3"},"4":{"subject":"과학","class":"1-8"},"6":{"subject":"과학","class":"1-9"}},"금":{"4":{"subject":"과학","class":"1-4"},"5":{"subject":"과학","class":"1-3"},"6":{"subject":"과학","class":"1-8"}}}},{"name":"구인숙","schedule":{"월":{"1":{"subject":"자율","class":"1-6"},"3":{"subject":"과학","class":"1-2"},"5":{"subject":"과학","class":"1-6"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"2":{"subject":"과학","class":"1-7"},"3":{"subject":"과학","class":"1-1"},"4":{"subject":"과학","class":"1-2"},"5":{"subject":"과학","class":"1-6"}},"수":{"1":{"subject":"과학","class":"1-7"},"5":{"subject":"과학","class":"1-5"},"7":{"subject":"과학","class":"1-2"}},"목":{"1":{"subject":"과학","class":"1-1"},"3":{"subject":"과학","class":"1-5"},"6":{"subject":"과학","class":"1-6"}},"금":{"3":{"subject":"과학","class":"1-5"},"5":{"subject":"과학","class":"1-1"},"6":{"subject":"과학","class":"1-7"}}}},{"name":"김지검","schedule":{"월":{"2":{"subject":"사회","class":"1-1"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"1":{"subject":"사회","class":"1-2"},"2":{"subject":"경제","class":"1-2"},"3":{"subject":"사회","class":"1-4"}},"수":{"3":{"subject":"사회","class":"1-4"},"5":{"subject":"사회","class":"1-3"},"6":{"subject":"경제","class":"1-2"},"7":{"subject":"사회","class":"1-1"}},"목":{"1":{"subject":"사회","class":"1-3"},"3":{"subject":"사회","class":"1-1"},"5":{"subject":"사회","class":"1-4"},"6":{"subject":"사회","class":"1-2"}},"금":{"1":{"subject":"사회","class":"1-2"},"6":{"subject":"사회","class":"1-3"}}}},{"name":"이준","schedule":{"월":{"1":{"subject":"자율","class":"1-7"},"3":{"subject":"사회","class":"1-6"},"4":{"subject":"사회","class":"1-6"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"5":{"subject":"사회","class":"1-8"},"6":{"subject":"사회","class":"1-8"}},"수":{"1":{"subject":"사회","class":"1-5"},"2":{"subject":"사회","class":"1-5"},"4":{"subject":"사회","class":"1-7"},"5":{"subject":"사회","class":"1-9"},"6":{"subject":"사회","class":"1-9"}},"목":{"2":{"subject":"사회","class":"1-6"},"4":{"subject":"사회","class":"1-7"},"5":{"subject":"사회","class":"1-7"}},"금":{"1":{"subject":"사회","class":"1-5"},"3":{"subject":"사회","class":"1-8"},"5":{"subject":"사회","class":"1-9"}}}},{"name":"정덕용","schedule":{"월":{"2":{"subject":"국사","class":"2-5"},"4":{"subject":"국사","class":"2-7"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"3":{"subject":"국사","class":"2-5"},"5":{"subject":"국사","class":"2-7"}},"수":{"1":{"subject":"국사","class":"2-8"},"2":{"subject":"국사","class":"2-1"},"3":{"subject":"국사","class":"2-8"},"4":{"subject":"국사","class":"2-7"}},"목":{"2":{"subject":"국사","class":"2-6"},"3":{"subject":"국사","class":"2-5"},"4":{"subject":"국사","class":"2-6"},"6":{"subject":"국사","class":"2-1"}},"금":{"1":{"subject":"국사","class":"2-1"},"2":{"subject":"국사","class":"2-8"},"3":{"subject":"국사","class":"2-6"}}}},{"name":"권해련","schedule":{"월":{"1":{"subject":"자율","class":"2-9"},"4":{"subject":"국사","class":"2-2"},"5":{"subject":"국사","class":"2-4"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"4":{"subject":"경제","class":"1-5"},"6":{"subject":"국사","class":"2-9"}},"수":{"2":{"subject":"국사","class":"2-9"},"3":{"subject":"국사","class":"2-3"}},"목":{"1":{"subject":"국사","class":"2-2"},"2":{"subject":"국사","class":"2-2"},"4":{"subject":"국사","class":"2-3"},"5":{"subject":"국사","class":"2-9"}},"금":{"1":{"subject":"국사","class":"2-4"},"2":{"subject":"국사","class":"2-3"},"3":{"subject":"국사","class":"2-4"},"4":{"subject":"경제","class":"1-5"}}}},{"name":"황기하","schedule":{"월":{"1":{"subject":"자율","class":"3-5"},"2":{"subject":"체육","class":"1-5"},"3":{"subject":"체육","class":"3-3"},"5":{"subject":"체육","class":"3-7"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"1":{"subject":"체육","class":"1-1"},"3":{"subject":"체육","class":"1-2"},"5":{"subject":"체육","class":"3-6"},"6":{"subject":"체육","class":"3-8"}},"수":{"4":{"subject":"체육","class":"3-4"},"5":{"subject":"체육","class":"1-2"}},"목":{"3":{"subject":"체육","class":"3-9"},"4":{"subject":"체육","class":"3-1"},"5":{"subject":"체육","class":"1-1"},"6":{"subject":"체육","class":"3-5"}},"금":{"5":{"subject":"체육","class":"1-5"},"6":{"subject":"체육","class":"3-2"}}}},{"name":"유인명","schedule":{"월":{"2":{"subject":"체육","class":"2-4"},"3":{"subject":"체육","class":"2-2"},"4":{"subject":"체육","class":"2-5"},"5":{"subject":"체육","class":"2-7"}},"화":{"6":{"subject":"체육","class":"2-1"}},"수":{"2":{"subject":"체육","class":"2-8"},"3":{"subject":"체육","class":"2-9"},"5":{"subject":"체육","class":"2-3"},"6":{"subject":"체육","class":"2-7"}},"목":{"1":{"subject":"체육","class":"2-6"},"2":{"subject":"체육","class":"2-5"},"3":{"subject":"체육","class":"2-4"},"4":{"subject":"체육","class":"2-8"},"5":{"subject":"체육","class":"2-1"},"6":{"subject":"체육","class":"2-2"}},"금":{"1":{"subject":"체육","class":"2-9"},"2":{"subject":"체육","class":"2-6"},"3":{"subject":"체육","class":"2-3"}}}},{"name":"박영관","schedule":{"월":{"1":{"subject":"자율","class":"2-1"},"4":{"subject":"체육","class":"1-9"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"1":{"subject":"체육","class":"1-4"},"2":{"subject":"경제","class":"1-1"},"3":{"subject":"체육","class":"1-6"},"4":{"subject":"체육","class":"1-3"}},"수":{"2":{"subject":"체육","class":"1-6"},"4":{"subject":"체육","class":"1-9"},"5":{"subject":"경제","class":"1-1"},"6":{"subject":"체육","class":"1-8"}},"목":{"2":{"subject":"체육","class":"1-7"}},"금":{"1":{"subject":"체육","class":"1-3"},"2":{"subject":"체육","class":"1-8"},"3":{"subject":"체육","class":"1-4"},"4":{"subject":"체육","class":"1-7"}}}},{"name":"주혜영","schedule":{"월":{"1":{"subject":"자율","class":"1-8"},"2":{"subject":"음악","class":"1-8"},"3":{"subject":"음악","class":"1-5"},"5":{"subject":"음악","class":"1-7"},"6":{"subject":"창체\n(동아리)","class":""}},"화":{"2":{"subject":"음악","class":"1-4"},"3":{"subject":"음악","class":"1-3"},"4":{"subject":"음악","class":"1-6"},"5":{"subject":"음악","class":"1-5"}},"수":{"2":{"subject":"음악","class":"1-2"},"3":{"subject":"음악","class":"1-6"},"5":{"subject":"음악","class":"1-8"},"6":{"subject":"음악","class":"1-1"},"7":{"subject":"음악","class":"1-9"}},"목":{"1":{"subject":"음악","class":"1-9"},"2":{"subject":"음악","class":"1-1"},"4":{"subject":"음악","class":"1-3"}},"금":{"3":{"subject":"음악","class":"1-2"},"5":{"subject":"음악","class":"1-7"},"6":{"subject":"음악","class":"1-4"}}}},{"name":"박지수","schedule":{"월":{"1":{"subject":"자율","class":"2-7"},"2":{"subject":"미술","class":"2-7"},"3":{"subject":"미술","class":"2-5"},"4":{"subject":"미술","class":"2-3"},"5":{"subject":"미술","class":"2-2"},"6":{"subject":"창체\n(동아리)","class":""}},"화":{"1":{"subject":"미술","class":"2-8"},"5":{"subject":"미술","class":"2-1"}},"수":{"1":{"subject":"미술","class":"2-9"},"2":{"subject":"미술","class":"2-3"},"3":{"subject":"미술","class":"2-1"},"7":{"subject":"미술","class":"2-7"}},"목":{"1":{"subject":"미술","class":"2-5"},"2":{"subject":"미술","class":"2-4"},"3":{"subject":"미술","class":"2-2"},"5":{"subject":"미술","class":"2-6"},"6":{"subject":"미술","class":"2-6"}},"금":{"1":{"subject":"미술","class":"2-8"},"2":{"subject":"미술","class":"2-4"},"3":{"subject":"미술","class":"2-9"}}}},{"name":"김신연","schedule":{"월":{"1":{"subject":"자율","class":"2-7"},"2":{"subject":"중국","class":"2-9"},"3":{"subject":"중국","class":"2-7"},"4":{"subject":"중국","class":"2-6"},"5":{"subject":"중국","class":"2-8"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"4":{"subject":"경제","class":"1-4"},"6":{"subject":"중국","class":"2-7"}},"수":{"5":{"subject":"중국","class":"2-7"},"7":{"subject":"경제","class":"1-4"}},"목":{"3":{"subject":"중국","class":"2-6"},"4":{"subject":"중국","class":"2-9"},"6":{"subject":"중국","class":"2-8"}},"금":{"1":{"subject":"중국","class":"2-6"},"2":{"subject":"중국","class":"2-9"},"3":{"subject":"중국","class":"2-8"}}}},{"name":"박선희","schedule":{"월":{"2":{"subject":"인공","class":"2-2"},"3":{"subject":"인공","class":"2-4"},"4":{"subject":"인공","class":"2-4"},"5":{"subject":"인공","class":"2-3"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"6":{"subject":"인공","class":"2-5"}},"수":{"1":{"subject":"인공","class":"2-1"},"3":{"subject":"인공","class":"2-5"},"4":{"subject":"인공","class":"2-3"}},"목":{"1":{"subject":"인공","class":"2-4"},"4":{"subject":"인공","class":"2-2"},"5":{"subject":"인공","class":"2-2"},"6":{"subject":"인공","class":"2-5"}},"금":{"1":{"subject":"인공","class":"2-3"},"2":{"subject":"인공","class":"2-1"},"3":{"subject":"인공","class":"2-1"}}}},{"name":"오완근","schedule":{"월":{},"화":{"2":{"subject":"진로","class":"1-9"},"3":{"subject":"진로","class":"1-9"}},"수":{"6":{"subject":"진로","class":"1-7"},"7":{"subject":"진로","class":"1-7"}},"목":{"5":{"subject":"진로","class":"1-8"},"6":{"subject":"진로","class":"1-8"}},"금":{"5":{"subject":"진로","class":"1-6"},"6":{"subject":"진로","class":"1-6"}}}},{"name":"이기돈","schedule":{"월":{"4":{"subject":"바조","class":"1-8"},"5":{"subject":"바조","class":"1-8"}},"화":{},"수":{"1":{"subject":"학과","class":"3-1"},"2":{"subject":"학과","class":"3-1"},"3":{"subject":"학과","class":"3-1"}},"목":{"1":{"subject":"바조","class":"1-5"},"2":{"subject":"바조","class":"1-5"}},"금":{"1":{"subject":"바조","class":"1-9"},"2":{"subject":"바조","class":"1-9"},"4":{"subject":"분리","class":"2-1"},"5":{"subject":"분리","class":"2-1"},"6":{"subject":"분리","class":"2-1"}}}},{"name":"이정식","schedule":{"월":{"2":{"subject":"성직","class":"3-4"},"3":{"subject":"성직","class":"3-4"},"4":{"subject":"성직","class":"3-3"},"5":{"subject":"성직","class":"3-3"},"6":{"subject":"창체\n(동아리)","class":""}},"화":{"1":{"subject":"바조","class":"1-3"},"2":{"subject":"바조","class":"1-3"},"4":{"subject":"성직","class":"3-1"}},"수":{"1":{"subject":"학과","class":"3-1"},"2":{"subject":"학과","class":"3-1"},"3":{"subject":"학과","class":"3-1"},"4":{"subject":"성직","class":"3-1"}},"목":{"4":{"subject":"성직","class":"3-5"},"5":{"subject":"성직","class":"3-5"}},"금":{"1":{"subject":"바조","class":"1-4"},"2":{"subject":"바조","class":"1-4"},"4":{"subject":"성직","class":"3-2"},"5":{"subject":"성직","class":"3-2"}}}},{"name":"강경","schedule":{"월":{"2":{"subject":"화제","class":"2-1"},"3":{"subject":"화제","class":"2-1"},"4":{"subject":"화제","class":"2-1"},"5":{"subject":"화제","class":"2-1"}},"화":{},"수":{"1":{"subject":"의제","class":"2-2"},"2":{"subject":"의제","class":"2-2"},"3":{"subject":"의제","class":"2-2"},"4":{"subject":"의제","class":"2-2"},"5":{"subject":"의제","class":"2-2"},"6":{"subject":"의제","class":"2-2"},"7":{"subject":"의제","class":"2-2"}},"목":{"1":{"subject":"공화","class":"1-2"},"2":{"subject":"공화","class":"1-2"},"3":{"subject":"공화","class":"1-2"},"5":{"subject":"화분","class":"3-1"},"6":{"subject":"화분","class":"3-1"}},"금":{"1":{"subject":"공화","class":"1-1"},"2":{"subject":"공화","class":"1-1"},"3":{"subject":"공화","class":"1-1"},"4":{"subject":"화분","class":"3-1"},"5":{"subject":"화분","class":"3-1"},"6":{"subject":"화분","class":"3-1"}}}},{"name":"김진철","schedule":{"월":{"1":{"subject":"자율","class":"1-1"},"3":{"subject":"바화","class":"1-1"},"4":{"subject":"바화","class":"1-1"},"5":{"subject":"바화","class":"1-1"}},"화":{"1":{"subject":"화제","class":"2-1"},"2":{"subject":"화제","class":"2-1"},"3":{"subject":"화제","class":"2-1"},"4":{"subject":"화제","class":"2-1"}},"수":{"4":{"subject":"화제","class":"2-1"},"5":{"subject":"화제","class":"2-1"},"6":{"subject":"화제","class":"2-1"},"7":{"subject":"화제","class":"2-1"}},"목":{"1":{"subject":"학과","class":"3-1"},"2":{"subject":"학과","class":"3-1"},"3":{"subject":"학과","class":"3-1"}},"금":{"4":{"subject":"바화","class":"1-2"},"5":{"subject":"바화","class":"1-2"},"6":{"subject":"바화","class":"1-2"}}}},{"name":"이규한","schedule":{"월":{"1":{"subject":"자율","class":"2-2"},"2":{"subject":"화제","class":"3-1"},"3":{"subject":"화제","class":"3-1"},"4":{"subject":"화제","class":"3-1"},"5":{"subject":"화제","class":"3-1"}},"화":{"1":{"subject":"의품","class":"2-2"},"2":{"subject":"의품","class":"2-2"},"3":{"subject":"의품","class":"2-2"},"4":{"subject":"의품","class":"2-2"},"5":{"subject":"의품","class":"2-2"},"6":{"subject":"의품","class":"2-2"}},"수":{},"목":{"1":{"subject":"화제","class":"2-1"},"2":{"subject":"화제","class":"2-1"},"3":{"subject":"화제","class":"2-1"},"4":{"subject":"화제","class":"2-1"}},"금":{"1":{"subject":"수질","class":"3-1"},"2":{"subject":"수질","class":"3-1"},"3":{"subject":"수질","class":"3-1"},"4":{"subject":"분리","class":"2-2"},"5":{"subject":"분리","class":"2-2"},"6":{"subject":"분리","class":"2-2"}}}},{"name":"변영욱","schedule":{"월":{"1":{"subject":"자율","class":"3-1"},"2":{"subject":"바조","class":"1-7"},"3":{"subject":"바조","class":"1-7"},"6":{"subject":"창체\n(동아리)","class":""}},"화":{"1":{"subject":"바조","class":"1-6"},"2":{"subject":"바조","class":"1-6"},"5":{"subject":"공정","class":"3-1"},"6":{"subject":"공정","class":"3-1"}},"수":{"1":{"subject":"바조","class":"1-1"},"2":{"subject":"바조","class":"1-1"},"3":{"subject":"바조","class":"1-2"},"4":{"subject":"바조","class":"1-2"}},"목":{"1":{"subject":"학과","class":"3-1"},"2":{"subject":"학과","class":"3-1"},"3":{"subject":"학과","class":"3-1"}},"금":{"1":{"subject":"의제","class":"2-2"},"2":{"subject":"의제","class":"2-2"},"3":{"subject":"의제","class":"2-2"}}}},{"name":"김상운","schedule":{"월":{"1":{"subject":"자율","class":"3-3"},"2":{"subject":"철신","class":"3-3"}},"화":{"4":{"subject":"내선","class":"3-3"},"5":{"subject":"내선","class":"3-3"},"6":{"subject":"내선","class":"3-3"}},"수":{"1":{"subject":"철신","class":"3-3"},"2":{"subject":"철신","class":"3-3"},"3":{"subject":"철신","class":"3-3"},"4":{"subject":"철신","class":"3-3"}},"목":{"1":{"subject":"스마","class":"3-3"},"2":{"subject":"스마","class":"3-3"},"3":{"subject":"스마","class":"3-3"},"4":{"subject":"스마","class":"3-3"},"5":{"subject":"학과","class":"3-3"},"6":{"subject":"학과","class":"3-3"}},"금":{"1":{"subject":"학과","class":"3-3"},"2":{"subject":"학과","class":"3-3"},"3":{"subject":"스마","class":"3-3"},"4":{"subject":"스마","class":"3-3"},"5":{"subject":"학과","class":"3-3"},"6":{"subject":"학과","class":"3-3"}}}},{"name":"전우찬","schedule":{"월":{"1":{"subject":"자율","class":"2-3"},"2":{"subject":"설계","class":"2-3"},"3":{"subject":"설계","class":"2-3"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"4":{"subject":"설계","class":"2-3"},"5":{"subject":"설계","class":"2-3"},"6":{"subject":"설계","class":"2-3"}},"수":{"1":{"subject":"전설","class":"2-3"},"6":{"subject":"설계","class":"2-3"},"7":{"subject":"설계","class":"2-3"}},"목":{"5":{"subject":"전설","class":"2-3"},"6":{"subject":"전설","class":"2-3"}},"금":{"1":{"subject":"제어","class":"3-2"},"2":{"subject":"제어","class":"3-2"},"3":{"subject":"제어","class":"3-2"}}}},{"name":"이상권","schedule":{"월":{"2":{"subject":"철운","class":"3-2"},"4":{"subject":"전회","class":"1-3"},"5":{"subject":"전회","class":"1-4"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"4":{"subject":"학과","class":"3-2"},"5":{"subject":"학과","class":"3-2"},"6":{"subject":"학과","class":"3-2"}},"수":{"1":{"subject":"전회","class":"1-3"},"2":{"subject":"전회","class":"1-4"}},"목":{"1":{"subject":"철신","class":"2-3"},"2":{"subject":"철신","class":"2-3"},"3":{"subject":"철신","class":"2-3"},"4":{"subject":"철운","class":"3-2"}},"금":{"5":{"subject":"학과","class":"3-3"},"6":{"subject":"학과","class":"3-3"}}}},{"name":"박병현","schedule":{"월":{"1":{"subject":"자율","class":"1-3"},"2":{"subject":"의생","class":"1-3"},"3":{"subject":"의생","class":"1-3"},"6":{"subject":"창체\n(진로)","class":""}},"화":{"1":{"subject":"철신","class":"2-3"},"2":{"subject":"철신","class":"2-3"},"3":{"subject":"철신","class":"2-3"}},"수":{"4":{"subject":"의생","class":"1-4"},"5":{"subject":"의생","class":"1-4"},"6":{"subject":"의생","class":"1-3"},"7":{"subject":"의생","class":"1-3"}},"목":{"1":{"subject":"의생","class":"1-4"},"2":{"subject":"의생","class":"1-4"},"5":{"subject":"학과","class":"3-3"},"6":{"subject":"학과","class":"3-3"}},"금":{"4":{"subject":"유지","class":"2-3"},"5":{"subject":"유지","class":"2-3"},"6":{"subject":"유지","class":"2-3"}}}},{"name":"이동훈","schedule":{"월":{"1":{"subject":"자율","class":"2-4"}},"화":{"1":{"subject":"부품","class":"2-4"},"2":{"subject":"부품","class":"2-4"},"3":{"subject":"부품","class":"2-4"},"4":{"subject":"기기","class":"2-4"},"5":{"subject":"기기","class":"2-4"},"6":{"subject":"기기","class":"2-4"}},"수":{"1":{"subject":"부품","class":"2-4"},"2":{"subject":"부품","class":"2-4"},"3":{"subject":"기기","class":"2-4"},"4":{"subject":"기기","class":"2-4"},"5":{"subject":"운영","class":"2-4"},"6":{"subject":"운영","class":"2-4"},"7":{"subject":"운영","class":"2-4"}},"목":{"4":{"subject":"반도","class":"2-4"},"5":{"subject":"반도","class":"2-4"},"6":{"subject":"반도","class":"2-4"}},"금":{"4":{"subject":"반도","class":"2-4"},"5":{"subject":"반도","class":"2-4"},"6":{"subject":"반도","class":"2-4"}}}},{"name":"김가현","schedule":{"월":{"1":{"subject":"자율","class":"3-2"},"3":{"subject":"내선","class":"3-2"},"4":{"subject":"내선","class":"3-2"},"5":{"subject":"내선","class":"3-2"},"6":{"subject":"창체\n(봉사)","class":""}},"화":{"4":{"subject":"학과","class":"3-2"},"5":{"subject":"학과","class":"3-2"},"6":{"subject":"학과","class":"3-2"}},"수":{"1":{"subject":"내선","class":"3-2"},"2":{"subject":"내선","class":"3-2"},"3":{"subject":"철신","class":"3-2"},"4":{"subject":"철신","class":"3-2"}},"목":{"1":{"subject":"내선","class":"3-2"},"2":{"subject":"내선","class":"3-2"},"3":{"subject":"내선","class":"3-2"},"5":{"subject":"철신","class":"3-2"},"6":{"subject":"철신","class":"3-2"}},"금":{"1":{"subject":"학과","class":"3-3"},"2":{"subject":"학과","class":"3-3"}}}},{"name":"김용태","schedule":{"월":{"6":{"subject":"창체\n(진,봉)","class":""}},"화":{"1":{"subject":"도면","class":"2-5"},"2":{"subject":"도면","class":"2-5"},"4":{"subject":"건실","class":"2-5"},"5":{"subject":"건실","class":"2-5"}},"수":{"4":{"subject":"도면","class":"2-5"},"5":{"subject":"도면","class":"2-5"}},"목":{"4":{"subject":"건실","class":"2-5"},"5":{"subject":"건실","class":"2-5"}},"금":{"1":{"subject":"설계","class":"3-4"},"2":{"subject":"설계","class":"3-4"},"3":{"subject":"설계","class":"3-4"},"4":{"subject":"설계","class":"2-5"},"5":{"subject":"설계","class":"2-5"},"6":{"subject":"설계","class":"2-5"}}}},{"name":"한윤구","schedule":{"월":{"1":{"subject":"자율","class":"1-5"},"3":{"subject":"실내","class":"3-5"},"4":{"subject":"역유","class":"3-5"},"5":{"subject":"역유","class":"3-5"}},"화":{"3":{"subject":"기제","class":"1-5"},"4":{"subject":"실내","class":"3-5"},"5":{"subject":"실내","class":"3-5"},"6":{"subject":"실내","class":"3-5"}},"수":{"1":{"subject":"실내","class":"3-4"},"2":{"subject":"역유","class":"3-4"},"3":{"subject":"역유","class":"3-4"},"6":{"subject":"기제","class":"1-5"},"7":{"subject":"기제","class":"1-5"}},"목":{"1":{"subject":"실내","class":"3-4"},"2":{"subject":"실내","class":"3-4"},"3":{"subject":"실내","class":"3-4"}},"금":{"1":{"subject":"설계","class":"3-5"},"2":{"subject":"설계","class":"3-5"},"3":{"subject":"설계","class":"3-5"}}}},{"name":"김윤기","schedule":{"월":{"1":{"subject":"자율","class":"3-4"},"2":{"subject":"철선","class":"3-5"},"4":{"subject":"철선","class":"3-4"},"5":{"subject":"철선","class":"3-4"},"6":{"subject":"창체\n(봉,동)","class":""}},"화":{"4":{"subject":"창호","class":"3-4"},"5":{"subject":"창호","class":"3-4"},"6":{"subject":"창호","class":"3-4"}},"수":{"1":{"subject":"창호","class":"3-5"},"2":{"subject":"창호","class":"3-5"},"3":{"subject":"창호","class":"3-5"},"4":{"subject":"철선","class":"3-5"}},"목":{"4":{"subject":"창호","class":"3-4"},"5":{"subject":"창호","class":"3-4"},"6":{"subject":"창호","class":"3-4"}},"금":{"4":{"subject":"창호","class":"3-5"},"5":{"subject":"창호","class":"3-5"},"6":{"subject":"창호","class":"3-5"}}}},{"name":"유찬빈","schedule":{"월":{"1":{"subject":"자율","class":"2-5"},"5":{"subject":"철일","class":"2-5"},"6":{"subject":"창체\n(동아리)","class":""}},"화":{"1":{"subject":"건일","class":"1-5"},"2":{"subject":"건일","class":"1-5"}},"수":{"1":{"subject":"철일","class":"2-5"},"2":{"subject":"철일","class":"2-5"},"3":{"subject":"건일","class":"1-5"},"6":{"subject":"창호","class":"2-5"},"7":{"subject":"창호","class":"2-5"}},"목":{"1":{"subject":"목공","class":"3-5"},"2":{"subject":"목공","class":"3-5"},"3":{"subject":"목공","class":"3-5"}},"금":{"1":{"subject":"창호","class":"2-5"},"2":{"subject":"창호","class":"2-5"},"3":{"subject":"창호","class":"2-5"},"4":{"subject":"목공","class":"3-4"},"5":{"subject":"목공","class":"3-4"},"6":{"subject":"목공","class":"3-4"}}}},{"name":"김원태","schedule":{"월":{"2":{"subject":"학과","class":"3-7"},"3":{"subject":"학과","class":"3-7"},"4":{"subject":"학과","class":"3-7"}},"화":{"1":{"subject":"제빵","class":"2-7"},"2":{"subject":"제빵","class":"2-7"},"3":{"subject":"제빵","class":"2-7"},"4":{"subject":"제빵","class":"2-7"}},"수":{"1":{"subject":"학과","class":"3-7"},"4":{"subject":"제빵","class":"2-6"},"5":{"subject":"제빵","class":"2-6"},"6":{"subject":"제빵","class":"2-6"},"7":{"subject":"제빵","class":"2-6"}},"목":{"1":{"subject":"도제","class":"3-7"},"2":{"subject":"도제","class":"3-7"},"3":{"subject":"도제","class":"3-7"}},"금":{"1":{"subject":"도제","class":"3-7"},"2":{"subject":"도제","class":"3-7"},"3":{"subject":"도제","class":"3-7"}}}},{"name":"이희우","schedule":{"월":{"6":{"subject":"창체\n(봉,동)","class":""}},"화":{"1":{"subject":"디저","class":"2-6"},"2":{"subject":"디저","class":"2-6"},"3":{"subject":"디저","class":"2-6"},"4":{"subject":"제과","class":"3-7"},"5":{"subject":"제과","class":"3-7"},"6":{"subject":"제과","class":"3-7"}},"수":{"1":{"subject":"디저","class":"2-7"},"2":{"subject":"디저","class":"2-7"},"3":{"subject":"디저","class":"2-7"}},"목":{"1":{"subject":"학과","class":"3-6"},"2":{"subject":"학과","class":"3-6"},"3":{"subject":"학과","class":"3-6"},"4":{"subject":"제빵","class":"3-6"}},"금":{"4":{"subject":"제빵","class":"3-6"},"5":{"subject":"제빵","class":"3-6"},"6":{"subject":"제빵","class":"3-6"}}}},{"name":"백영신","schedule":{"월":{"1":{"subject":"자율","class":"2-6"},"2":{"subject":"양식","class":"2-6"},"3":{"subject":"양식","class":"2-6"},"5":{"subject":"양식","class":"2-6"},"6":{"subject":"창체\n(진,동)","class":""}},"화":{"4":{"subject":"양식","class":"2-6"},"5":{"subject":"양식","class":"2-6"},"6":{"subject":"양식","class":"2-6"}},"수":{"4":{"subject":"식과","class":"3-6"}},"목":{"1":{"subject":"학과","class":"3-6"},"2":{"subject":"학과","class":"3-6"},"3":{"subject":"학과","class":"3-6"},"5":{"subject":"바리","class":"3-6"},"6":{"subject":"바리","class":"3-6"}},"금":{"4":{"subject":"바리","class":"2-6"},"5":{"subject":"바리","class":"2-6"},"6":{"subject":"바리","class":"2-6"}}}},{"name":"송유현","schedule":{"월":{"1":{"subject":"자율","class":"3-7"},"2":{"subject":"학과","class":"3-7"},"3":{"subject":"학과","class":"3-7"},"4":{"subject":"학과","class":"3-7"},"5":{"subject":"성직","class":"3-6"}},"화":{"6":{"subject":"성직","class":"3-6"}},"수":{"1":{"subject":"학과","class":"3-7"},"2":{"subject":"성직","class":"3-7"},"3":{"subject":"성직","class":"3-7"},"4":{"subject":"도제","class":"3-7"}},"목":{"4":{"subject":"도제","class":"3-7"},"5":{"subject":"도제","class":"3-7"},"6":{"subject":"도제","class":"3-7"}},"금":{"1":{"subject":"김치","class":"3-6"},"2":{"subject":"김치","class":"3-6"},"3":{"subject":"김치","class":"3-6"},"4":{"subject":"도제","class":"3-7"},"5":{"subject":"도제","class":"3-7"},"6":{"subject":"도제","class":"3-7"}}}},{"name":"정수현","schedule":{"월":{"1":{"subject":"자율","class":"1-6"},"2":{"subject":"떡제","class":"3-6"},"3":{"subject":"떡제","class":"3-6"},"4":{"subject":"떡제","class":"3-6"},"6":{"subject":"창체\n(진로)","class":""}},"화":{"4":{"subject":"한국","class":"3-6"}},"수":{"1":{"subject":"한국","class":"3-6"},"2":{"subject":"한국","class":"3-6"},"3":{"subject":"한국","class":"3-6"},"4":{"subject":"제빵","class":"1-6"},"5":{"subject":"제빵","class":"1-6"},"6":{"subject":"제빵","class":"1-6"},"7":{"subject":"제빵","class":"1-6"}},"목":{"1":{"subject":"양식","class":"2-7"},"2":{"subject":"양식","class":"2-7"},"3":{"subject":"양식","class":"2-7"}},"금":{"1":{"subject":"양식","class":"2-7"},"2":{"subject":"양식","class":"2-7"},"3":{"subject":"양식","class":"2-7"}}}},{"name":"공다은","schedule":{"월":{"6":{"subject":"창체\n(봉사)","class":""}},"화":{"1":{"subject":"식영","class":"1-7"},"3":{"subject":"제빵","class":"1-7"},"4":{"subject":"제빵","class":"1-7"},"5":{"subject":"제빵","class":"1-7"},"6":{"subject":"제빵","class":"1-7"}},"수":{"1":{"subject":"제빵","class":"2-6"},"2":{"subject":"제빵","class":"2-6"},"3":{"subject":"제빵","class":"2-6"},"5":{"subject":"식영","class":"1-7"}},"목":{"1":{"subject":"식영","class":"1-6"},"4":{"subject":"제빵","class":"2-7"},"5":{"subject":"제빵","class":"2-7"},"6":{"subject":"제빵","class":"2-7"}},"금":{"1":{"subject":"식영","class":"1-6"},"4":{"subject":"바리","class":"2-7"},"5":{"subject":"바리","class":"2-7"},"6":{"subject":"바리","class":"2-7"}}}},{"name":"백서윤","schedule":{"월":{"1":{"subject":"자율","class":"2-8"},"2":{"subject":"헤어","class":"2-8"},"3":{"subject":"헤어","class":"2-8"},"4":{"subject":"헤어","class":"2-8"},"6":{"subject":"창체\n(진,동)","class":""}},"화":{"2":{"subject":"헤어","class":"2-8"},"3":{"subject":"헤어","class":"2-8"},"4":{"subject":"헤어","class":"2-8"},"5":{"subject":"헤어","class":"2-8"},"6":{"subject":"창업","class":"3-9"}},"수":{"4":{"subject":"헤어","class":"2-9"},"5":{"subject":"헤어","class":"2-9"},"6":{"subject":"헤어","class":"2-9"},"7":{"subject":"헤어","class":"2-9"}},"목":{"1":{"subject":"헤어","class":"2-9"},"2":{"subject":"헤어","class":"2-9"},"3":{"subject":"헤어","class":"2-9"}},"금":{"6":{"subject":"창업","class":"3-9"}}}},{"name":"김은빛","schedule":{"월":{"1":{"subject":"자율","class":"3-8"},"3":{"subject":"피부","class":"2-9"},"4":{"subject":"피부","class":"2-9"},"5":{"subject":"피부","class":"2-9"},"6":{"subject":"창체\n(동아리)","class":""}},"화":{"1":{"subject":"피부","class":"2-9"},"2":{"subject":"피부","class":"2-9"},"3":{"subject":"피부","class":"2-9"},"4":{"subject":"피부","class":"2-9"}},"수":{"4":{"subject":"피부","class":"2-8"},"5":{"subject":"피부","class":"2-8"},"6":{"subject":"피부","class":"2-8"},"7":{"subject":"피부","class":"2-8"}},"목":{"1":{"subject":"피부","class":"2-8"},"2":{"subject":"피부","class":"2-8"},"3":{"subject":"피부","class":"2-8"}},"금":{"5":{"subject":"창업","class":"3-8"},"6":{"subject":"창업","class":"3-8"}}}},{"name":"류지연","schedule":{"월":{"1":{"subject":"자율","class":"1-9"},"2":{"subject":"성직","class":"3-9"},"3":{"subject":"성직","class":"3-9"},"6":{"subject":"창체\n(진,봉)","class":""}},"화":{"1":{"subject":"기능","class":"1-8"},"2":{"subject":"기능","class":"1-8"},"3":{"subject":"기능","class":"1-8"},"4":{"subject":"기능","class":"1-9"},"5":{"subject":"기능","class":"1-9"},"6":{"subject":"기능","class":"1-9"}},"수":{"1":{"subject":"기능","class":"1-9"},"2":{"subject":"기능","class":"1-9"},"3":{"subject":"기능","class":"1-8"},"4":{"subject":"기능","class":"1-8"}},"목":{"1":{"subject":"기능","class":"1-8"},"2":{"subject":"기능","class":"1-9"},"3":{"subject":"성직","class":"3-8"}},"금":{"4":{"subject":"성직","class":"3-8"}}}},{"name":"박현지","schedule":{"월":{"1":{"subject":"자율","class":"2-9"},"2":{"subject":"이용","class":"3-8"},"3":{"subject":"이용","class":"3-8"},"4":{"subject":"이용","class":"3-9"},"5":{"subject":"이용","class":"3-9"},"6":{"subject":"창체\n(진,봉)","class":""}},"화":{"5":{"subject":"미기","class":"2-9"},"6":{"subject":"미기","class":"2-8"}},"수":{"1":{"subject":"이용","class":"3-8"},"2":{"subject":"이용","class":"3-8"},"3":{"subject":"이용","class":"3-9"},"4":{"subject":"이용","class":"3-9"}},"목":{"1":{"subject":"이용","class":"3-8"},"2":{"subject":"이용","class":"3-8"},"5":{"subject":"미기","class":"2-8"},"6":{"subject":"미기","class":"2-9"}},"금":{"4":{"subject":"이용","class":"3-9"},"5":{"subject":"이용","class":"3-9"}}}},{"name":"박지수","schedule":{"월":{"1":{"subject":"자율","class":"3-9"},"4":{"subject":"네일","class":"3-8"},"5":{"subject":"네일","class":"3-8"},"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"4":{"subject":"학과","class":"3-8"},"5":{"subject":"학과","class":"3-8"}},"수":{"1":{"subject":"네일","class":"3-9"},"2":{"subject":"네일","class":"3-9"}},"목":{"4":{"subject":"학과","class":"3-8"},"5":{"subject":"학과","class":"3-8"},"6":{"subject":"학과","class":"3-8"}},"금":{"1":{"subject":"색채","class":"3-9"},"2":{"subject":"색채","class":"3-9"},"3":{"subject":"색채","class":"3-9"},"4":{"subject":"색채","class":"2-9"},"5":{"subject":"색채","class":"2-9"},"6":{"subject":"색채","class":"2-9"}}}},{"name":"양지혜","schedule":{"월":{"6":{"subject":"창체\n(진,봉,동)","class":""}},"화":{"4":{"subject":"학과","class":"3-9"},"5":{"subject":"학과","class":"3-9"}},"수":{"3":{"subject":"네일","class":"3-8"},"4":{"subject":"네일","class":"3-8"}},"목":{"1":{"subject":"네일","class":"3-9"},"2":{"subject":"네일","class":"3-9"},"4":{"subject":"학과","class":"3-9"},"5":{"subject":"학과","class":"3-9"},"6":{"subject":"학과","class":"3-9"}},"금":{"1":{"subject":"색채","class":"3-8"},"2":{"subject":"색채","class":"3-8"},"3":{"subject":"색채","class":"3-8"},"4":{"subject":"색채","class":"2-8"},"5":{"subject":"색채","class":"2-8"},"6":{"subject":"색채","class":"2-8"}}}},{"name":"정수미","schedule":{"월":{"6":{"subject":"창체\n(동아리)","class":""}},"화":{},"수":{},"목":{},"금":{}}},{"name":"박준우","schedule":{"월":{"6":{"subject":"창체\n(동아리)","class":""}},"화":{},"수":{},"목":{},"금":{}}}];
+
+const DAYS = ['월','화','수','목','금'];
+const PERIODS = {'월':7,'화':6,'수':7,'목':6,'금':6};
+
+let exchanges = [];
+// 학기 기간 설정 (관리자 등록, 서버 동기화)
+let semesterConfig = {
+  start: '2026-03-01',
+  end:   '2026-07-18',
+  label: '2026학년도 1학기'
+};
+// 웹앱으로 배포 시 자기 자신 URL 사용, 로컬 테스트 시 직접 입력
+const APPS_SCRIPT_URL = (()=>{
+  const u = window.location.href;
+  // Apps Script 웹앱 URL 패턴인지 확인
+  if(u.includes('script.google.com/macros')) return u.split('?')[0];
+  // 로컬/기타 환경: 아래에 직접 URL 입력
+  return 'https://script.google.com/macros/s/AKfycbzqhY_xYNtCFV-OWhfLmWexpvNhElOSoS0eU2tAUZFduL7ButWN9tN3HGkRMWYQksc4kQ/exec';
+})();
+const ADMIN_SESSION_KEY = 'school_admin_mode_v1';
+let events = [];
+let blockedSubjects = [];
+let isAdminMode = sessionStorage.getItem(ADMIN_SESSION_KEY) === '1';
+let syncTimer = null;
+let lastServerRevision = '';
+let syncInFlight = false;
+let renderQueued = false;
+// ── 성능 최적화 ──
+let lastRenderRevision = '';   // 마지막으로 렌더한 revision
+let lastRenderDataHash = '';   // 렌더 데이터 해시 (revision 없을 때 폴백)
+let countCache = new Map();    // countAffectedSlotsByEvent 캐시
+let visibilityDebounce = null;
+function normalizeEvent(evt){
+  if(!evt) return null;
+  return {
+    id: evt.id || genEventId(),
+    createdAt: evt.createdAt || today(),
+    startDate: evt.startDate || evt.date || today(),
+    endDate: evt.endDate || evt.date || evt.startDate || today(),
+    grade: String(evt.grade || '1'),
+    classNo: String(evt.classNo || 'all'),
+    scope: evt.scope || 'period',
+    period: evt.scope === 'day' ? null : Number(evt.period || 1),
+    name: evt.name || '',
+    status: evt.status || '적용'
+  };
+}
+function normalizeBlockedItem(item){
+  if(!item) return null;
+  return {
+    id: item.id || genBlockedId(),
+    createdAt: item.createdAt || today(),
+    teacher: item.teacher || '',
+    subject: item.subject || '',
+    date: item.date || today(),
+    period: Number(item.period || 0),
+    status: item.status || '적용'
+  };
+}
+function save(){}
+
+function isApiConfigured(){
+  return APPS_SCRIPT_URL && !APPS_SCRIPT_URL.includes('PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE');
+}
+async function apiGet(action){
+  if(!isApiConfigured()) throw new Error('Apps Script URL을 먼저 넣어주세요.');
+  const url = `${APPS_SCRIPT_URL}?action=${encodeURIComponent(action)}&_=${Date.now()}`;
+  const res = await fetch(url, {method:'GET'});
+  return await res.json();
+}
+async function apiPost(action, payload={}){
+  if(!isApiConfigured()) throw new Error('Apps Script URL을 먼저 넣어주세요.');
+  const body = new URLSearchParams();
+  body.set('action', action);
+  Object.entries(payload).forEach(([k,v])=> body.set(k, typeof v === 'string' ? v : JSON.stringify(v)));
+  const res = await fetch(APPS_SCRIPT_URL, {method:'POST', body});
+  return await res.json();
+}
+function applyServerData(data){
+  exchanges = Array.isArray(data.exchanges) ? data.exchanges : [];
+  events = Array.isArray(data.events) ? data.events.map(normalizeEvent).filter(Boolean) : [];
+  blockedSubjects = Array.isArray(data.blockedSubjects) ? data.blockedSubjects.map(normalizeBlockedItem).filter(Boolean) : [];
+  if(data.semesterConfig && data.semesterConfig.start){
+    semesterConfig = {...semesterConfig, ...data.semesterConfig};
+    applySemesterConfig();
+  }
+  countCache.clear();
+}
+function renderAll(){
+  renderEvents();
+  renderReq();
+  renderHist();
+  renderTT();
+  updateBadges();
+}
+function renderImmediately(){
+  try{ renderTT(); }catch(err){}
+  try{ updateBadges(); }catch(err){}
+}
+function scheduleRenderAll(){
+  if(renderQueued) return;
+  renderQueued = true;
+  requestAnimationFrame(()=>{
+    renderQueued = false;
+    renderAll();
+  });
+}
+function applyServerBundle(bundle, opts={}){
+  if(!bundle) return;
+  if(bundle.revision) lastServerRevision = String(bundle.revision);
+  applyServerData(bundle.data || {});
+  if(!opts.silent) scheduleRenderAll();
+}
+async function fetchRemoteMeta(){
+  if(!isApiConfigured()) return null;
+  const meta = await apiGet('getMeta');
+  if(!meta.ok) throw new Error(meta.message || '상태를 확인하지 못했습니다.');
+  return meta;
+}
+async function refreshRemoteData(opts={}){
+  if(!isApiConfigured() || syncInFlight) return;
+  syncInFlight = true;
+  try{
+    if(!opts.force && lastServerRevision){
+      const meta = await fetchRemoteMeta();
+      if(meta && meta.revision && String(meta.revision) === String(lastServerRevision)) return;
+    }
+    const data = await apiGet('getData');
+    if(!data.ok) throw new Error(data.message || '데이터를 불러오지 못했습니다.');
+    applyServerBundle(data, {silent:opts.silent});
+  } finally {
+    syncInFlight = false;
+  }
+}
+function ensureAdmin(){
+  if(isAdminMode) return true;
+  alert('이 기능은 관리자만 사용할 수 있습니다. 오른쪽 아래 관리자 버튼으로 관리자 모드에 들어가세요.');
+  return false;
+}
+async function requestAdminLogin(){
+  const password = prompt('관리자 비밀번호를 입력하세요.');
+  if(password===null) return;
+  try{
+    const result = await apiPost('verifyAdmin', {password});
+    if(!result.ok) throw new Error(result.message || '비밀번호가 올바르지 않습니다.');
+    isAdminMode = true;
+    sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
+    sessionStorage.setItem(ADMIN_SESSION_KEY + '_pw', password);
+    renderAdminControls();
+    renderReq();
+    alert('관리자 모드가 활성화되었습니다.');
+  }catch(err){
+    alert(err.message || '관리자 인증에 실패했습니다.');
+  }
+}
+function logoutAdminMode(){
+  isAdminMode = false;
+  sessionStorage.removeItem(ADMIN_SESSION_KEY);
+  sessionStorage.removeItem(ADMIN_SESSION_KEY + '_pw');
+  renderAdminControls();
+  renderReq();
+}
+function getAdminPassword(){
+  return sessionStorage.getItem(ADMIN_SESSION_KEY + '_pw') || '';
+}
+function renderAdminControls(){
+  let box = document.getElementById('adminFab');
+  if(!box){
+    box = document.createElement('div');
+    box.id = 'adminFab';
+    box.style.position='fixed';
+    box.style.right='18px';
+    box.style.bottom='18px';
+    box.style.zIndex='999';
+    document.body.appendChild(box);
+  }
+  box.innerHTML = isAdminMode
+    ? `<div style="display:flex;gap:8px;align-items:center;background:#111827;color:#fff;padding:10px 12px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:12px;font-weight:700;"><span>관리자 모드</span><button onclick="logoutAdminMode()" style="border:none;background:#ef4444;color:#fff;border-radius:999px;padding:7px 10px;cursor:pointer;font-weight:700;">종료</button></div>`
+    : `<button onclick="requestAdminLogin()" style="border:none;background:#1d4ed8;color:#fff;border-radius:999px;padding:12px 16px;cursor:pointer;font-weight:800;box-shadow:0 10px 30px rgba(29,78,216,.28);">관리자</button>`;
+}
+
+function today(){ return formatDateISO(new Date()); }
+function genId(){ return 'EX-'+Date.now().toString(36).toUpperCase(); }
+function genEventId(){ return 'EV-'+Date.now().toString(36).toUpperCase(); }
+function genBlockedId(){ return 'BL-'+Date.now().toString(36).toUpperCase(); }
+function genMakeupId(){ return 'MK-'+Date.now().toString(36).toUpperCase(); }
+
+const SEMESTER_YEAR = 2026; // fallback (실제는 semesterConfig에서 읽음
+const SEMESTER_MONTHS = [4,5,6,7,8]; // fallback
+let selectedMonth = 4;
+let selectedWeek = 1;
+
+// ── 학기 설정 적용 ──────────────────────────────────────────
+function getSemesterMonths(){
+  if(!semesterConfig.start || !semesterConfig.end) return SEMESTER_MONTHS;
+  const s = parseDateLocal(semesterConfig.start);
+  const e = parseDateLocal(semesterConfig.end);
+  const months = [];
+  let cur = new Date(s.getFullYear(), s.getMonth(), 1);
+  while(cur <= e){
+    months.push(cur.getMonth()+1);
+    cur.setMonth(cur.getMonth()+1);
+  }
+  return [...new Set(months)];
+}
+function getSemesterYear(){
+  return semesterConfig.start ? parseDateLocal(semesterConfig.start).getFullYear() : SEMESTER_YEAR;
+}
+function getSemesterDateRange(){
+  return { start: semesterConfig.start || '2026-03-01', end: semesterConfig.end || '2026-07-18' };
+}
+function applySemesterConfig(){
+  // 헤더 타이틀 업데이트
+  const h1 = document.querySelector('.topbar h1');
+  if(h1 && semesterConfig.label) h1.textContent = '수업 교환 시스템 — ' + semesterConfig.label;
+  // 월 셀렉터 재초기화
+  const monthSel = document.getElementById('monthSelect');
+  if(monthSel){
+    const months = getSemesterMonths();
+    monthSel.innerHTML = months.map(m=>`<option value="${m}">${m}월</option>`).join('');
+    if(!months.includes(selectedMonth)){
+      selectedMonth = months[0];
+      monthSel.value = String(selectedMonth);
+      syncWeekOptions();
+    }
+  }
+  // 학기 설정 UI 값 동기화
+  const si = document.getElementById('semesterStartInput');
+  const ei = document.getElementById('semesterEndInput');
+  const li = document.getElementById('semesterLabelInput');
+  if(si) si.value = semesterConfig.start || '';
+  if(ei) ei.value = semesterConfig.end || '';
+  if(li) li.value = semesterConfig.label || '';
+  lastRenderDataHash = '';
+}
+
+function parseDateLocal(s){
+  const [y,m,d] = s.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+function formatDateISO(date){
+  const y = date.getFullYear();
+  const m = String(date.getMonth()+1).padStart(2,'0');
+  const d = String(date.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+function addDays(date, days){
+  const d = new Date(date);
+  d.setDate(d.getDate()+days);
+  return d;
+}
+function startOfWeekMonday(date){
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate()+diff);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function getWeeksForMonth(month){
+  const year = getSemesterYear();
+  const first = new Date(year, month-1, 1);
+  const last = new Date(year, month, 0);
+  let start = startOfWeekMonday(first);
+  const weeks = [];
+  let idx = 1;
+  while(start <= last){
+    const days = {};
+    DAYS.forEach((dayName, i)=>{
+      const current = addDays(start, i);
+      days[dayName] = formatDateISO(current);
+    });
+    weeks.push({index: idx, start: formatDateISO(start), end: formatDateISO(addDays(start,4)), days});
+    start = addDays(start, 7);
+    idx += 1;
+  }
+  return weeks;
+}
+function getTodaySelection(){
+  const todayDate = parseDateLocal(today());
+  const months = getSemesterMonths();
+  const year = getSemesterYear();
+  const todayMonth = todayDate.getFullYear()===year && months.includes(todayDate.getMonth()+1)
+    ? todayDate.getMonth()+1 : months[0]||4;
+  const weeks = getWeeksForMonth(todayMonth);
+  const todayStr = today();
+  const currentWeek = weeks.find(w=>todayStr>=w.start && todayStr<=w.end);
+  return {month: todayMonth, week: currentWeek ? currentWeek.index : 1};
+}
+function getSelectedWeekInfo(){
+  const weeks = getWeeksForMonth(selectedMonth);
+  return weeks.find(w=>w.index===Number(selectedWeek)) || weeks[0];
+}
+function getDateForDay(day){
+  const info = getSelectedWeekInfo();
+  return info?.days?.[day] || null;
+}
+function getWeekRangeText(info){
+  return `${fmtDate(info.start)} ~ ${fmtDate(info.end)}`;
+}
+function initSelectors(){
+  const monthSel = document.getElementById('monthSelect');
+  monthSel.innerHTML = getSemesterMonths().map(m=>`<option value="${m}">${m}월</option>`).join('');
+  const initial = getTodaySelection();
+  selectedMonth = initial.month;
+  selectedWeek = initial.week;
+  monthSel.value = String(selectedMonth);
+  syncWeekOptions(selectedWeek);
+}
+function syncWeekOptions(preferredWeek){
+  const weekSel = document.getElementById('weekSelect');
+  const weeks = getWeeksForMonth(selectedMonth);
+  weekSel.innerHTML = weeks.map(w=>`<option value="${w.index}">${w.index}주차 (${fmtDate(w.start)}~${fmtDate(w.end)})</option>`).join('');
+  const todayStr = today();
+  const currentWeek = weeks.find(w=>todayStr>=w.start && todayStr<=w.end);
+  const fallbackWeek = currentWeek ? currentWeek.index : 1;
+  const desiredWeek = Number(preferredWeek || selectedWeek || fallbackWeek);
+  selectedWeek = weeks.some(w=>w.index===desiredWeek) ? desiredWeek : fallbackWeek;
+  weekSel.value = String(selectedWeek);
+}
+function onMonthChange(){
+  selectedMonth = Number(document.getElementById('monthSelect').value);
+  const now = getTodaySelection();
+  const preferred = now.month===selectedMonth ? now.week : 1;
+  syncWeekOptions(preferred);
+  lastRenderDataHash = ''; // 강제 재빌드
+  renderTT();
+}
+function onWeekChange(){
+  selectedWeek = Number(document.getElementById('weekSelect').value || selectedWeek);
+  lastRenderDataHash = ''; // 강제 재빌드
+  renderTT();
+}
+function goToToday(){
+  const sel = getTodaySelection();
+  const months = getSemesterMonths();
+  // 오늘이 학기 범위 밖이면 첫 번째 달로
+  selectedMonth = months.includes(sel.month) ? sel.month : months[0];
+  const monthSel = document.getElementById('monthSelect');
+  if(monthSel) monthSel.value = String(selectedMonth);
+  syncWeekOptions(sel.week);
+  selectedWeek = sel.week;
+  lastRenderDataHash = '';
+  renderTT();
+  // 시각적 피드백
+  const btn = document.querySelector('[onclick="goToToday()"]');
+  if(btn){
+    btn.style.background = 'rgba(255,255,255,.45)';
+    setTimeout(()=>{ btn.style.background = 'rgba(255,255,255,.22)'; }, 400);
+  }
+}
+function getMaxPeriodByDate(dateStr){
+  const weekday = dayOfDate(dateStr);
+  return PERIODS[weekday] || 6;
+}
+function getDatesInRange(startDate, endDate){
+  if(!startDate || !endDate) return [];
+  const start = parseDateLocal(startDate);
+  const end = parseDateLocal(endDate);
+  if(start > end) return [];
+  const dates = [];
+  for(let d = new Date(start); d <= end; d = addDays(d, 1)){
+    dates.push(formatDateISO(d));
+  }
+  return dates;
+}
+function getRangeMaxPeriod(startDate, endDate){
+  const dates = getDatesInRange(startDate, endDate);
+  return dates.reduce((max, dateStr)=>Math.max(max, getMaxPeriodByDate(dateStr)), 1);
+}
+function isDateWithinRange(dateStr, startDate, endDate){
+  if(!dateStr || !startDate || !endDate) return false;
+  return dateStr >= startDate && dateStr <= endDate;
+}
+function rangesOverlap(startA, endA, startB, endB){
+  return !(endA < startB || endB < startA);
+}
+
+function getRestoreDate(dA,dB){
+  const a=new Date(dA+'T00:00:00'), b=new Date(dB+'T00:00:00');
+  const last = a>b?a:b; const r=new Date(last); r.setDate(r.getDate()+1);
+  return r.toISOString().slice(0,10);
+}
+function isExpired(dA,dB){ return getRestoreDate(dA,dB)<=today(); }
+function fmtDate(s){ if(!s)return''; const[,m,d]=s.split('-'); return `${m}/${d}`; }
+function dayOfDate(s){ const days=['일','월','화','수','목','금','토']; return days[new Date(s+'T00:00:00').getDay()]; }
+
+function getMakeupRestoreDate(date){
+  return formatDateISO(addDays(parseDateLocal(date), 1));
+}
+function autoRestore(){
+  let ch=false;
+  exchanges.forEach(e=>{
+    if(e.kind==='makeup'){
+      if(e.status==='보강중' && getMakeupRestoreDate(e.date)<=today()){
+        e.status='보강완료';
+        e.restoredAt=today();
+        ch=true;
+      }
+      return;
+    }
+    if(e.status==='교환중'&&isExpired(e.dateA,e.dateB)){e.status='복원완료';e.restoredAt=today();ch=true;}
+  });
+  if(ch)save();
+}
+
+function getTeacher(name){ return TT.find(t=>t.name===name); }
+function getScheduleCell(teacher, day, period){
+  const t = getTeacher(teacher);
+  return t?.schedule?.[day]?.[period] || null;
+}
+function isFreePeriod(teacher, day, period){
+  const cell = getScheduleCell(teacher, day, period);
+  return !cell || !cell.subject;
+}
+
+function getBlockedSubjects(){
+  return blockedSubjects.filter(b=>b.status!=='취소').map(normalizeBlockedItem);
+}
+// 교환 불가 체크 - 요일까지 비교
+function isBlockedSubject(teacherName, subject, period, day){
+  if(!teacherName || !subject) return false;
+  return getBlockedSubjects().some(b=>{
+    if(b.teacher!==teacherName || b.subject!==subject) return false;
+    if(Number(b.period) && Number(b.period)!==Number(period)) return false;
+    // 요일 체크: b.date 에서 요일 추출
+    if(day && b.date){
+      const bDay = dayOfDate(b.date);
+      if(bDay !== day) return false;
+    }
+    return true;
+  });
+}
+function getBlockedReason(teacherName, subject, period, day){
+  const found = getBlockedSubjects().find(b=>{
+    if(b.teacher!==teacherName || b.subject!==subject) return false;
+    if(Number(b.period) && Number(b.period)!==Number(period)) return false;
+    if(day && b.date && dayOfDate(b.date)!==day) return false;
+    return true;
+  });
+  return found ? `교환 불가 (${found.subject} · ${dayOfDate(found.date)}요일 ${found.period}교시)` : '';
+}
+function getSubjectsForTeacher(teacherName, dateStr){
+  const teacher = getTeacher(teacherName);
+  if(!teacher) return [];
+  const day = dateStr ? dayOfDate(dateStr) : null;
+  const subs = new Set();
+  DAYS.forEach(d=>{
+    if(day && d!==day) return;
+    Object.values(teacher.schedule[d] || {}).forEach(cell=>{
+      if(cell?.subject && !cell.subject.includes('창체') && !cell.subject.includes('자율')) subs.add(cell.subject);
+    });
+  });
+  return Array.from(subs).sort((a,b)=>a.localeCompare(b,'ko'));
+}
+function getPeriodsForTeacherSubject(teacherName, dateStr, subject){
+  if(!teacherName || !subject) return [];
+  const teacher = getTeacher(teacherName);
+  if(!teacher) return [];
+  const day = dateStr ? dayOfDate(dateStr) : null;
+  const periods = new Set();
+  DAYS.forEach(d=>{
+    if(day && d!==day) return;
+    Object.entries(teacher.schedule[d] || {}).forEach(([period, cell])=>{
+      if(cell?.subject === subject) periods.add(Number(period));
+    });
+  });
+  return Array.from(periods).filter(n=>!Number.isNaN(n)).sort((a,b)=>a-b);
+}
+
+function hasEventOnExchangeSlot(teacherName, date, day, period){
+  if(!teacherName || !date || !day || !period) return null;
+  const info = getExchangeDisplayCell(teacherName, day, period, date);
+  return getEventForDisplay(date, info ? info.cell : null, period);
+}
+function getExchangeConflictEvent(exchange){
+  if(!exchange || exchange.status==='취소' || exchange.status==='반려') return null;
+  return hasEventOnExchangeSlot(exchange.tA, exchange.dateA, exchange.dayA, exchange.pA)
+    || hasEventOnExchangeSlot(exchange.tB, exchange.dateB, exchange.dayB, exchange.pB)
+    || null;
+}
+function getFullDayEventForDate(date){
+  return [...getActiveEvents()].reverse().find(e=>isFullSchoolDayEvent(e) && eventAppliesToDate(e,date)) || null;
+}
+
+// ─── 시간표 렌더 ────────────────────────────────
+function getExchangeDisplayCell(teacherName, day, period, dateOverride){
+  const date = dateOverride || getDateForDay(day);
+  const original = getScheduleCell(teacherName, day, period);
+  const base = original ? {...original} : null;
+
+  const appliedStatuses = new Set(['교환중','복원완료','보강중','보강완료']);
+  for(const e of exchanges){
+    if(!appliedStatuses.has(e.status)) continue;
+
+    if(e.kind==='makeup'){
+      if(e.date!==date || e.day!==day || Number(e.period)!==Number(period)) continue;
+      if(e.originalTeacher===teacherName){
+        return {
+          cell:{subject:e.subject, class:e.cls},
+          applied:true,
+          original:base,
+          makeup:true,
+          makeupNote:`${e.subTeacher} (보강)`,
+          movedOut:false
+        };
+      }
+      if(e.subTeacher===teacherName){
+        return {
+          cell:{subject:e.subject, class:e.cls},
+          applied:true,
+          original:base,
+          makeup:true,
+          makeupNote:`${e.originalTeacher} (보강)`,
+          movedOut:false
+        };
+      }
+      continue;
+    }
+
+    if(e.tA===teacherName){
+      if(e.dateB===date && e.dayB===day && e.pB===period){
+        return {cell:{subject:e.subA, class:e.clsA}, applied:true, original:base,
+          exchangeNote:`${e.tB} (교환)`};
+      }
+      if(e.dateA===date && e.dayA===day && e.pA===period){
+        return {cell:null, applied:false, original:base, movedOut:true,
+          exchangeNote:`${e.tB} (교환)`};
+      }
+    }
+
+    if(e.tB===teacherName){
+      if(e.dateA===date && e.dayA===day && e.pA===period){
+        return {cell:{subject:e.subB, class:e.clsB}, applied:true, original:base,
+          exchangeNote:`${e.tA} (교환)`};
+      }
+      if(e.dateB===date && e.dayB===day && e.pB===period){
+        return {cell:null, applied:false, original:base, movedOut:true,
+          exchangeNote:`${e.tA} (교환)`};
+      }
+    }
+  }
+  return {cell:base, applied:false, original:base};
+}
+
+function getClassOptionsByGrade(grade){
+  if(String(grade)==='all') return [];
+  const classNums = new Set();
+  TT.forEach(t=>{
+    DAYS.forEach(d=>{
+      Object.values(t.schedule[d] || {}).forEach(cell=>{
+        const cls = cell?.class || '';
+        const [g, c] = String(cls).split('-');
+        if(String(g)===String(grade) && c) classNums.add(Number(c));
+      });
+    });
+  });
+  return Array.from(classNums).filter(n=>!Number.isNaN(n)).sort((a,b)=>a-b);
+}
+function updateClassOptions(){
+  const grade = document.getElementById('eventGrade')?.value || '1';
+  const classSel = document.getElementById('eventClass');
+  if(!classSel) return;
+  if(String(grade)==='all'){
+    classSel.innerHTML = '<option value="all">전체 반</option>';
+    classSel.value = 'all';
+    classSel.disabled = true;
+    return;
+  }
+  classSel.disabled = false;
+  const current = classSel.value || 'all';
+  const options = getClassOptionsByGrade(grade);
+  classSel.innerHTML = '<option value="all">전체 반</option>' + options.map(n=>`<option value="${n}">${n}반</option>`).join('');
+  classSel.value = options.some(n=>String(n)===String(current)) ? String(current) : 'all';
+}
+function toggleEventPeriodField(){
+  const scope = document.getElementById('eventScope')?.value || 'period';
+  const field = document.getElementById('eventPeriodField');
+  if(field) field.style.display = scope === 'day' ? 'none' : '';
+}
+function getActiveEvents(){
+  return events.filter(e=>e.status!=='취소').map(normalizeEvent);
+}
+function eventAppliesToDate(evt, date){
+  return isDateWithinRange(date, evt.startDate || evt.date, evt.endDate || evt.date || evt.startDate);
+}
+function isFullSchoolDayEvent(evt){
+  return String(evt.grade)==='all' && evt.scope==='day';
+}
+function eventMatchesCell(evt, date, cell, period){
+  if(!date || !eventAppliesToDate(evt, date)) return false;
+  if(isFullSchoolDayEvent(evt)) return true;
+  if(!cell || !cell.class) return false;
+  const [grade, classNo] = String(cell.class).split('-');
+  if(String(evt.grade)!=='all' && String(evt.grade) !== String(grade)) return false;
+  if(String(evt.classNo || 'all') !== 'all' && String(evt.classNo) !== String(classNo)) return false;
+  if(evt.scope === 'day') return true;
+  return Number(evt.period) === Number(period);
+}
+function eventMatchesEmptySlot(evt, date, period){
+  if(!date || !eventAppliesToDate(evt, date)) return false;
+  if(!isFullSchoolDayEvent(evt)) return false;
+  return Number(period) <= Number(getMaxPeriodByDate(date));
+}
+function getEventForDisplay(date, cell, period){
+  const active = [...getActiveEvents()].reverse();
+  if(cell){
+    const matched = active.find(e=>eventMatchesCell(e, date, cell, period));
+    if(matched) return matched;
+  }
+  return active.find(e=>eventMatchesEmptySlot(e, date, period)) || null;
+}
+function getEventClassLabel(evt, cell){
+  if(isFullSchoolDayEvent(evt)) return '전체';
+  if(cell?.class) return cell.class;
+  if(String(evt.grade)==='all') return '전체';
+  if(String(evt.classNo || 'all') === 'all') return `${evt.grade}학년 전체`;
+  return `${evt.grade}-${evt.classNo}`;
+}
+function getDisplayCell(teacherName, day, period){
+  const date = getDateForDay(day);
+  const exchangeInfo = getExchangeDisplayCell(teacherName, day, period, date);
+  const evt = getEventForDisplay(date, exchangeInfo ? exchangeInfo.cell : null, period);
+  if(evt){
+    return {
+      cell: {subject: evt.name, class: getEventClassLabel(evt, exchangeInfo ? exchangeInfo.cell : null)},
+      applied: false,
+      eventApplied: true,
+      movedOut: false,
+      original: exchangeInfo ? exchangeInfo.cell : null
+    };
+  }
+  if(!exchangeInfo || !exchangeInfo.cell){
+    return {cell: exchangeInfo ? exchangeInfo.cell : null, applied:false, eventApplied:false, movedOut: !!(exchangeInfo && exchangeInfo.movedOut), makeup:false, note:''};
+  }
+  return {
+    cell: exchangeInfo.cell,
+    applied: !!exchangeInfo.applied,
+    eventApplied: false,
+    movedOut: !!exchangeInfo.movedOut,
+    original: exchangeInfo.original || exchangeInfo.cell,
+    makeup: !!exchangeInfo.makeup,
+    note: exchangeInfo.makeupNote || exchangeInfo.exchangeNote || ''
+  };
+}
+
+function _dataHash(){
+  return exchanges.length + '|' + events.length + '|' + blockedSubjects.length + '|' + lastServerRevision;
+}
+function countAffectedSlotsByEvent(evt){
+  const key = JSON.stringify(evt) + '|' + _dataHash();
+  if(countCache.has(key)) return countCache.get(key);
+  const normalized = normalizeEvent(evt);
+  const dates = getDatesInRange(normalized.startDate, normalized.endDate);
+  if(!dates.length) return 0;
+  let count = 0;
+  dates.forEach(date=>{
+    const day = dayOfDate(date);
+    const maxPeriod = getMaxPeriodByDate(date);
+    if(isFullSchoolDayEvent(normalized)){
+      count += TT.length * maxPeriod;
+      return;
+    }
+    TT.forEach(t=>{
+      const periods = normalized.scope === 'day' ? Array.from({length:maxPeriod}, (_,i)=>i+1) : [Number(normalized.period)];
+      periods.forEach(period=>{
+        if(Number(period) > maxPeriod) return;
+        const info = getExchangeDisplayCell(t.name, day, period, date);
+        if(eventMatchesCell(normalized, date, info ? info.cell : null, period)) count += 1;
+      });
+    });
+  });
+  if(countCache.size > 200) countCache.clear(); // 메모리 과다 방지
+  countCache.set(key, count);
+  return count;
+}
+function updateEventPeriodOptions(){
+  const startInput = document.getElementById('eventStartDate');
+  const endInput = document.getElementById('eventEndDate');
+  const periodSel = document.getElementById('eventPeriod');
+  if(!startInput || !endInput || !periodSel) return;
+  const startDate = startInput.value || today();
+  const endDate = endInput.value || startDate;
+  const maxPeriod = Math.max(1, getRangeMaxPeriod(startDate, endDate));
+  const current = Number(periodSel.value || 1);
+  periodSel.innerHTML = Array.from({length:maxPeriod}, (_,i)=>`<option value="${i+1}">${i+1}교시</option>`).join('');
+  periodSel.value = String(Math.min(current || 1, maxPeriod));
+  toggleEventPeriodField();
+}
+let _eventPreviewTimer = null;
+function updateEventPreviewDebounced(){ clearTimeout(_eventPreviewTimer); _eventPreviewTimer = setTimeout(updateEventPreview, 120); }
+function updateEventPreview(){
+  const box = document.getElementById('eventPreview');
+  if(!box) return;
+  const startDate = document.getElementById('eventStartDate')?.value || today();
+  const endDate = document.getElementById('eventEndDate')?.value || startDate;
+  const grade = document.getElementById('eventGrade')?.value || '1';
+  const classNo = document.getElementById('eventClass')?.value || 'all';
+  const scope = document.getElementById('eventScope')?.value || 'period';
+  const period = document.getElementById('eventPeriod')?.value || '1';
+  const name = (document.getElementById('eventName')?.value || '').trim();
+  const previewEvent = {startDate, endDate, grade, classNo, scope, period:Number(period), name: name || '행사명 입력 필요'};
+  const count = countAffectedSlotsByEvent(previewEvent);
+  const dateLabel = startDate === endDate ? `${fmtDate(startDate)} (${dayOfDate(startDate)}요일)` : `${fmtDate(startDate)} ~ ${fmtDate(endDate)}`;
+  const gradeLabel = grade === 'all' ? '전체 학년' : `${grade}학년`;
+  const classLabel = grade === 'all' ? '전체 반' : (classNo === 'all' ? '전체 반' : `${classNo}반`);
+  const scopeLabel = scope === 'day' ? '요일 전체' : `${period}교시`;
+  const extra = isFullSchoolDayEvent(previewEvent)
+    ? '<div>특이사항: 전체 학년 + 요일 전체는 빈 시간까지 포함해 모든 칸을 행사로 채웁니다.</div>'
+    : '';
+  const rangeNotice = scope === 'period' && startDate !== endDate
+    ? `<div>기간 중 ${period}교시가 없는 요일은 자동으로 제외됩니다.</div>`
+    : '';
+  box.innerHTML = `
+    <div><strong>${dateLabel} · ${gradeLabel} · ${classLabel} · ${scopeLabel}</strong></div>
+    <div>행사명: <strong>${escapeHtml(name || '행사명 입력 필요')}</strong></div>
+    <div>예상 반영: 조건에 맞는 칸 ${count}건이 행사명으로 대체됩니다.</div>
+    ${rangeNotice}
+    ${extra}
+  `;
+}
+async function addEvent(){
+  if(!ensureAdmin()) return;
+  const startDate = document.getElementById('eventStartDate').value;
+  const endDate = document.getElementById('eventEndDate').value;
+  const grade = document.getElementById('eventGrade').value;
+  const classNo = document.getElementById('eventClass').value;
+  const scope = document.getElementById('eventScope').value;
+  const period = Number(document.getElementById('eventPeriod').value);
+  const name = document.getElementById('eventName').value.trim();
+  if(!startDate || !endDate || !grade || !classNo || !scope || !name || (scope==='period' && !period)){ alert('시작일, 종료일, 학년, 반, 적용 범위, 행사명을 모두 입력해주세요.'); return; }
+  if(endDate < startDate){ alert('종료일은 시작일보다 빠를 수 없습니다.'); return; }
+  const duplicate = getActiveEvents().find(e=> rangesOverlap(startDate, endDate, e.startDate, e.endDate) && String(e.grade)===String(grade) && String(e.classNo||'all')===String(classNo) && e.scope===scope && (scope==='day' || Number(e.period)===Number(period)) );
+  if(duplicate){ alert(`해당 조건과 기간이 겹치는 행사(${duplicate.name})가 이미 등록되어 있습니다.`); return; }
+  const record = normalizeEvent({id:genEventId(), createdAt:today(), startDate, endDate, grade, classNo, scope, period: scope==='day' ? null : period, name, status:'적용'});
+  try{
+    const result = await apiPost('addEvent', {password:getAdminPassword(), record});
+    if(!result.ok) throw new Error(result.message || '행사 등록에 실패했습니다.');
+    applyServerBundle(result);
+    document.getElementById('eventName').value='';
+    updateEventPreview();
+    goTab('event');
+    alert('행사가 등록되었습니다. 해당 기간의 시간표에 즉시 반영됩니다.');
+  }catch(err){ alert(err.message || '행사 등록에 실패했습니다.'); }
+}
+async function removeEvent(id){
+  if(!ensureAdmin()) return;
+  if(!confirm('이 행사를 삭제할까요? 해당 시간표는 원래 수업으로 즉시 복귀합니다.')) return;
+  try{
+    const result = await apiPost('removeEvent', {password:getAdminPassword(), id});
+    if(!result.ok) throw new Error(result.message || '행사 삭제에 실패했습니다.');
+    applyServerBundle(result);
+  }catch(err){ alert(err.message || '행사 삭제에 실패했습니다.'); }
+}
+function renderEvents(){
+  const listEl = document.getElementById('eventList');
+  if(!listEl) return;
+  const list = [...getActiveEvents()].sort((a,b)=>a.startDate.localeCompare(b.startDate) || a.endDate.localeCompare(b.endDate) || String(a.grade).localeCompare(String(b.grade)) || String(a.classNo).localeCompare(String(b.classNo)) || Number(a.period||0)-Number(b.period||0));
+  if(!list.length){
+    listEl.innerHTML = '<div class="event-empty">등록된 행사가 없습니다.</div>';
+    return;
+  }
+  listEl.innerHTML = list.map(e=>{
+      const gradeLabel = e.grade === 'all' ? '전체 학년' : `${e.grade}학년`;
+      const classLabel = e.grade === 'all' ? '전체 반' : (e.classNo === 'all' ? '전체 반' : `${e.classNo}반`);
+      const scopeLabel = e.scope === 'day' ? '요일 전체' : `${e.period}교시`;
+      const dateLabel = e.startDate === e.endDate ? `${fmtDate(e.startDate)} (${dayOfDate(e.startDate)}요일)` : `${fmtDate(e.startDate)} ~ ${fmtDate(e.endDate)}`;
+      return `<div class="event-card">
+      <div class="event-main">
+        <div class="event-name">${escapeHtml(e.name)}</div>
+        <div class="event-meta">${dateLabel} · ${gradeLabel} · ${classLabel} · ${scopeLabel}<br>적용 칸 ${countAffectedSlotsByEvent(e)}건 · 등록일 ${e.createdAt}</div>
+      </div>
+      <button class="btn-event-delete" onclick="removeEvent('${e.id}')">행사 삭제</button>
+    </div>`;
+  }).join('');
+}
+function escapeHtml(value){
+  return String(value || '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function renderTT(){
+  // 데이터 변경 없으면 DOM 재빌드 생략
+  const currentHash = _dataHash() + '|' + selectedMonth + '|' + selectedWeek;
+  const searchVal = document.getElementById('searchTeacher')?.value.trim() || '';
+  const gradeVal  = document.getElementById('filterGrade')?.value || '';
+  const fullHash = currentHash + '|' + searchVal + '|' + gradeVal;
+  if(fullHash === lastRenderDataHash) return;
+  lastRenderDataHash = fullHash;
+
+  selectedMonth = Number(document.getElementById('monthSelect')?.value || selectedMonth || 4);
+  selectedWeek = Number(document.getElementById('weekSelect')?.value || selectedWeek || 1);
+
+  const search = document.getElementById('searchTeacher').value.trim();
+  const grade  = document.getElementById('filterGrade').value;
+  const table  = document.getElementById('ttTable');
+  if(!table) return;
+
+  // tooltip 생성: applied(교환)/makeup(보강)/blocked 모두 통합 처리
+  const tooltipFor = (info, cell, isBlocked, blockTip, isMon1Jaul)=>{
+    // 1. 교환불가/보강전용
+    if(isBlocked){
+      const msg = isMon1Jaul ? '🔒 보강만 가능 (자율 시간)' : `🚫 교환 불가\n${blockTip||''}`;
+      return ` data-tooltip="${escapeHtml(msg)}"`;
+    }
+    // 2. makeupNote 우선 (보강 수업)
+    if(info && info.makeupNote){
+      return ` data-tooltip="${escapeHtml(info.makeupNote)}"`;
+    }
+    // 3. exchangeNote (교환된 수업)
+    if(info && info.exchangeNote){
+      return ` data-tooltip="${escapeHtml(info.exchangeNote)}"`;
+    }
+    // 4. note fallback
+    if(info && info.note){
+      return ` data-tooltip="${escapeHtml(info.note)}"`;
+    }
+    return '';
+  };
+
+  let filtered = TT.filter(t=>{
+    if(search && !t.name.includes(search)) return false;
+    if(grade){
+      const hasGradeClass = DAYS.some(d=>Object.values(t.schedule[d]||{}).some(c=>c?.class?.startsWith(grade+'-')));
+      if(!hasGradeClass) return false;
+    }
+    return true;
+  });
+
+  // 총 교시 수 계산
+  const totalPeriods = DAYS.reduce((s,d)=>s+PERIODS[d],0);
+  let html = '<colgroup><col style="width:95px;min-width:95px;">';
+  for(let i=0;i<totalPeriods;i++) html+='<col>';
+  html += '<col style="width:58px;min-width:58px;"></colgroup>';
+  html += '<thead><tr><th rowspan="2" style="min-width:95px;width:95px;">교사명</th>';
+  DAYS.forEach(d=>{
+    html += `<th colspan="${PERIODS[d]}" style="border-left:2px solid #C5CAD5;">${d}<span class="date-label">${fmtDate(getDateForDay(d))}</span></th>`;
+  });
+  html += '<th rowspan="2" class="remark-head">비고</th></tr><tr>';
+  DAYS.forEach(d=>{
+    for(let p=1;p<=PERIODS[d];p++) html+=`<th style="${p===1?'border-left:2px solid #C5CAD5;':''}">${p}</th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  filtered.forEach((t, idx)=>{
+    html += `<tr><td class="td-name"><span class="teacher-inline">${idx+1}. ${t.name}</span></td>`;
+    DAYS.forEach(d=>{
+      const fullDayEvt = getFullDayEventForDate(getDateForDay(d));
+      if(fullDayEvt){
+        html += `<td colspan="${PERIODS[d]}" style="border-left:2px solid #C5CAD5;"><div class="cell event locked day-merged"><div class="subj">${escapeHtml(fullDayEvt.name)}</div><div class="cls">전체 일정 · ${fmtDate(getDateForDay(d))}</div></div></td>`;
+        return;
+      }
+      for(let p=1;p<=PERIODS[d];p++){
+        const border = p===1 ? 'border-left:2px solid #C5CAD5;' : '';
+        if(d==='월' && p===7) continue;
+        if(d==='월' && p===6){
+          const info6 = getDisplayCell(t.name, d, 6);
+          const info7 = getDisplayCell(t.name, d, 7);
+          const merged = (info6 && info6.cell && info6.cell.subject) ? info6 : info7;
+          if(merged && merged.cell && merged.cell.subject){
+            const isMondayJaYul = (d==='월' && (merged.cell.subject==='자율'));
+            const isNonSwap = (!isMondayJaYul) && (merged.cell.subject.includes('창체') || merged.cell.subject.includes('자율'));
+            const isBlocked = (!isNonSwap && !merged.applied && !merged.eventApplied && isBlockedSubject(t.name, merged.cell.subject, 6, d));
+            const cellClass = merged.eventApplied ? 'cell event locked day-merged' : merged.makeup ? 'cell candidate makeup-display locked day-merged' : merged.applied ? 'cell applied day-merged' : isBlocked ? 'cell blocked day-merged' : isNonSwap ? 'cell has locked day-merged' : 'cell has day-merged';
+            const clickAttr = (!isNonSwap && !merged.applied && !merged.eventApplied) ? `onclick="onCellClick('${t.name}','${d}',6,'${String(merged.cell.subject).replace(/'/g,"&#39;")}','${String(merged.cell.class||'').replace(/'/g,"&#39;")}',${isBlocked})"` : '';
+            const blockTip6 = isBlocked ? getBlockedReason(t.name, merged.cell.subject, 6, d) : '';
+            const mergedTooltip = tooltipFor(merged, merged.cell, isBlocked, blockTip6, false);
+            const noteInCell = isBlocked ? '' : (merged.note ? `<div class="merge-note">${escapeHtml(merged.note.length>12?merged.note.slice(0,12)+'…':merged.note)}</div>` : '<div class="merge-note" style="opacity:.5;font-size:7.5px;">6·7통합</div>');
+            html += `<td colspan="2" style="${border}"><div class="${cellClass}" ${clickAttr}${mergedTooltip}><div class="subj">${escapeHtml(merged.cell.subject)}</div><div class="cls">${escapeHtml(merged.cell.class || '')}</div>${noteInCell}</div></td>`;
+          } else {
+            html += `<td colspan="2" style="${border}"><div class="cell empty day-merged"></div></td>`;
+          }
+          continue;
+        }
+        const {cell, applied, eventApplied, makeup, note} = getDisplayCell(t.name, d, p);
+        const isMon1Jaul = (d==='월' && p===1 && cell && cell.subject==='자율');
+        if(cell && cell.subject && (isMon1Jaul || (!cell.subject.includes('창체') && !cell.subject.includes('자율')))){
+          // 월요일 1교시 자율: 보강만 가능(교환 불가)
+          const isBlocked = isMon1Jaul || (!applied && !eventApplied && isBlockedSubject(t.name, cell.subject, p, d));
+          const cellClass = eventApplied ? 'cell event locked' : makeup ? 'cell candidate makeup-display locked' : applied ? 'cell applied' : isBlocked ? 'cell blocked' : 'cell has';
+          const makeupOnly = isMon1Jaul ? `'makeup_only'` : 'false';
+          const clickAttr = (!eventApplied) ? `onclick="onCellClick('${t.name}','${d}',${p},'${String(cell.subject).replace(/'/g,"&#39;")}','${String(cell.class || '').replace(/'/g,"&#39;")}',${isBlocked},${makeupOnly})"` : '';
+          const blockTip = isMon1Jaul ? '' : getBlockedReason(t.name, cell.subject, p, d);
+          const dispInfo = getExchangeDisplayCell(t.name, d, p, getDateForDay(d));
+          const cellTooltip = tooltipFor(dispInfo, cell, isBlocked, blockTip, isMon1Jaul);
+          // 셀 안: 과목명 + 반 + (applied/makeup 시 간략 태그)
+          const statusTag = makeup ? `<div class="merge-note">🟣보강</div>` :
+                            applied ? `<div class="merge-note">🔁교환</div>` :
+                            isBlocked && isMon1Jaul ? `<div class="merge-note" style="font-size:7.5px;opacity:.7;">보강전용</div>` :
+                            isBlocked ? `<div class="merge-note" style="font-size:7.5px;opacity:.7;">교환불가</div>` : '';
+          html += `<td style="${border}"><div class="${cellClass}" ${clickAttr}${cellTooltip}><div class="subj">${escapeHtml(isMon1Jaul?'자율':cell.subject)}</div><div class="cls">${escapeHtml(cell.class || '')}</div>${statusTag}</div></td>`;
+        } else if(cell && cell.subject){
+          html += `<td style="${border}"><div class="cell empty" style="cursor:default;font-size:9px;color:#ccc;">${escapeHtml(cell.subject.split('\\n')[0])}</div></td>`;
+        } else {
+          // movedOut: 교환으로 수업이 이동된 빈 자리 → tooltip 표시
+          const movedInfo = getExchangeDisplayCell(t.name, d, p, getDateForDay(d));
+          if(movedInfo && movedInfo.movedOut && movedInfo.exchangeNote){
+            const movedTip = escapeHtml(movedInfo.exchangeNote);
+            html += `<td style="${border}"><div class="cell empty" style="cursor:default;position:relative;" data-tooltip="${movedTip}"><span style="font-size:8px;color:#94A3B8;font-weight:600;">→이동</span></div></td>`;
+          } else {
+            html += `<td style="${border}"><div class="cell empty"></div></td>`;
+          }
+        }
+      }
+    });
+    html += '<td class="remark-cell"></td></tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+  updateBadges();
+}
+
+// ─── 셀 클릭 → 패널 열기 ────────────────────────
+let selA = null;
+function hasClassAt(teacherName, day, period){
+  const teacher = TT.find(t=>t.name===teacherName);
+  const cell = teacher?.schedule?.[day]?.[period];
+  return !!(cell && cell.subject && !cell.subject.includes('창체') && !cell.subject.includes('자율'));
+}
+
+function isFreeAt(teacherName, day, period){
+  return !hasClassAt(teacherName, day, period);
+}
+
+function getSwapCandidates(base){
+  const candidates = [];
+  TT.forEach(t=>{
+    if(t.name===base.teacher) return;
+    DAYS.forEach(d=>{
+      for(let p=1;p<=PERIODS[d];p++){
+        // 실제 표시되는 셀(교환 반영 포함)을 기준으로 후보 탐색 → 이중 교환 지원
+        const displayInfo = getDisplayCell(t.name, d, p);
+        const c = displayInfo.cell;
+        if(!c || !c.subject) continue;
+        if(c.subject.includes('창체') || c.subject.includes('자율')) continue;
+        if(c.class !== base.class) continue;
+        if(c.subject === base.subject) continue;
+        if(isBlockedSubject(base.teacher, base.subject, base.period, base.day)) continue;
+        if(isBlockedSubject(t.name, c.subject, p, d)) continue;
+        if(displayInfo.eventApplied) continue;
+        // 내 교사가 상대 요일·교시에 공강인지 (교환 반영 포함)
+        const myDisplayAtTheirSlot = getDisplayCell(base.teacher, d, p);
+        if(myDisplayAtTheirSlot.cell && myDisplayAtTheirSlot.cell.subject &&
+           !myDisplayAtTheirSlot.cell.subject.includes('창체') &&
+           !myDisplayAtTheirSlot.cell.subject.includes('자율')) continue;
+        // 상대 교사가 내 요일·교시에 공강인지 (교환 반영 포함)
+        const theirDisplayAtMySlot = getDisplayCell(t.name, base.day, base.period);
+        if(theirDisplayAtMySlot.cell && theirDisplayAtMySlot.cell.subject &&
+           !theirDisplayAtMySlot.cell.subject.includes('창체') &&
+           !theirDisplayAtMySlot.cell.subject.includes('자율')) continue;
+        candidates.push({teacher:t.name, day:d, period:p, subject:c.subject, class:c.class});
+      }
+    });
+  });
+  return candidates;
+}
+
+function getMakeupCandidates(base){
+  const isMon1 = (base.day==='월' && Number(base.period)===1);
+  return TT.filter(t=>t.name!==base.teacher)
+    .filter(t=>{
+      // 월요일 1교시 자율 보강: 해당 시간에 완전히 공강인 교사만
+      const dc = getDisplayCell(t.name, base.day, base.period);
+      if(isMon1){
+        // 아무 수업도 없어야 함 (자율 포함)
+        const raw = getScheduleCell(t.name, base.day, base.period);
+        return !raw || !raw.subject;
+      }
+      return isFreeAt(t.name, base.day, base.period);
+    })
+    .filter(t=>!getDisplayCell(t.name, base.day, base.period).eventApplied)
+    .filter(t=>!exchanges.some(e=>{
+      if(!(e.status==='대기중'||e.status==='교환중'||e.status==='보강대기'||e.status==='보강중')) return false;
+      if(e.kind==='makeup') return e.subTeacher===t.name && e.day===base.day && Number(e.period)===Number(base.period);
+      return ((e.tA===t.name&&e.dayA===base.day&&e.pA===base.period)||(e.tB===t.name&&e.dayB===base.day&&e.pB===base.period));
+    }))
+    .map(t=>({teacher:t.name, dept:getTeacherDepartmentHint(t), todayLoad:getTeacherDayLoad(t.name, base.day)}))
+    .sort((a,b)=>a.todayLoad-b.todayLoad || a.teacher.localeCompare(b.teacher));
+}
+
+function getTeacherDayLoad(teacherName, day){
+  const teacher = TT.find(t=>t.name===teacherName);
+  return Object.keys(teacher?.schedule?.[day] || {}).filter(p=>{
+    const cell = teacher.schedule[day][p];
+    return cell && cell.subject && !cell.subject.includes('창체') && !cell.subject.includes('자율');
+  }).length;
+}
+
+function getTeacherDepartmentHint(teacher){
+  const sample = Object.values(teacher.schedule || {}).flatMap(day=>Object.values(day || {})).find(c=>c && c.subject && !c.subject.includes('창체') && !c.subject.includes('자율'));
+  return sample?.subject || '공강';
+}
+
+function onCellClick(teacher, day, period, subject, cls, isBlocked, makeupOnly){
+  selA = {teacher, day, period, subject, class:cls, isBlocked:!!isBlocked, makeupOnly: makeupOnly==='makeup_only'};
+  openActionMenu();
+}
+
+function openActionMenu(){
+  if(!selA) return;
+  const info = `${selA.teacher} 선생님 · ${selA.day}요일 ${selA.period}교시 · ${selA.class||'학급 미지정'} ${selA.subject}`;
+  document.getElementById('actionMenuInfo').textContent = info;
+  const exchangeBtn = document.querySelector('.action-btn.exchange');
+  if(exchangeBtn){
+    const blockExchange = selA.isBlocked || selA.makeupOnly;
+    exchangeBtn.disabled = blockExchange;
+    exchangeBtn.style.opacity = blockExchange ? '0.35' : '';
+    exchangeBtn.style.cursor  = blockExchange ? 'not-allowed' : '';
+    exchangeBtn.title = selA.makeupOnly ? '월요일 자율은 보강만 가능합니다.' :
+                        selA.isBlocked  ? '교환 불가 과목으로 등록된 수업입니다.' : '';
+  }
+  document.getElementById('actionOverlay').classList.add('on');
+  document.getElementById('actionMenu').classList.add('on');
+}
+
+function closeActionMenu(){
+  document.getElementById('actionOverlay').classList.remove('on');
+  document.getElementById('actionMenu').classList.remove('on');
+}
+
+function startExchangeFromMenu(){
+  closeActionMenu();
+  if(!selA) return;
+  const candidates = getSwapCandidates(selA);
+  openPanel(selA.teacher, selA.day, selA.period, selA.subject, selA.class, candidates);
+}
+
+function startMakeupFromMenu(){
+  closeActionMenu();
+  if(!selA) return;
+  openMakeupPanel(selA, getMakeupCandidates(selA));
+}
+
+let selB = null;
+let panelMode = 'candidates';
+function setPanelMode(mode){
+  panelMode = mode;
+  const panel = document.getElementById('panel');
+  if(!panel) return;
+  panel.classList.remove('panel-candidates','panel-confirm');
+  panel.classList.add(mode === 'confirm' ? 'panel-confirm' : 'panel-candidates');
+}
+
+function openMakeupPanel(base, candidates){
+  selB = null;
+  setPanelMode('candidates');
+  document.getElementById('panelTitle').innerHTML = '<i class="fa-solid fa-circle-plus"></i> 보강 교사 선택';
+
+  // ㄱ~ㅎ 한국어 이름순 정렬
+  const sorted = [...candidates].sort((a,b)=>a.teacher.localeCompare(b.teacher,'ko'));
+
+  // 전체 HTML 구성 (검색창 + 그리드)
+  const summaryHtml = `
+    <div class="match-summary" style="margin-bottom:14px;">
+      <div class="label">🟣 보강이 필요한 수업</div>
+      <div class="sub">${base.teacher} 선생님</div>
+      <div class="main">${base.day}요일 ${base.period}교시</div>
+      <div class="sub">${base.class || '학급 미지정'} ${base.subject}</div>
+    </div>`;
+
+  const searchHtml = `
+    <div style="position:relative;margin-bottom:12px;">
+      <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94A3B8;font-size:12px;pointer-events:none;"></i>
+      <input type="text" id="makeupSearch"
+        placeholder="선생님 이름 검색..."
+        oninput="filterMakeupCandidates()"
+        style="width:100%;padding:9px 12px 9px 34px;border:1.5px solid #E2E8F0;border-radius:10px;
+          font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;
+          transition:border-color .15s;"
+        onfocus="this.style.borderColor='#A78BFA'"
+        onblur="this.style.borderColor='#E2E8F0'">
+    </div>`;
+
+  const gridHtml = candidates.length
+    ? `<div class="makeup-grid" id="makeupGrid">${_buildMakeupCards(sorted, base)}</div>`
+    : `<div class="makeup-empty" id="makeupGrid">해당 시간에 공강인 선생님이 없습니다.</div>`;
+
+  document.getElementById('panelBody').innerHTML = summaryHtml + searchHtml + gridHtml;
+
+  document.getElementById('panelFoot').innerHTML = candidates.length
+    ? '<button class="btn btn-outline" onclick="closePanel()">닫기</button>'
+    : '<button class="btn btn-outline" onclick="closePanel()">확인</button>';
+
+  document.getElementById('overlay').classList.add('on');
+  document.getElementById('panel').classList.add('on');
+
+  // 검색창 포커스
+  setTimeout(()=>{ document.getElementById('makeupSearch')?.focus(); }, 80);
+
+  // 전체 후보 저장 (필터링용)
+  window._makeupAllCandidates = sorted;
+  window._makeupBase = base;
+}
+
+function _buildMakeupCards(list, base){
+  if(!list.length) return `<div style="grid-column:1/-1;text-align:center;padding:24px;color:#94A3B8;font-size:13px;font-weight:600;">
+    <i class="fa-solid fa-circle-xmark" style="font-size:28px;display:block;margin-bottom:8px;opacity:.4;"></i>
+    해당 없음
+  </div>`;
+  return list.map(c=>`
+    <div class="makeup-card" id="mc-${c.teacher.replace(/[^a-zA-Z0-9가-힣]/g,'_')}"
+      onclick="selectMakeupTeacher('${c.teacher.replace(/'/g,"&#39;")}')">
+      <div class="makeup-name"><span class="makeup-icon">🟣</span>${c.teacher}</div>
+      <div class="makeup-meta">${base.day}${base.period}교시 공강<br>${c.dept} · ${c.todayLoad}시간</div>
+    </div>`).join('');
+}
+
+function filterMakeupCandidates(){
+  const q = (document.getElementById('makeupSearch')?.value || '').trim();
+  const base = window._makeupBase;
+  const all  = window._makeupAllCandidates || [];
+  const filtered = q ? all.filter(c=>c.teacher.includes(q)) : all;
+  const grid = document.getElementById('makeupGrid');
+  if(grid) grid.innerHTML = _buildMakeupCards(filtered, base);
+}
+
+function selectMakeupTeacher(teacherName){
+  if(!selA) return;
+  selB = {teacher: teacherName};
+  setPanelMode('confirm');
+  document.getElementById('panelTitle').textContent = '보강 신청 확인';
+  document.getElementById('panelBody').innerHTML = `
+    <div class="sel-card">
+      <div class="label">원래 수업</div>
+      <div class="main">${selA.teacher} 선생님 — ${selA.day}요일 ${selA.period}교시</div>
+      <div class="sub">${selA.subject} · ${selA.class || '학급 미지정'}</div>
+    </div>
+    <div style="text-align:center;font-size:20px;margin:6px 0;color:var(--green);font-weight:800;">→</div>
+    <div class="sel-card" style="background:var(--green2);border-color:#A8E6CF;">
+      <div class="label" style="color:var(--green);">보강 교사</div>
+      <div class="main">${teacherName} 선생님</div>
+      <div class="sub">${selA.day}요일 ${selA.period}교시 공강 시간에 보강 배정</div>
+    </div>
+    <div class="preview-box" style="margin-top:12px;">
+      <div><strong>처리 방식</strong> : 보강 신청</div>
+      <div><strong>적용 날짜</strong> : ${getDateForDay(selA.day)} (${selA.day}요일)</div>
+      <div><strong>반영</strong> : 승인 후 원래 수업 칸과 보강 교사 칸에 모두 표시되고, 수업 결·보강 현황에 기록됩니다.</div>
+    </div>`;
+  document.getElementById('panelFoot').innerHTML = `
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-outline" style="flex:0 0 80px;" onclick="openMakeupPanel(selA, getMakeupCandidates(selA))">← 뒤로</button>
+      <button class="btn btn-blue" onclick="submitMakeup()">보강 승인 요청</button>
+    </div>`;
+}
+async function submitMakeup(){
+  if(!selA || !selB) return;
+  const date = getDateForDay(selA.day);
+  const conflict = exchanges.find(e=>{
+    if(e.kind==='makeup'){
+      return (e.status==='보강대기' || e.status==='보강중') && e.date===date && e.day===selA.day && Number(e.period)===Number(selA.period) &&
+        (e.originalTeacher===selA.teacher || e.subTeacher===selB.teacher);
+    }
+    return (e.status==='대기중'||e.status==='교환중'||e.status==='보강대기') &&
+      ((e.tA===selA.teacher&&e.dateA===date&&Number(e.pA)===Number(selA.period))||
+       (e.tB===selA.teacher&&e.dateB===date&&Number(e.pB)===Number(selA.period))||
+       (e.tA===selB.teacher&&e.dateA===date&&Number(e.pA)===Number(selA.period))||
+       (e.tB===selB.teacher&&e.dateB===date&&Number(e.pB)===Number(selA.period)));
+  });
+  if(conflict){ alert(`해당 시간에는 이미 처리된 교환/보강이 있습니다. (${conflict.id})`); return; }
+  const mk = { id: genMakeupId(), kind: 'makeup', createdAt: today(), date, day: selA.day, period: selA.period, originalTeacher: selA.teacher, subTeacher: selB.teacher, subject: selA.subject, cls: selA.class || '', status: '보강대기' };
+
+  // ── 낙관적 업데이트: 서버 응답 전 로컬 즉시 반영 ──
+  exchanges.push(mk);
+  countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+  closePanel();
+  goTab('req');
+
+  // 백그라운드 서버 동기화
+  apiPost('submitMakeup', {record: mk}).then(result=>{
+    if(!result.ok){
+      exchanges = exchanges.filter(e=>e.id!==mk.id);
+      countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+      scheduleRenderAll();
+      alert(result.message || '보강 신청에 실패했습니다. 다시 시도해주세요.');
+      return;
+    }
+    applyServerBundle(result, {silent:false});
+  }).catch(err=>{
+    exchanges = exchanges.filter(e=>e.id!==mk.id);
+    countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+    scheduleRenderAll();
+    alert(err.message || '보강 신청에 실패했습니다. 네트워크를 확인해주세요.');
+  });
+}
+
+
+function openPanel(teacher, day, period, subject, cls, candidates){
+  selB = null;
+  setPanelMode('candidates');
+  document.getElementById('panelTitle').innerHTML = '<i class="fa-solid fa-arrow-right-arrow-left"></i> 교환 후보 선택';
+
+  const grouped = {'월':[], '화':[], '수':[], '목':[], '금':[]};
+  candidates.forEach(c=>grouped[c.day].push(c));
+  Object.keys(grouped).forEach(dk=>{ grouped[dk].sort((a,b)=>a.period-b.period || a.teacher.localeCompare(b.teacher)); });
+
+  // 좌우 2단: 왼쪽=내 수업 정보, 오른쪽=후보 목록
+  let body = `<div style="display:grid;grid-template-columns:220px 1fr;gap:16px;align-items:start;">`;
+
+  // ── 왼쪽: 내 수업 카드
+  body += `<div>
+    <div style="font-size:11px;font-weight:700;color:#2563EB;margin-bottom:8px;display:flex;align-items:center;gap:4px;">
+      <i class="fa-solid fa-circle-user"></i> 내 수업
+    </div>
+    <div style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1.5px solid #93C5FD;border-radius:14px;padding:14px 16px;">
+      <div style="font-size:18px;font-weight:900;color:#1E3A8A;">${teacher}</div>
+      <div style="font-size:13px;font-weight:700;color:#2563EB;margin-top:4px;">${day}요일 ${period}교시</div>
+      <div style="font-size:12px;color:#475569;margin-top:4px;">${cls} · ${subject}</div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:#94A3B8;line-height:1.6;">
+      👆 오른쪽에서<br>교환할 수업을 선택하세요
+    </div>
+    <div id="selBPreview" style="display:none;margin-top:10px;background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border:1.5px solid #6EE7B7;border-radius:14px;padding:14px 16px;">
+      <div style="font-size:10px;font-weight:700;color:#065F46;margin-bottom:4px;">✅ 선택된 상대 수업</div>
+      <div id="selBName" style="font-size:15px;font-weight:900;color:#064E3B;"></div>
+      <div id="selBInfo" style="font-size:12px;color:#065F46;margin-top:3px;"></div>
+    </div>
+  </div>`;
+
+  // ── 오른쪽: 후보 목록 (요일별 그리드)
+  body += `<div>
+    <div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:8px;display:flex;align-items:center;gap:4px;">
+      <i class="fa-solid fa-people-arrows"></i> 교환 가능한 수업 (${candidates.length}건)
+    </div>
+    <div class="days-grid" style="grid-template-columns:repeat(5,1fr);">`;
+
+  ['월','화','수','목','금'].forEach(dayKey=>{
+    body += `<div class="day-group"><div class="day-title" style="font-size:13px;">${dayKey}</div>`;
+    if(!grouped[dayKey].length){
+      body += `<div class="day-empty" style="font-size:11px;padding:12px 6px;">없음</div>`;
+    } else {
+      grouped[dayKey].forEach((c,i)=>{
+        const idx = `${dayKey}-${i}`;
+        body += `<div class="slot-item" id="cand-${idx}" onclick="pickCand('${idx}', ${JSON.stringify(c).replace(/"/g,'&quot;')})" style="min-height:80px;padding:10px;">
+          <div class="slot-top" style="gap:6px;margin-bottom:4px;">
+            <div class="slot-num" style="width:24px;height:24px;font-size:12px;">${c.period}</div>
+            <div class="slot-teacher" style="font-size:14px;">${c.teacher}</div>
+          </div>
+          <div style="font-size:11px;color:#4B5563;line-height:1.4;">
+            <span style="color:#EF4444;font-weight:700;">${c.day}요일 ${c.period}교시</span><br>
+            ${c.class} · ${c.subject}
+          </div>
+        </div>`;
+      });
+    }
+    body += `</div>`;
+  });
+  body += `</div></div></div>`;
+
+  document.getElementById('panelBody').innerHTML = body;
+  document.getElementById('panelFoot').innerHTML = candidates.length ?
+    `<button class="btn btn-blue" id="btnNext" onclick="openDateStep()" disabled>
+      <i class="fa-solid fa-calendar-days"></i> 날짜 선택하기
+    </button>` :
+    `<div style="font-size:12px;color:#94A3B8;padding:4px 0;">교환 가능한 수업이 없습니다.</div>
+     <button class="btn btn-outline" onclick="closePanel()">닫기</button>`;
+
+  document.getElementById('overlay').classList.add('on');
+  document.getElementById('panel').classList.add('on');
+}
+
+function pickCand(i, cand){
+  selB = cand;
+  document.querySelectorAll('.slot-item,.cand-item').forEach(el=>el.classList.remove('picked'));
+  const pickedEl = document.getElementById('cand-'+i);
+  if(pickedEl) pickedEl.classList.add('picked');
+  const btn = document.getElementById('btnNext');
+  if(btn) btn.disabled = false;
+  // 왼쪽 패널 선택 미리보기 업데이트
+  const preview = document.getElementById('selBPreview');
+  const nameEl  = document.getElementById('selBName');
+  const infoEl  = document.getElementById('selBInfo');
+  if(preview && nameEl && infoEl){
+    nameEl.textContent = cand.teacher + ' 선생님';
+    infoEl.textContent = `${cand.day}요일 ${cand.period}교시 · ${cand.class} · ${cand.subject}`;
+    preview.style.display = '';
+  }
+}
+
+function openDateStep(){
+  if(!selB) return;
+  setPanelMode('confirm');
+  const today_ = today();
+
+  // 해당 요일의 날짜 목록 — 학기 기간 내로 제한
+  function getDatesForDay(dayName){
+    const dayIdx = ['일','월','화','수','목','금','토'].indexOf(dayName);
+    const { start: semStart, end: semEnd } = getSemesterDateRange();
+    const rangeStart = today() > semStart ? today() : semStart;
+    const startD = parseDateLocal(rangeStart);
+    const endD   = parseDateLocal(semEnd);
+    const dates = [];
+    // rangeStart부터 학기 끝까지 해당 요일 모두 수집
+    let cur = new Date(startD);
+    // 해당 요일로 이동
+    const curDay = cur.getDay(); // 0=일
+    const targetDay = dayIdx === 0 ? 0 : dayIdx; // 월=1 ... 금=5
+    let diff = targetDay - curDay;
+    if(diff < 0) diff += 7;
+    cur.setDate(cur.getDate() + diff);
+    while(cur <= endD){
+      dates.push(formatDateISO(cur));
+      cur.setDate(cur.getDate() + 7);
+    }
+    return dates;
+  }
+
+  function buildDateButtons(fieldId, dayName, otherFieldId){
+    const dates = getDatesForDay(dayName);
+    const weekInfo = getSelectedWeekInfo();
+    // 현재 선택된 주차의 해당 요일 날짜를 기본값으로
+    const defaultDate = getDateForDay(dayName) || (dates[0]||'');
+    return `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;" id="${fieldId}_btns">
+      ${dates.map(d=>`
+        <button type="button" class="date-pick-btn ${d===defaultDate?'on':''}"
+          onclick="selectDateBtn('${fieldId}','${d}',this)"
+          style="padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700;
+          border:1.5px solid ${d===defaultDate?'#2563EB':'#E2E8F0'};
+          background:${d===defaultDate?'#EFF6FF':'#F8FAFC'};
+          color:${d===defaultDate?'#1E40AF':'#475569'};cursor:pointer;transition:all .12s;
+          font-family:'Noto Sans KR',sans-serif;">
+          ${fmtDate(d)}(${dayName})
+        </button>`).join('')}
+    </div>
+    <input type="hidden" id="${fieldId}" value="${defaultDate}">`;
+  }
+
+  document.getElementById('panelBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
+      <div style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1.5px solid #93C5FD;border-radius:14px;padding:14px;">
+        <div style="font-size:10px;font-weight:700;color:#2563EB;margin-bottom:6px;">📘 내 수업</div>
+        <div style="font-size:16px;font-weight:900;color:#1E3A8A;">${selA.teacher}</div>
+        <div style="font-size:13px;font-weight:700;color:#2563EB;margin-top:2px;">${selA.day}요일 ${selA.period}교시</div>
+        <div style="font-size:11px;color:#475569;margin-top:2px;">${selA.subject} · ${selA.class}</div>
+        <div style="margin-top:10px;font-size:11px;font-weight:700;color:#1E3A8A;">${selA.day}요일 날짜 선택</div>
+        ${buildDateButtons('dA', selA.day)}
+      </div>
+      <div style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border:1.5px solid #6EE7B7;border-radius:14px;padding:14px;">
+        <div style="font-size:10px;font-weight:700;color:#065F46;margin-bottom:6px;">📗 상대 수업</div>
+        <div style="font-size:16px;font-weight:900;color:#064E3B;">${selB.teacher}</div>
+        <div style="font-size:13px;font-weight:700;color:#065F46;margin-top:2px;">${selB.day}요일 ${selB.period}교시</div>
+        <div style="font-size:11px;color:#475569;margin-top:2px;">${selB.subject} · ${selB.class}</div>
+        <div style="margin-top:10px;font-size:11px;font-weight:700;color:#065F46;">${selB.day}요일 날짜 선택</div>
+        ${buildDateButtons('dB', selB.day)}
+      </div>
+    </div>
+    <div id="restoreInfo" style="font-size:11px;color:var(--green);background:var(--green2);padding:8px 10px;border-radius:6px;display:none;margin-top:10px;"></div>
+    <div id="conflictWarn" style="font-size:11px;color:var(--red);background:var(--red2);padding:8px 10px;border-radius:6px;display:none;margin-top:6px;"></div>`;
+
+  document.getElementById('panelFoot').innerHTML =
+    `<div style="display:flex;gap:8px;">
+      <button class="btn btn-outline" style="flex:0 0 80px;" onclick="reopenCandidates()">← 뒤로</button>
+      <button class="btn btn-blue" id="btnSubmit" onclick="submitFinal()">교환 신청 완료</button>
+    </div>`;
+
+  // 초기값으로 바로 유효성 체크
+  updateRestoreInfo();
+}
+
+function selectDateBtn(fieldId, date, el){
+  document.getElementById(fieldId).value = date;
+  // 같은 그룹 버튼 스타일 리셋
+  const container = document.getElementById(fieldId + '_btns');
+  if(container) container.querySelectorAll('.date-pick-btn').forEach(b=>{
+    const isOn = b === el;
+    b.style.borderColor = isOn ? '#2563EB' : '#E2E8F0';
+    b.style.background  = isOn ? '#EFF6FF' : '#F8FAFC';
+    b.style.color       = isOn ? '#1E40AF' : '#475569';
+    b.classList.toggle('on', isOn);
+  });
+  updateRestoreInfo();
+}
+
+function updateRestoreInfo(){
+  const dA=document.getElementById('dA').value;
+  const dB=document.getElementById('dB').value;
+  const ri=document.getElementById('restoreInfo');
+  const cw=document.getElementById('conflictWarn');
+  const btn=document.getElementById('btnSubmit');
+
+  // 요일 체크
+  if(dA){
+    const actualDay = dayOfDate(dA);
+    if(actualDay !== selA.day){
+      cw.style.display='block';
+      cw.textContent=`내 수업 날짜(${dA})는 ${actualDay}요일입니다. ${selA.day}요일 날짜를 선택해주세요.`;
+      btn.disabled=true; return;
+    }
+  }
+  if(dB){
+    const actualDay = dayOfDate(dB);
+    if(actualDay !== selB.day){
+      cw.style.display='block';
+      cw.textContent=`상대 수업 날짜(${dB})는 ${actualDay}요일입니다. ${selB.day}요일 날짜를 선택해주세요.`;
+      btn.disabled=true; return;
+    }
+  }
+
+  cw.style.display='none';
+  if(!dA||!dB){ri.style.display='none'; btn.disabled=true; return;}
+
+  const eventConflictA = hasEventOnExchangeSlot(selA.teacher, dA, selA.day, selA.period);
+  if(eventConflictA){
+    cw.style.display='block';
+    cw.textContent=`교환 불가: ${dA} ${selA.day}요일 ${selA.period}교시는 행사(${eventConflictA.name})가 적용된 날짜입니다.`;
+    btn.disabled=true; return;
+  }
+  const eventConflictB = hasEventOnExchangeSlot(selB.teacher, dB, selB.day, selB.period);
+  if(eventConflictB){
+    cw.style.display='block';
+    cw.textContent=`교환 불가: ${dB} ${selB.day}요일 ${selB.period}교시는 행사(${eventConflictB.name})가 적용된 날짜입니다.`;
+    btn.disabled=true; return;
+  }
+
+  // 충돌 체크: 대기중인 것만 막음 (교환중은 3자 교환 허용)
+  const conflict = exchanges.find(e=>
+    e.status==='대기중' &&
+    ((e.tA===selA.teacher&&e.dateA===dA&&e.pA===selA.period)||
+     (e.tB===selA.teacher&&e.dateB===dA&&e.pB===selA.period)||
+     (e.tA===selB.teacher&&e.dateA===dB&&e.pA===selB.period)||
+     (e.tB===selB.teacher&&e.dateB===dB&&e.pB===selB.period))
+  );
+  if(conflict){
+    cw.style.display='block';
+    cw.textContent='충돌: 해당 날짜/교시에 아직 승인 대기중인 교환 신청이 있습니다. ('+conflict.id+')';
+    btn.disabled=true; return;
+  }
+
+  const rd = getRestoreDate(dA,dB);
+  ri.style.display='block';
+  ri.textContent=`복원 예정: ${rd} 자정에 자동으로 원래 시간표로 복원됩니다.`;
+  btn.disabled=false;
+}
+
+async function submitFinal(){
+  const dA=document.getElementById('dA').value;
+  const dB=document.getElementById('dB').value;
+  const ex={ id:genId(), createdAt:today(), tA:selA.teacher, dateA:dA, dayA:selA.day, pA:selA.period, subA:selA.subject, clsA:selA.class, tB:selB.teacher, dateB:dB, dayB:selB.day, pB:selB.period, subB:selB.subject, clsB:selB.class, status:'대기중' };
+
+  // ── 낙관적 업데이트: 서버 응답 전 로컬 즉시 반영 ──
+  exchanges.push(ex);
+  countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+  closePanel();
+  goTab('req');
+
+  // 백그라운드 서버 동기화
+  apiPost('submitExchange', {record: ex}).then(result=>{
+    if(!result.ok){
+      exchanges = exchanges.filter(e=>e.id!==ex.id);
+      countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+      scheduleRenderAll();
+      alert(result.message || '교환 신청에 실패했습니다. 다시 시도해주세요.');
+      return;
+    }
+    applyServerBundle(result, {silent:false});
+  }).catch(err=>{
+    exchanges = exchanges.filter(e=>e.id!==ex.id);
+    countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+    scheduleRenderAll();
+    alert(err.message || '교환 신청에 실패했습니다. 네트워크를 확인해주세요.');
+  });
+}
+
+// ─── 승인 탭 ─────────────────────────────────────
+function renderReq(){
+  const list = exchanges.filter(e=>(e.kind==='makeup' && e.status==='보강대기') || (e.kind!=='makeup' && e.status==='대기중'));
+  const el = document.getElementById('reqList');
+  if(!list.length){el.innerHTML='<div class="empty-msg">승인 대기 중인 신청이 없습니다.</div>';return;}
+  el.innerHTML = list.map(e=>{
+    if(e.kind==='makeup'){
+      return `
+      <div class="req-item">
+        <div class="req-header">
+          <div class="req-head-left"><span class="req-type-badge makeup">🟣 보강</span><span class="status-badge s-wait">🕒 보강대기</span></div>
+          <div class="req-action-inline"><span class="req-id">${e.id} · ${e.createdAt}</span><button class="btn-sm btn-print" onclick="openPrintModal('${e.id}')"><i class="fa-solid fa-print"></i> 출력</button><button class="btn-sm btn-cancel" onclick="cancelExchange('${e.id}')">↺ 취소</button></div>
+        </div>
+        <div class="req-body">
+          <div class="req-slot">
+            <div class="t">${e.originalTeacher}</div>
+            <div class="d">${e.date} (${e.day}요일 ${e.period}교시)<br>${e.subject} · ${e.cls || '학급 미지정'}</div>
+          </div>
+          <div style="text-align:center;font-size:18px;color:#7C3AED;font-weight:900;">🟣</div>
+          <div class="req-slot">
+            <div class="t">${e.subTeacher}</div>
+            <div class="d">${e.date} (${e.day}요일 ${e.period}교시)<br>보강 담당 예정</div>
+          </div>
+        </div>
+        <div class="req-foot">
+          <span class="req-restore">완료 예정: ${getMakeupRestoreDate(e.date)}</span>
+          <div class="btn-row">
+            ${isAdminMode ? `<button class="btn-sm btn-approve" onclick="approve('${e.id}')">✅ 승인</button><button class="btn-sm btn-reject" onclick="reject('${e.id}')">✖ 거절</button>` : '<span class="req-restore">관리자 승인 필요</span>'}
+          </div>
+        </div>
+      </div>`;
+    }
+    return `
+    <div class="req-item">
+      <div class="req-header">
+        <div class="req-head-left"><span class="req-type-badge exchange">🔁 교환</span><span class="status-badge s-wait">🕒 대기중</span></div>
+        <div class="req-action-inline"><span class="req-id">${e.id} · ${e.createdAt}</span><button class="btn-sm btn-print" onclick="openPrintModal('${e.id}')"><i class="fa-solid fa-print"></i> 출력</button><button class="btn-sm btn-cancel" onclick="cancelExchange('${e.id}')">↺ 취소</button></div>
+      </div>
+      <div class="req-body">
+        <div class="req-slot">
+          <div class="t">${e.tA}</div>
+          <div class="d">${e.dateA} (${e.dayA}요일 ${e.pA}교시)<br>${e.subA} · ${e.clsA}</div>
+        </div>
+        <div style="text-align:center;font-size:18px;color:var(--blue);font-weight:900;">🔁</div>
+        <div class="req-slot">
+          <div class="t">${e.tB}</div>
+          <div class="d">${e.dateB} (${e.dayB}요일 ${e.pB}교시)<br>${e.subB} · ${e.clsB}</div>
+        </div>
+      </div>
+      <div class="req-foot">
+        <span class="req-restore">복원 예정: ${getRestoreDate(e.dateA,e.dateB)}</span>
+        <div class="btn-row">
+          ${isAdminMode ? `${getExchangeConflictEvent(e)?'<span class="conflict-note">행사 충돌</span>':''}<button class="btn-sm btn-approve" ${getExchangeConflictEvent(e)?'disabled style="opacity:.45;cursor:not-allowed;"':''} onclick="approve('${e.id}')">✅ 승인</button><button class="btn-sm btn-reject" onclick="reject('${e.id}')">✖ 거절</button>` : '<span class="req-restore">관리자 승인 필요</span>'}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  _renderGroupPrintBar(list, 'reqGroupPrintBar');
+}
+
+function _renderGroupPrintBar(list, barId){
+  const bar = document.getElementById(barId);
+  if(!bar) return;
+  if(!list || !list.length){ bar.style.display='none'; return; }
+
+  // 교사별로 교환+보강 모두 집계
+  const byTeacher = {};
+  list.forEach(e=>{
+    const name = e.kind==='makeup' ? e.originalTeacher : e.tA;
+    if(!byTeacher[name]) byTeacher[name] = {makeup:0, exchange:0};
+    if(e.kind==='makeup') byTeacher[name].makeup++;
+    else byTeacher[name].exchange++;
+  });
+
+  let html = `<div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:14px;padding:12px 16px;">
+    <div style="font-size:12px;font-weight:700;color:#0369A1;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+      <i class="fa-solid fa-print"></i> 교사별 묶음 출력
+      <span style="font-weight:400;color:#64748B;font-size:11px;">— 같은 교사의 교환·보강을 한 장에 출력</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">`;
+
+  Object.entries(byTeacher).forEach(([name, cnt])=>{
+    const label = [
+      cnt.exchange ? `🔁 교환 ${cnt.exchange}건` : '',
+      cnt.makeup   ? `🟣 보강 ${cnt.makeup}건`   : '',
+    ].filter(Boolean).join(' · ');
+    html += `<button class="btn-sm btn-print" onclick="openPrintModalByTeacher('${escapeHtml(name)}','both')">
+      ${escapeHtml(name)} — ${label} 출력
+    </button>`;
+  });
+
+  html += `</div></div>`;
+  bar.innerHTML = html;
+  bar.style.display = 'block';
+}
+
+async function approve(id){
+  if(!ensureAdmin()) return;
+  const e=exchanges.find(x=>x.id===id);
+  if(!e)return;
+  const prevStatus = e.status;
+
+  // 낙관적 업데이트
+  e.status = e.kind==='makeup' ? '보강중' : '교환중';
+  countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+  scheduleRenderAll();
+
+  apiPost('approveExchange', {password:getAdminPassword(), id}).then(result=>{
+    if(!result.ok){
+      e.status = prevStatus;
+      countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+      scheduleRenderAll();
+      alert(result.message || '승인에 실패했습니다.');
+      return;
+    }
+    applyServerBundle(result, {silent:false});
+  }).catch(err=>{
+    e.status = prevStatus;
+    countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+    scheduleRenderAll();
+    alert(err.message || '승인에 실패했습니다.');
+  });
+}
+async function reject(id){
+  if(!ensureAdmin()) return;
+  if(!confirm('거절하시겠습니까?'))return;
+  const e=exchanges.find(x=>x.id===id);
+  if(!e)return;
+  const prevStatus = e.status;
+
+  // 낙관적 업데이트
+  e.status = e.kind==='makeup' ? '보강반려' : '반려';
+  countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+  scheduleRenderAll();
+
+  apiPost('rejectExchange', {password:getAdminPassword(), id}).then(result=>{
+    if(!result.ok){
+      e.status = prevStatus;
+      countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+      scheduleRenderAll();
+      alert(result.message || '거절에 실패했습니다.');
+      return;
+    }
+    applyServerBundle(result, {silent:false});
+  }).catch(err=>{
+    e.status = prevStatus;
+    countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+    scheduleRenderAll();
+    alert(err.message || '거절에 실패했습니다.');
+  });
+}
+
+// ─── 현황 탭 ─────────────────────────────────────
+function renderHist(){
+  autoRestore();
+  const el=document.getElementById('histList');
+  const list=[...exchanges].reverse();
+  document.getElementById('sAll').textContent=exchanges.length;
+  document.getElementById('sWait').textContent=exchanges.filter(e=>(e.kind!=='makeup' && e.status==='대기중') || (e.kind==='makeup' && e.status==='보강대기')).length;
+  document.getElementById('sActive').textContent=exchanges.filter(e=>e.status==='교환중' || e.status==='보강중').length;
+  document.getElementById('sDone').textContent=exchanges.filter(e=>e.status==='복원완료' || e.status==='보강완료').length;
+  const cancelEl = document.getElementById('sCancel');
+  if(cancelEl) cancelEl.textContent=exchanges.filter(e=>e.status==='취소').length;
+  if(!list.length){el.innerHTML='<div class="empty-msg">수업 결·보강 내역이 없습니다.</div>';return;}
+  const stMap={'대기중':'s-wait','교환중':'s-active','복원완료':'s-done','반려':'s-reject','취소':'s-cancel','보강대기':'s-wait','보강중':'s-active','보강완료':'s-done','보강반려':'s-reject'};
+  el.innerHTML=list.map(e=>{
+    if(e.kind==='makeup'){
+      const extra = e.status==='보강완료'
+        ? `<span style="font-size:11px;color:var(--purple);">완료일: ${e.restoredAt||getMakeupRestoreDate(e.date)}</span>`
+        : e.status==='취소'
+          ? `<span style="font-size:11px;color:#6B7280;background:#F3F4F6;padding:3px 8px;border-radius:4px;">취소일: ${e.canceledAt||today()}</span>`
+          : e.status==='보강반려'
+            ? `<span style="font-size:11px;color:var(--red);background:var(--red2);padding:3px 8px;border-radius:4px;">반려일: ${e.rejectedAt||today()}</span>`
+            : e.status==='보강대기'
+              ? `<span class="req-restore">승인 대기 중</span>`
+              : `<span style="font-size:11px;color:var(--green);background:var(--green2);padding:3px 8px;border-radius:4px;">적용일: ${e.date}</span>`;
+      const cancelBtn = (e.status==='취소' || e.status==='보강완료' || e.status==='보강반려') ? '' : `<button class="btn-sm btn-cancel" onclick="cancelExchange('${e.id}')">↺ 취소</button>`;
+      const statusLabel = e.status==='보강대기' ? '🕒 보강대기' : e.status==='보강중' ? '🟣 보강중' : e.status==='보강완료' ? '✨ 보강완료' : e.status==='보강반려' ? '✖ 보강반려' : '↺ 취소';
+      return `<div class="req-item">
+        <div class="req-header">
+          <div class="req-head-left"><span class="req-type-badge makeup">🟣 보강</span><span class="status-badge ${stMap[e.status]||''}">${statusLabel}</span></div>
+          <div class="req-action-inline"><span class="req-id">${e.id}</span><button class="btn-sm btn-print" onclick="openPrintModal('${e.id}')"><i class="fa-solid fa-print"></i> 출력</button>${cancelBtn}</div>
+        </div>
+        <div class="req-body">
+          <div class="req-slot"><div class="t">${e.originalTeacher}</div><div class="d">${e.date} ${e.day}요일 ${e.period}교시<br>${e.subject} · ${e.cls || '학급 미지정'}</div></div>
+          <div style="text-align:center;font-size:18px;color:#7C3AED;font-weight:900;">🟣</div>
+          <div class="req-slot"><div class="t">${e.subTeacher}</div><div class="d">${e.date} ${e.day}요일 ${e.period}교시<br>${e.status==='보강대기' ? '보강 담당 예정' : '보강 담당'}</div></div>
+        </div>
+        <div class="req-foot"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${extra}<span style="font-size:11px;color:var(--text3);">등록: ${e.createdAt}</span></div><div class="btn-row"></div></div>
+      </div>`;
+    }
+    const rd=getRestoreDate(e.dateA,e.dateB);
+    const conflictEvt=getExchangeConflictEvent(e);
+    const extra = e.status==='교환중'?`<span class="req-restore">복원 예정: ${rd}</span>`:
+                e.status==='복원완료'?`<span style="font-size:11px;color:var(--purple);">복원일: ${e.restoredAt||rd}</span>`:
+                e.status==='취소'?`<span style="font-size:11px;color:#6B7280;background:#F3F4F6;padding:3px 8px;border-radius:4px;">취소일: ${e.canceledAt||today()}</span>`:'';
+    const cancelBtn = e.status==='취소' ? '' : `<button class="btn-sm btn-cancel" onclick="cancelExchange('${e.id}')">↺ 취소</button>`;
+    const statusLabel = e.status==='대기중' ? '🕒 대기중' : e.status==='교환중' ? '🔁 교환중' : e.status==='복원완료' ? '✨ 복원완료' : e.status==='반려' ? '✖ 반려' : '↺ 취소';
+    return`<div class="req-item">
+      <div class="req-header">
+        <div class="req-head-left"><span class="req-type-badge exchange">🔁 교환</span><span class="status-badge ${stMap[e.status]||''}">${statusLabel}</span>${conflictEvt?`<span class="conflict-note">행사 충돌 · ${escapeHtml(conflictEvt.name)}</span>`:''}</div>
+        <div class="req-action-inline"><span class="req-id">${e.id}</span><button class="btn-sm btn-print" onclick="openPrintModal('${e.id}')"><i class="fa-solid fa-print"></i> 출력</button>${cancelBtn}</div>
+      </div>
+      <div class="req-body">
+        <div class="req-slot"><div class="t">${e.tA}</div><div class="d">${e.dateA} ${e.dayA}요일 ${e.pA}교시<br>${e.subA} · ${e.clsA}</div></div>
+        <div style="text-align:center;font-size:18px;color:var(--blue);font-weight:700;">⇄</div>
+        <div class="req-slot"><div class="t">${e.tB}</div><div class="d">${e.dateB} ${e.dayB}요일 ${e.pB}교시<br>${e.subB} · ${e.clsB}</div></div>
+      </div>
+      <div class="req-foot"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${extra}<span style="font-size:11px;color:var(--text3);">신청: ${e.createdAt}</span></div><div class="btn-row"></div></div>
+    </div>`;
+  }).join('');
+  _renderGroupPrintBar(list, 'histGroupPrintBar');
+}
+
+let _lastBadgeHash = '';
+function updateBadges(){
+  autoRestore();
+  const wc=exchanges.filter(e=>(e.kind!=='makeup' && e.status==='대기중') || (e.kind==='makeup' && e.status==='보강대기')).length;
+  const ec=getActiveEvents().length;
+  const bc=getBlockedSubjects().length;
+  const bHash = wc+'|'+ec+'|'+bc+'|'+selectedMonth+'|'+selectedWeek;
+  const el=document.getElementById('waitCnt');
+  if(bHash !== _lastBadgeHash){
+    _lastBadgeHash = bHash;
+    el.innerHTML=wc?`<span class="badge-cnt" style="font-size:10px;padding:1px 6px;">${wc}</span>`:'';
+    const eventBadge=document.getElementById('eventCnt');
+    if(eventBadge) eventBadge.innerHTML=ec?`<span class="badge-cnt" style="font-size:10px;padding:1px 6px;">${ec}</span>`:'';
+    const blockBadge=document.getElementById('blockCnt');
+    if(blockBadge) blockBadge.innerHTML=bc?`<span class="badge-cnt" style="font-size:10px;padding:1px 6px;">${bc}</span>`:'';
+    const rb=document.getElementById('reqCntBadge');
+    if(wc){rb.textContent=wc+' 건 대기';rb.style.display='';}else rb.style.display='none';
+    const info = getSelectedWeekInfo();
+    document.getElementById('todayTxt').textContent=`오늘 기준 ${today()} · ${selectedMonth}월 ${info.index}주차 (${getWeekRangeText(info)})`;
+  }
+}
+
+function reopenCandidates(){
+  if(!selA) return;
+  const candidates = getSwapCandidates(selA);
+  openPanel(selA.teacher, selA.day, selA.period, selA.subject, selA.class, candidates);
+}
+
+function closePanel(){
+  closeActionMenu();
+  document.getElementById('overlay').classList.remove('on');
+  document.getElementById('panel').classList.remove('on');
+  setPanelMode('candidates');
+  selA=null; selB=null;
+}
+
+function goTab(name){
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('on',['tt','req','hist','event','block'][i]===name);
+  });
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  if((name==='event' || name==='block') && !isAdminMode){ alert('행사 추가와 교환 불가 과목 관리는 관리자만 가능합니다.'); name='tt'; }
+  document.getElementById('page-'+name).classList.add('on');
+  if(name==='req')renderReq();
+  if(name==='hist')renderHist();
+  if(name==='event'){
+    updateClassOptions();
+    updateEventPeriodOptions();
+    toggleEventPeriodField();
+    updateEventPreview();
+    renderEvents();
+  }
+  if(name==='block'){
+    initBlockForm();
+    renderBlockedSubjects();
+    initSemesterUI();
+  }
+}
+
+
+
+function initBlockForm(){
+  const teacherSearch = document.getElementById('blockTeacherSearch');
+  if(teacherSearch && !teacherSearch.dataset.bound){
+    teacherSearch.dataset.bound = '1';
+    teacherSearch.addEventListener('input', filterBlockTeachers);
+  }
+  const teacherSel = document.getElementById('blockTeacher');
+  if(!teacherSel) return;
+  const current = teacherSel.value || '';
+  const q = document.getElementById('blockTeacherSearch')?.value || '';
+  const filteredTeachers = TT.filter(t=>!q || t.name.includes(q.trim()));
+  teacherSel.innerHTML = '<option value="">선생님 선택</option>' + filteredTeachers.map(t=>`<option value="${t.name}">${t.name}</option>`).join('');
+  if(current && filteredTeachers.some(t=>t.name===current)) teacherSel.value = current;
+  const dateInput = document.getElementById('blockDate');
+  if(dateInput && !dateInput.value) dateInput.value = getDateForDay('월') || today();
+  updateBlockedSubjectOptions();
+  updateBlockPeriodOptions();
+  updateBlockPreview();
+}
+function filterBlockTeachers(){
+  const teacherSel = document.getElementById('blockTeacher');
+  const current = teacherSel?.value || '';
+  const q = (document.getElementById('blockTeacherSearch')?.value || '').trim();
+  const filteredTeachers = TT.filter(t=>!q || t.name.includes(q));
+  if(!teacherSel) return;
+  teacherSel.innerHTML = '<option value="">선생님 선택</option>' + filteredTeachers.map(t=>`<option value="${t.name}">${t.name}</option>`).join('');
+  if(current && filteredTeachers.some(t=>t.name===current)) teacherSel.value = current;
+  updateBlockedSubjectOptions();
+  updateBlockPeriodOptions();
+  updateBlockPreview();
+}
+function updateBlockedSubjectOptions(){
+  const teacher = document.getElementById('blockTeacher')?.value || '';
+  const date = document.getElementById('blockDate')?.value || today();
+  const subjectSel = document.getElementById('blockSubject');
+  if(!subjectSel) return;
+  const current = subjectSel.value || '';
+  const subjects = teacher ? getSubjectsForTeacher(teacher, date) : [];
+  subjectSel.innerHTML = subjects.length ? subjects.map(s=>`<option value="${s}">${s}</option>`).join('') : '<option value="">과목 선택</option>';
+  if(current && subjects.includes(current)) subjectSel.value = current;
+}
+function updateBlockPeriodOptions(){
+  const teacher = document.getElementById('blockTeacher')?.value || '';
+  const date = document.getElementById('blockDate')?.value || today();
+  const subject = document.getElementById('blockSubject')?.value || '';
+  const periodSel = document.getElementById('blockPeriod');
+  if(!periodSel) return;
+  const current = periodSel.value || '';
+  const periods = (teacher && subject) ? getPeriodsForTeacherSubject(teacher, date, subject) : [];
+  periodSel.innerHTML = periods.length ? periods.map(p=>`<option value="${p}">${p}교시</option>`).join('') : '<option value="">교시 선택</option>';
+  if(current && periods.some(p=>String(p)===String(current))) periodSel.value = current;
+}
+function updateBlockPreview(){
+  const box = document.getElementById('blockPreview');
+  if(!box) return;
+  const teacher = document.getElementById('blockTeacher')?.value || '';
+  const date = document.getElementById('blockDate')?.value || '';
+  const subject = document.getElementById('blockSubject')?.value || '';
+  const period = document.getElementById('blockPeriod')?.value || '';
+  if(!teacher || !subject || !period){
+    box.innerHTML = '<div><strong>선생님, 과목, 교시를 선택하면</strong> 해당 학기 동안 해당 교시는 교환 불가로 등록됩니다.</div>';
+    return;
+  }
+  box.innerHTML = `<div><strong>${escapeHtml(teacher)} · ${escapeHtml(subject)} · ${period}교시</strong></div><div>기준 날짜: ${date?`${fmtDate(date)} (${dayOfDate(date)}요일)`: '-'}</div><div>등록 후에는 같은 선생님의 동일 과목 · 동일 교시가 학기 동안 교환 후보에서 제외됩니다.</div>`;
+}
+async function addBlockedSubject(){
+  if(!ensureAdmin()) return;
+  const teacher = document.getElementById('blockTeacher')?.value || '';
+  const date = document.getElementById('blockDate')?.value || today();
+  const subject = document.getElementById('blockSubject')?.value || '';
+  const period = Number(document.getElementById('blockPeriod')?.value || 0);
+  if(!teacher || !subject || !period){ alert('선생님, 과목, 교시를 선택해주세요.'); return; }
+  const dup = getBlockedSubjects().find(b=>b.teacher===teacher && b.subject===subject && Number(b.period)===Number(period));
+  if(dup){ alert('이미 등록된 교환 불가 과목입니다.'); return; }
+  const record = normalizeBlockedItem({id:genBlockedId(), createdAt:today(), teacher, date, subject, period, status:'적용'});
+  try{
+    const result = await apiPost('addBlockedSubject', {password:getAdminPassword(), record});
+    if(!result.ok) throw new Error(result.message || '교환 불가 과목 등록에 실패했습니다.');
+    applyServerBundle(result);
+    alert('교환 불가 과목이 등록되었습니다.');
+  }catch(err){ alert(err.message || '교환 불가 과목 등록에 실패했습니다.'); }
+}
+async function removeBlockedSubject(id){
+  if(!ensureAdmin()) return;
+  if(!confirm('이 교환 불가 과목 등록을 삭제할까요?')) return;
+  try{
+    const result = await apiPost('removeBlockedSubject', {password:getAdminPassword(), id});
+    if(!result.ok) throw new Error(result.message || '교환 불가 과목 삭제에 실패했습니다.');
+    applyServerBundle(result);
+  }catch(err){ alert(err.message || '교환 불가 과목 삭제에 실패했습니다.'); }
+}
+function renderBlockedSubjects(){
+  const el = document.getElementById('blockList');
+  if(!el) return;
+  const list = [...getBlockedSubjects()].sort((a,b)=>a.teacher.localeCompare(b.teacher,'ko') || a.subject.localeCompare(b.subject,'ko') || Number(a.period)-Number(b.period));
+  if(!list.length){ el.innerHTML = '<div class="block-empty">등록된 교환 불가 과목이 없습니다.</div>'; return; }
+  el.innerHTML = list.map(b=>`<div class="block-card"><div><div class="block-name">${escapeHtml(b.teacher)} · ${escapeHtml(b.subject)} · ${b.period ? b.period+'교시' : '전체 교시'}</div><div class="block-meta">기준 날짜 ${fmtDate(b.date)} (${dayOfDate(b.date)}요일)<br>등록일 ${b.createdAt} · 학기 동안 교환 불가</div></div><button class="btn-event-delete" onclick="removeBlockedSubject('${b.id}')">삭제</button></div>`).join('');
+}
+
+async function cancelExchange(id){
+  const e = exchanges.find(x=>x.id===id);
+  if(!e) return;
+  if(e.status==='취소'){ alert(`이미 취소된 ${e.kind==='makeup' ? '보강' : '교환'}입니다.`); return; }
+  if(!confirm(`이 ${e.kind==='makeup' ? '보강' : '교환'}(${id})을 취소 처리할까요? 기록은 남고 상태만 '취소'로 변경됩니다.`)) return;
+
+  // 낙관적 업데이트
+  const prevStatus = e.status;
+  e.status = '취소';
+  countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+  scheduleRenderAll();
+
+  const payload = {id};
+  if(isAdminMode) payload.password = getAdminPassword();
+  apiPost('cancelExchange', payload).then(result=>{
+    if(!result.ok){
+      e.status = prevStatus;
+      countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+      scheduleRenderAll();
+      alert(result.message || '취소에 실패했습니다.');
+      return;
+    }
+    applyServerBundle(result, {silent:false});
+  }).catch(err=>{
+    e.status = prevStatus;
+    countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
+    scheduleRenderAll();
+    alert(err.message || '취소에 실패했습니다.');
+  });
+}
+
+async function saveSemesterConfig(){
+  if(!ensureAdmin()) return;
+  const start = document.getElementById('semesterStartInput')?.value;
+  const end   = document.getElementById('semesterEndInput')?.value;
+  const label = (document.getElementById('semesterLabelInput')?.value||'').trim();
+  if(!start || !end){ alert('시작일과 종료일을 모두 입력해주세요.'); return; }
+  if(end < start){ alert('종료일은 시작일보다 빠를 수 없습니다.'); return; }
+  if(!label){ alert('학기 명칭을 입력해주세요.'); return; }
+  const config = {start, end, label};
+  semesterConfig = config;
+  applySemesterConfig();
+  renderSemesterPreview();
+  // 서버 저장 시도 (지원하면 저장, 아니면 로컬만)
+  try{
+    const result = await apiPost('setSemesterConfig', {password:getAdminPassword(), config});
+    if(!result.ok) throw new Error(result.message);
+    if(result.data) applyServerData(result.data);
+    alert(`✅ 학기 기간이 저장되었습니다.\n${label}\n${start} ~ ${end}`);
+  }catch(err){
+    alert(`✅ 학기 기간이 적용되었습니다.\n${label}\n${start} ~ ${end}\n\n(서버 저장은 Apps Script setSemesterConfig API 연동 후 영구 저장됩니다)`);
+  }
+}
+
+function renderSemesterPreview(){
+  const box = document.getElementById('semesterPreview');
+  if(!box) return;
+  const {start, end, label} = semesterConfig;
+  if(!start || !end){ box.style.display='none'; return; }
+  const months = getSemesterMonths();
+  box.style.display='block';
+  box.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#7C3AED;margin-right:5px;"></i>
+    <strong>${escapeHtml(label||'학기')}</strong> &nbsp;|&nbsp; ${start} ~ ${end}
+    &nbsp;|&nbsp; 대상 월: ${months.map(m=>m+'월').join(', ')}`;
+}
+
+function initSemesterUI(){
+  const si = document.getElementById('semesterStartInput');
+  const ei = document.getElementById('semesterEndInput');
+  const li = document.getElementById('semesterLabelInput');
+  if(si) si.value = semesterConfig.start || '';
+  if(ei) ei.value = semesterConfig.end   || '';
+  if(li) li.value = semesterConfig.label || '';
+  renderSemesterPreview();
+  [si,ei,li].forEach(el=>{ if(el) el.addEventListener('input', ()=>{
+    const s=si?.value, e=ei?.value, l=(li?.value||'').trim();
+    const box=document.getElementById('semesterPreview');
+    if(!box) return;
+    if(s && e && s<=e){
+      const ms=[], sd=parseDateLocal(s), ed=parseDateLocal(e);
+      let c=new Date(sd.getFullYear(),sd.getMonth(),1);
+      while(c<=ed){ms.push(c.getMonth()+1);c.setMonth(c.getMonth()+1);}
+      box.style.display='block';
+      box.innerHTML=`<i class="fa-solid fa-eye" style="color:#7C3AED;margin-right:5px;"></i>미리보기: <strong>${escapeHtml(l||'(명칭 미입력)')}</strong> &nbsp;${s} ~ ${e} &nbsp;| 대상 월: ${[...new Set(ms)].map(m=>m+'월').join(', ')}`;
+    } else { box.style.display='none'; }
+  }); });
+}
+
+async function resetExchanges(){
+  if(!ensureAdmin()) return;
+  if(!exchanges.length){ alert('초기화할 수업 결·보강 현황이 없습니다.'); return; }
+  if(!confirm('모든 수업 결·보강 현황을 초기화할까요? 이 작업은 되돌릴 수 없습니다.')) return;
+  try{
+    const result = await apiPost('resetExchanges', {password:getAdminPassword()});
+    if(!result.ok) throw new Error(result.message || '초기화에 실패했습니다.');
+    applyServerBundle(result);
+    alert('모든 수업 결·보강 현황이 초기화되었습니다.');
+  }catch(err){ alert(err.message || '초기화에 실패했습니다.'); }
+}
+
+async function initApp(){
+  const searchInput = document.getElementById('searchTeacher');
+  if(searchInput && typeof searchInput.value === 'string') searchInput.value = searchInput.value.trim();
+  applySemesterConfig(); // 학기 설정 먼저 적용
+  initSelectors();
+  const eventStartDate = document.getElementById('eventStartDate');
+  const eventEndDate = document.getElementById('eventEndDate');
+  if(eventStartDate) eventStartDate.value = today();
+  if(eventEndDate) eventEndDate.value = today();
+  updateClassOptions();
+  updateEventPeriodOptions();
+  toggleEventPeriodField();
+  updateEventPreview();
+  renderAdminControls();
+  renderImmediately();
+  refreshRemoteData({silent:false, force:true}).catch(err=>{
+    console.error(err);
+  });
+  if(syncTimer) clearInterval(syncTimer);
+  syncTimer = setInterval(()=>refreshRemoteData({silent:false, force:false}).catch(()=>{}), 15000);
+}
+
+// ── JS 기반 tooltip (overflow:hidden 우회, position:fixed) ──────────
+(function(){
+  const TIP_ID = '__cellTip__';
+  let tip = null;
+  let hideTimer = null;
+
+  function getOrCreateTip(){
+    if(!tip){
+      tip = document.createElement('div');
+      tip.id = TIP_ID;
+      tip.style.cssText = [
+        'position:fixed',
+        'z-index:9999',
+        'background:rgba(15,23,42,.93)',
+        'color:#fff',
+        'padding:6px 11px',
+        'border-radius:8px',
+        'font-size:12px',
+        'font-weight:700',
+        'font-family:\'Noto Sans KR\',sans-serif',
+        'white-space:nowrap',
+        'pointer-events:none',
+        'box-shadow:0 4px 16px rgba(0,0,0,.28)',
+        'opacity:0',
+        'transition:opacity .12s',
+        'line-height:1.5',
+      ].join(';');
+      document.body.appendChild(tip);
+    }
+    return tip;
+  }
+
+  function showTip(el, text, e){
+    clearTimeout(hideTimer);
+    const t = getOrCreateTip();
+    t.textContent = text;
+    t.style.opacity = '0';
+    t.style.display = 'block';
+
+    // 색상을 셀 종류에 따라 변경
+    if(el.classList.contains('makeup-display'))      t.style.background = 'rgba(76,29,149,.95)';
+    else if(el.classList.contains('applied'))        t.style.background = 'rgba(120,53,15,.95)';
+    else if(el.classList.contains('blocked'))        t.style.background = 'rgba(100,116,139,.95)';
+    else if(el.classList.contains('empty'))          t.style.background = 'rgba(71,85,105,.95)';
+    else                                             t.style.background = 'rgba(15,23,42,.93)';
+
+    positionTip(t, e);
+    requestAnimationFrame(()=>{ t.style.opacity = '1'; });
+  }
+
+  function positionTip(t, e){
+    const W = window.innerWidth, H = window.innerHeight;
+    const tw = t.offsetWidth || 160;
+    const th = t.offsetHeight || 32;
+    let x = e.clientX - tw/2;
+    let y = e.clientY - th - 10;
+    if(x < 8) x = 8;
+    if(x + tw > W - 8) x = W - tw - 8;
+    if(y < 8) y = e.clientY + 20; // 위 공간 없으면 아래로
+    t.style.left = x + 'px';
+    t.style.top  = y + 'px';
+  }
+
+  function hideTip(){
+    hideTimer = setTimeout(()=>{
+      if(tip){ tip.style.opacity='0'; setTimeout(()=>{ if(tip) tip.style.display='none'; },120); }
+    }, 80);
+  }
+
+  // 이벤트 위임: document에서 data-tooltip 셀 감지
+  document.addEventListener('mouseover', e=>{
+    const el = e.target.closest('[data-tooltip]');
+    if(el && el.classList.contains('cell')){
+      showTip(el, el.getAttribute('data-tooltip'), e);
+    }
+  });
+  document.addEventListener('mousemove', e=>{
+    if(tip && tip.style.opacity==='1'){
+      const el = e.target.closest('[data-tooltip]');
+      if(el && el.classList.contains('cell')) positionTip(tip, e);
+    }
+  });
+  document.addEventListener('mouseout', e=>{
+    const el = e.target.closest('[data-tooltip]');
+    if(el && el.classList.contains('cell')) hideTip();
+  });
+})();
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  initApp();
+});
+window.addEventListener('pageshow', ()=>{
+  renderImmediately();
+  refreshRemoteData({silent:false, force:true}).catch(()=>{});
+});
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='visible'){
+    clearTimeout(visibilityDebounce);
+    visibilityDebounce = setTimeout(()=>{
+      renderImmediately();
+      refreshRemoteData({silent:false, force:false}).catch(()=>{});
+    }, 200);
+  }
+});
+
+// ══════════════════════════════════════════════════
+// 수업 교체·보강 계획서 출력 시스템 v3
+// ══════════════════════════════════════════════════
+
+const REASONS_EXCHANGE = ['연가','병가','특별휴가','출장','조퇴','외출','지참','자녀돌봄','기타'];
+const REASONS_MAKEUP   = ['연가','병가','특별휴가','출장','조퇴','외출','지참','육아돌봄','기타'];
+
+let _printExchangeId  = null;
+let _printTeacher     = null;
+let _printKind        = null;
+let _selectedReasons  = new Set();
+let _printSubmitter   = null;   // 교환 계획서 제출교사 (tA or tB)
+
+// ── 단일 출력 진입 ──────────────────────────────
+function openPrintModal(id){
+  const e = exchanges.find(x=>x.id===id);
+  if(!e){ alert('해당 신청을 찾을 수 없습니다.'); return; }
+  _printExchangeId = id;
+  _printTeacher    = null;
+  _printKind       = e.kind;
+  _selectedReasons = new Set();
+  _printSubmitter  = e.kind==='makeup' ? e.originalTeacher : e.tA; // 기본값
+  _openPrintModalCommon(e.kind==='makeup');
+}
+
+// ── 교사별 묶음 출력 진입 ──
+function openPrintModalByTeacher(teacherName, kind){
+  _printExchangeId = null;
+  _printTeacher    = teacherName;
+  _printKind       = kind; // 'exchange' | 'makeup' | 'both'
+  _selectedReasons = new Set();
+  _printSubmitter  = teacherName;
+  // 'both'이면 사유 칩은 교환 기준으로 표시 (인쇄 시 두 양식 모두 출력)
+  _openPrintModalCommon(kind==='makeup');
+}
+
+function _openPrintModalCommon(isMakeup){
+  const isBoth = _printKind === 'both';
+  document.getElementById('printModalTitle').innerHTML =
+    `<i class="fa-solid fa-print"></i> ${isBoth ? '수업 교체 + 보강 계획서' : isMakeup ? '수업 보강 계획서' : '수업 교체 계획서'} 출력`;
+
+  // 교환 계획서 단일 출력 시에만 제출교사 선택 표시
+  const submitterSection = document.getElementById('submitterSection');
+  const submitterGrid    = document.getElementById('submitterGrid');
+
+  if(!isMakeup && !isBoth && _printExchangeId){
+    const e = exchanges.find(x=>x.id===_printExchangeId);
+    if(e){
+      submitterGrid.innerHTML = [
+        {name: e.tA, label: `${e.tA} (${e.dayA}요일 ${e.pA}교시 · ${e.subA})`},
+        {name: e.tB, label: `${e.tB} (${e.dayB}요일 ${e.pB}교시 · ${e.subB})`},
+      ].map(opt=>`
+        <div class="reason-chip ${_printSubmitter===opt.name?'on':''}"
+             onclick="selectSubmitter('${opt.name}')">
+          <i class="fa-solid fa-user" style="font-size:10px;"></i> ${escapeHtml(opt.label)}
+        </div>`).join('');
+      submitterSection.style.display = '';
+    }
+  } else {
+    submitterSection.style.display = 'none';
+    submitterGrid.innerHTML = '';
+  }
+
+  // 사유 칩: both이면 교환 사유 기준으로 표시 (두 양식에 동일 적용)
+  const reasons = isMakeup ? REASONS_MAKEUP : REASONS_EXCHANGE;
+  document.getElementById('reasonGrid').innerHTML = reasons.map(r=>`
+    <div class="reason-chip" id="rc-${r}" onclick="toggleReason('${r}')">
+      ${r}
+    </div>`).join('');
+
+  _refreshPlanPreview();
+  document.getElementById('printOverlay').classList.add('on');
+}
+
+function closePrintModal(){
+  document.getElementById('printOverlay').classList.remove('on');
+  _printExchangeId = null; _printTeacher = null; _printKind = null;
+  _selectedReasons = new Set(); _printSubmitter = null;
+}
+
+// ── 제출교사 선택 ──────────────────────────────
+function selectSubmitter(name){
+  _printSubmitter = name;
+  // 칩 활성화 업데이트
+  document.querySelectorAll('#submitterGrid .reason-chip').forEach(el=>{
+    el.classList.toggle('on', el.textContent.trim().startsWith(name));
+  });
+  _refreshPlanPreview();
+}
+
+// ── 사유 토글 (DOM 유지, 클래스만 변경) ──────────
+function toggleReason(r){
+  if(_selectedReasons.has(r)) _selectedReasons.delete(r);
+  else _selectedReasons.add(r);
+
+  // 칩 DOM은 그대로 두고 클래스만 변경 → 미리보기만 갱신
+  const chip = document.getElementById('rc-'+r);
+  if(chip) chip.classList.toggle('on', _selectedReasons.has(r));
+
+  _refreshOnlyReasonCells(); // 테이블 전체 재빌드 대신 사유 셀만 갱신
+}
+
+// ── 사유 셀만 빠르게 업데이트 ────────────────────
+function _refreshOnlyReasonCells(){
+  const isMakeup = _printKind === 'makeup';
+  const reasons  = isMakeup ? REASONS_MAKEUP : REASONS_EXCHANGE;
+  const cells    = document.querySelectorAll('#planPreviewWrap .plan-reason-cell');
+  if(cells.length !== reasons.length){
+    // 테이블이 아직 없으면 전체 갱신
+    _refreshPlanPreview(); return;
+  }
+  cells.forEach((cell, i)=>{
+    const r = reasons[i];
+    const on = _selectedReasons.has(r);
+    const checkEl = cell.querySelector('.plan-reason-check');
+    if(checkEl) checkEl.textContent = on ? 'O' : '';
+    cell.style.color = on ? '#C00' : '';
+    cell.style.fontWeight = on ? '900' : '';
+  });
+}
+
+function _refreshPlanPreview(){
+  const wrap = document.getElementById('planPreviewWrap');
+  if(!wrap) return;
+  wrap.innerHTML = _buildPlanHTML();
+}
+
+// ── 계획서 HTML 조립 ─────────────────────────────
+// ── 공통 인쇄 CSS ─────────────────────────────────
+const PRINT_CSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap');
+  @page { size:A4 portrait; margin:12mm 10mm; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Noto Sans KR',sans-serif; background:#fff; }
+
+  /* ── 양식 공통 ── */
+  .plan-form { width:100%; border:2px solid #000; font-size:10px; margin-bottom:14px; }
+  .plan-form + .plan-form { margin-top:0; }
+  .plan-title-box {
+    text-align:center; border-bottom:2px solid #000; padding:10px 0 8px;
+  }
+  .plan-title-box h2 { font-size:22px; font-weight:900; letter-spacing:2px; display:inline-block; padding:4px 24px; border:1.5px solid #000; }
+  .plan-title-box h2 em { color:#C00; font-style:normal; }
+  .plan-desc-row { font-size:9.5px; color:#C00; font-weight:700; padding:4px 8px; border-bottom:1px solid #999; }
+  .plan-check-hint { font-size:9px; color:#333; padding:3px 8px; border-bottom:1px solid #999; }
+
+  /* ── 사유 + 제출교사 행 ── */
+  .plan-reason-row { display:flex; align-items:stretch; border-bottom:2px solid #000; }
+  .plan-reason-cells { display:flex; flex:1; }
+  .plan-reason-cell {
+    flex:1; text-align:center; padding:5px 1px;
+    border-right:1px solid #999; font-size:9.5px; font-weight:600;
+  }
+  .plan-reason-cell:last-child { border-right:none; }
+  .plan-reason-check { font-size:14px; font-weight:900; display:block; margin-top:2px; color:#C00; }
+  .plan-submitter {
+    min-width:150px; text-align:center; padding:6px 10px;
+    font-size:12px; font-weight:700;
+    border-left:2px solid #000;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ── 표 ── */
+  .plan-table { width:100%; border-collapse:collapse; }
+  .plan-table th {
+    background:#EEF2F7 !important; font-size:9.5px; font-weight:800;
+    text-align:center; padding:5px 2px; border:1px solid #999;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .plan-table td {
+    font-size:9.5px; text-align:center;
+    padding:4px 2px; border:1px solid #ccc; height:28px;
+  }
+  .no-col { width:22px; background:#F8FAFC !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .arrow-col { width:18px; }
+  .arrow-td { font-weight:900; font-size:11px; color:#555; }
+
+  /* ── 구분선 (교환↔보강 사이) ── */
+  .plan-divider {
+    border:none; border-top:2px dashed #aaa;
+    margin:10px 0;
+  }
+`;
+
+// ── 양식 HTML 빌더 ────────────────────────────────
+function _buildFormHTML(kind, dataRows, submitter, reasons, selectedReasons){
+  const isMakeup = kind === 'makeup';
+  const titleWord = isMakeup ? '보강' : '교체';
+  const desc = isMakeup
+    ? '보강은 다른 선생님이 결강 수업에 대신 들어가는 것입니다. (타학과 교사가 보강 시에는 반드시 보강자료 첨부)'
+    : '교체는 출장, 연가 등으로 인해 자신의 수업을 다른 요일이나 다른 시간으로 바꾸는 것입니다.';
+
+  const reasonCells = reasons.map(r => {
+    const on = selectedReasons.has(r);
+    return `<div class="plan-reason-cell">${r}<span class="plan-reason-check">${on?'O':''}</span></div>`;
+  }).join('');
+
+  const thead = isMakeup
+    ? `<tr><th class="no-col">No</th><th>월/일</th><th>요일</th><th>학년-반</th><th>교시</th><th>결강과목</th><th class="arrow-col">→</th><th>보강교사</th></tr>`
+    : `<tr><th class="no-col">No</th><th>월/일</th><th>요일</th><th>학년-반</th><th>교시</th><th>교체과목</th><th class="arrow-col">⇔</th><th>월/일</th><th>요일</th><th>교시</th><th>학년-반</th><th>과목</th><th>교환교사</th></tr>`;
+
+  const tbody = isMakeup ? _buildMakeupTbody(dataRows) : _buildExchangeTbody(dataRows, submitter);
+
+  return `<div class="plan-form">
+    <div class="plan-title-box"><h2>수업 <em>${titleWord}</em> 계획서</h2></div>
+    <div class="plan-desc-row">${desc}</div>
+    <div class="plan-check-hint">해당 되는 내용에 체크(O)해주세요.</div>
+    <div class="plan-reason-row">
+      <div class="plan-reason-cells">${reasonCells}</div>
+      <div class="plan-submitter">제출교사 : <strong style="margin-left:4px;">${escapeHtml(submitter)}</strong></div>
+    </div>
+    <table class="plan-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table>
+  </div>`;
+}
+
+// ── 미리보기용 HTML (모달) ────────────────────────
+function _buildPlanHTML(){
+  const isMakeup = _printKind === 'makeup';
+  let dataRows = [], submitter = _printSubmitter || '';
+
+  if(_printExchangeId){
+    const e = exchanges.find(x=>x.id===_printExchangeId);
+    if(!e) return '<p style="color:red;padding:20px;">데이터 없음</p>';
+    dataRows = [e];
+    if(!submitter) submitter = isMakeup ? e.originalTeacher : e.tA;
+  } else if(_printTeacher){
+    dataRows = isMakeup
+      ? exchanges.filter(x=>x.kind==='makeup' && x.originalTeacher===_printTeacher && x.status!=='취소' && x.status!=='보강반려')
+      : exchanges.filter(x=>x.kind!=='makeup' && x.tA===_printTeacher && x.status!=='취소' && x.status!=='반려');
+    if(!submitter) submitter = _printTeacher;
+  }
+
+  if(!dataRows.length) return '<p style="color:#94A3B8;text-align:center;padding:20px;">출력할 데이터가 없습니다.</p>';
+
+  const reasons = isMakeup ? REASONS_MAKEUP : REASONS_EXCHANGE;
+  return _buildFormHTML(isMakeup?'makeup':'exchange', dataRows, submitter, reasons, _selectedReasons);
+}
+
+// ── 보강 tbody ────────────────────────────────────
+function _buildMakeupTbody(rows){
+  let html = '';
+  for(let i=0; i<7; i++){
+    const e = rows[i];
+    if(e){
+      const [,m,d] = (e.date||e.dateA||'').split('-');
+      html += `<tr>
+        <td class="no-col">${i+1}</td>
+        <td>${m||''}/${d||''}</td><td>${e.day||''}</td>
+        <td>${escapeHtml(e.cls||e.clsA||'')}</td><td>${e.period||e.pA||''}</td>
+        <td>${escapeHtml(e.subject||e.subA||'')}</td>
+        <td class="arrow-td">→</td>
+        <td>${escapeHtml(e.subTeacher||e.tB||'')}</td></tr>`;
+    } else {
+      html += `<tr><td class="no-col">${i+1}</td><td></td><td></td><td></td><td></td><td></td><td class="arrow-td">→</td><td></td></tr>`;
+    }
+  }
+  return html;
+}
+
+// ── 교환 tbody ────────────────────────────────────
+function _buildExchangeTbody(rows, submitter){
+  let html = '';
+  for(let i=0; i<7; i++){
+    const e = rows[i];
+    if(e){
+      const isA = !submitter || e.tA === submitter;
+      const [,mL,dL] = ((isA?e.dateA:e.dateB)||'').split('-');
+      const [,mR,dR] = ((isA?e.dateB:e.dateA)||'').split('-');
+      html += `<tr>
+        <td class="no-col">${i+1}</td>
+        <td>${mL||''}/${dL||''}</td><td>${isA?e.dayA:e.dayB}</td>
+        <td>${isA?e.clsA:e.clsB}</td><td>${isA?e.pA:e.pB}</td>
+        <td>${escapeHtml(isA?e.subA:e.subB)}</td>
+        <td class="arrow-td">⇔</td>
+        <td>${mR||''}/${dR||''}</td><td>${isA?e.dayB:e.dayA}</td>
+        <td>${isA?e.pB:e.pA}</td><td>${isA?e.clsB:e.clsA}</td>
+        <td>${escapeHtml(isA?e.subB:e.subA)}</td>
+        <td>${escapeHtml(isA?e.tB:e.tA)}</td></tr>`;
+    } else {
+      html += `<tr><td class="no-col">${i+1}</td><td></td><td></td><td></td><td></td><td></td><td class="arrow-td">⇔</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+    }
+  }
+  return html;
+}
+
+// ── 실제 인쇄 ─────────────────────────────────────
+function doPrint(){
+  // 출력 대상 데이터 수집
+  let exchangeRows = [], makeupRows = [];
+  let exchangeSubmitter = _printSubmitter || '';
+  let makeupSubmitter   = _printSubmitter || '';
+
+  if(_printExchangeId){
+    const e = exchanges.find(x=>x.id===_printExchangeId);
+    if(!e){ alert('데이터를 찾을 수 없습니다.'); return; }
+    if(e.kind==='makeup'){
+      makeupRows = [e];
+      makeupSubmitter = e.originalTeacher;
+    } else {
+      exchangeRows = [e];
+      exchangeSubmitter = exchangeSubmitter || e.tA;
+    }
+  } else if(_printTeacher){
+    // 'both' 또는 개별 kind 모두 교환+보강 전부 수집
+    exchangeRows = exchanges.filter(x=>x.kind!=='makeup' && x.tA===_printTeacher && x.status!=='취소' && x.status!=='반려');
+    makeupRows   = exchanges.filter(x=>x.kind==='makeup' && x.originalTeacher===_printTeacher && x.status!=='취소' && x.status!=='보강반려');
+    exchangeSubmitter = makeupSubmitter = _printTeacher;
+  }
+
+  // 제출교사 결정 (데이터 있는 쪽에서 가져옴)
+  const submitter = exchangeSubmitter || makeupSubmitter ||
+    (exchangeRows[0] ? exchangeRows[0].tA : '') ||
+    (makeupRows[0]   ? makeupRows[0].originalTeacher : '');
+
+  // ── 항상 교환 위 + 보강 아래 두 양식 모두 출력 ──
+  // 데이터 없는 양식은 빈 행으로 채움
+  const exchangeForm = _buildFormHTML('exchange', exchangeRows, submitter, REASONS_EXCHANGE, _selectedReasons);
+  const makeupForm   = _buildFormHTML('makeup',   makeupRows,   submitter, REASONS_MAKEUP,   _selectedReasons);
+
+  const printArea = document.getElementById('printArea');
+  printArea.innerHTML = `<style>${PRINT_CSS}</style>
+    ${exchangeForm}
+    <hr class="plan-divider">
+    ${makeupForm}`;
+
+  window.onafterprint = ()=>{ printArea.innerHTML=''; };
+  closePrintModal();
+  setTimeout(()=>window.print(), 100);
+}
+
+</script>
+</body>
