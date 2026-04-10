@@ -829,6 +829,38 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
   <!-- 행사 추가 탭 -->
   <div class="page" id="page-event">
+    <!-- 공휴일 자동 등록 -->
+    <div class="form-card" style="margin-bottom:20px;">
+      <div class="card-title"><i class="fa-solid fa-calendar-xmark" style="color:#EF4444;"></i> 법정공휴일 자동 등록</div>
+      <div class="card-subtitle">한국 법정공휴일(대체공휴일 포함)을 자동으로 가져와 등록합니다. 월~금에 해당하는 날만 전체학년 하루 전체 행사로 일괄 등록됩니다.</div>
+      <div style="display:grid;grid-template-columns:120px 120px 1fr auto;gap:12px;align-items:end;margin-bottom:12px;">
+        <div class="field">
+          <label><i class="fa-regular fa-calendar"></i> 연도</label>
+          <select id="holidayYear" style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:12px;font-size:13px;font-family:'Noto Sans KR',sans-serif;"></select>
+        </div>
+        <div class="field">
+          <label><i class="fa-solid fa-key"></i> API 키</label>
+          <input type="text" id="holidayApiKey" placeholder="공공데이터 API 키" style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:12px;font-size:11px;font-family:'Noto Sans KR',sans-serif;">
+        </div>
+        <div id="holidayPreviewBox" style="background:#F8FAFC;border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:11px;color:var(--text2);min-height:46px;display:flex;align-items:center;">
+          API 키를 입력하고 공휴일을 가져오세요
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <button class="btn btn-blue" style="white-space:nowrap;padding:10px 16px;" onclick="fetchHolidays()">
+            <i class="fa-solid fa-cloud-arrow-down"></i> 가져오기
+          </button>
+          <button class="btn" id="holidayRegisterBtn" style="display:none;white-space:nowrap;padding:10px 16px;background:linear-gradient(135deg,#EF4444,#DC2626);color:#fff;border:none;" onclick="registerHolidays()">
+            <i class="fa-solid fa-calendar-plus"></i> 일괄 등록
+          </button>
+        </div>
+      </div>
+      <div id="holidayList" style="display:none;max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;padding:8px;background:#fff;"></div>
+      <div style="margin-top:8px;font-size:11px;color:#94A3B8;display:flex;align-items:center;gap:5px;">
+        <i class="fa-solid fa-circle-info"></i>
+        API 키는 <a href="https://www.data.go.kr" target="_blank" style="color:#2563EB;">data.go.kr</a> → "한국천문연구원 특일 정보" 검색 → 활용신청 후 발급 (무료)
+      </div>
+    </div>
+
     <div class="event-layout">
       <div class="form-card">
         <div class="card-title"><i class="fa-solid fa-calendar-plus"></i> 행사 추가</div>
@@ -1179,6 +1211,7 @@ async function requestAdminLogin(){
     sessionStorage.setItem(ADMIN_SESSION_KEY + '_pw', password);
     renderAdminControls();
     renderReq();
+    _lastBadgeHash = ''; updateBadges(); // 뱃지 즉시 갱신
     alert('관리자 모드가 활성화되었습니다.');
   }catch(err){
     alert(err.message || '관리자 인증에 실패했습니다.');
@@ -1190,6 +1223,7 @@ function logoutAdminMode(){
   sessionStorage.removeItem(ADMIN_SESSION_KEY + '_pw');
   renderAdminControls();
   renderReq();
+  _lastBadgeHash = ''; updateBadges(); // 뱃지 즉시 갱신
 }
 function getAdminPassword(){
   return sessionStorage.getItem(ADMIN_SESSION_KEY + '_pw') || '';
@@ -2323,6 +2357,7 @@ function openDateStep(){
     const rangeStart = today() > semStart ? today() : semStart;
     const startD = parseDateLocal(rangeStart);
     const endD   = parseDateLocal(semEnd);
+    endD.setHours(23, 59, 59, 999); // 종료일 당일 포함
     const dates = [];
     // rangeStart부터 학기 끝까지 해당 요일 모두 수집
     let cur = new Date(startD);
@@ -2721,9 +2756,9 @@ function updateBadges(){
     _lastBadgeHash = bHash;
     el.innerHTML=wc?`<span class="badge-cnt" style="font-size:10px;padding:1px 6px;">${wc}</span>`:'';
     const eventBadge=document.getElementById('eventCnt');
-    if(eventBadge) eventBadge.innerHTML=ec?`<span class="badge-cnt" style="font-size:10px;padding:1px 6px;">${ec}</span>`:'';
+    if(eventBadge) eventBadge.innerHTML=(ec && isAdminMode)?`<span class="badge-cnt" style="font-size:10px;padding:1px 6px;">${ec}</span>`:'';
     const blockBadge=document.getElementById('blockCnt');
-    if(blockBadge) blockBadge.innerHTML=bc?`<span class="badge-cnt" style="font-size:10px;padding:1px 6px;">${bc}</span>`:'';
+    if(blockBadge) blockBadge.innerHTML=(bc && isAdminMode)?`<span class="badge-cnt" style="font-size:10px;padding:1px 6px;">${bc}</span>`:'';
     const rb=document.getElementById('reqCntBadge');
     if(wc){rb.textContent=wc+' 건 대기';rb.style.display='';}else rb.style.display='none';
     const info = getSelectedWeekInfo();
@@ -2760,6 +2795,7 @@ function goTab(name){
     toggleEventPeriodField();
     updateEventPreview();
     renderEvents();
+    initHolidayUI();
   }
   if(name==='block'){
     initBlockForm();
@@ -2898,6 +2934,93 @@ async function cancelExchange(id){
     scheduleRenderAll();
     alert(err.message || '취소에 실패했습니다.');
   });
+}
+
+// ── 법정공휴일 자동 등록 ─────────────────────────────────────
+let _fetchedHolidays = [];
+
+function initHolidayUI(){
+  const sel = document.getElementById('holidayYear');
+  if(!sel) return;
+  const year = getSemesterYear();
+  sel.innerHTML = [year-1, year, year+1].map(y=>`<option value="${y}" ${y===year?'selected':''}>${y}년</option>`).join('');
+  const saved = localStorage.getItem('holidayApiKey');
+  if(saved){ const k=document.getElementById('holidayApiKey'); if(k) k.value=saved; }
+}
+
+async function fetchHolidays(){
+  if(!ensureAdmin()) return;
+  const apiKey = (document.getElementById('holidayApiKey')?.value||'').trim();
+  const year   = document.getElementById('holidayYear')?.value || getSemesterYear();
+  if(!apiKey){ alert('API 키를 입력해주세요.\ndata.go.kr → "한국천문연구원 특일 정보" 검색 후 무료 발급'); return; }
+  localStorage.setItem('holidayApiKey', apiKey);
+  const box  = document.getElementById('holidayPreviewBox');
+  const list = document.getElementById('holidayList');
+  box.textContent = '불러오는 중...';
+  _fetchedHolidays = [];
+  try {
+    const DAYS = ['일','월','화','수','목','금','토'];
+    const allHolidays = [];
+    for(let month = 1; month <= 12; month++){
+      const mm = String(month).padStart(2,'0');
+      const url = `https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo?serviceKey=${encodeURIComponent(apiKey)}&solYear=${year}&solMonth=${mm}&numOfRows=20&_type=json`;
+      const res  = await fetch(url);
+      const json = await res.json();
+      const items = json?.response?.body?.items?.item;
+      if(!items) continue;
+      const arr = Array.isArray(items) ? items : [items];
+      arr.forEach(h => {
+        const dateStr = String(h.locdate);
+        const isoDate = `${dateStr.slice(0,4)}-${dateStr.slice(4,6)}-${dateStr.slice(6,8)}`;
+        const dow = new Date(`${isoDate}T00:00:00`).getDay();
+        if(dow >= 1 && dow <= 5){
+          allHolidays.push({ date: isoDate, name: String(h.dateName), dow: DAYS[dow] });
+        }
+      });
+    }
+    const { start, end } = getSemesterDateRange();
+    const inSemester = allHolidays.filter(h => h.date >= start && h.date <= end);
+    _fetchedHolidays = inSemester;
+    if(!inSemester.length){
+      box.textContent = `${year}년 학기 중 평일 공휴일이 없습니다.`;
+      list.style.display='none';
+      document.getElementById('holidayRegisterBtn').style.display='none';
+      return;
+    }
+    box.innerHTML = `<span style="color:#EF4444;font-weight:700;">${inSemester.length}개</span> 평일 공휴일 발견 (${start} ~ ${end})`;
+    list.style.display='block';
+    list.innerHTML = inSemester.map(h=>`<div style="display:flex;align-items:center;gap:10px;padding:5px 8px;border-bottom:1px solid #F1F5F9;"><span style="font-size:11px;color:#94A3B8;min-width:90px;">${h.date} (${h.dow})</span><span style="font-size:12px;font-weight:700;color:#EF4444;">${escapeHtml(h.name)}</span></div>`).join('');
+    document.getElementById('holidayRegisterBtn').style.display='';
+  } catch(err) {
+    box.innerHTML = `<span style="color:#EF4444;">오류: ${escapeHtml(err.message)}</span>`;
+  }
+}
+
+async function registerHolidays(){
+  if(!ensureAdmin()) return;
+  if(!_fetchedHolidays.length){ alert('먼저 공휴일을 가져오세요.'); return; }
+  const existing = getActiveEvents();
+  const toAdd = _fetchedHolidays.filter(h=>!existing.some(e=>isDateWithinRange(h.date,e.startDate,e.endDate)&&String(e.grade)==='all'&&e.scope==='day'));
+  if(!toAdd.length){ alert('모든 공휴일이 이미 등록되어 있습니다.'); return; }
+  if(!confirm(`${toAdd.length}개 공휴일을 전체학년 하루 전체 행사로 등록합니다.\n\n${toAdd.map(h=>`${h.date} ${h.name}`).join('\n')}`)) return;
+  const btn = document.getElementById('holidayRegisterBtn');
+  btn.disabled=true; btn.textContent='등록 중...';
+  let ok=0, fail=0;
+  for(const h of toAdd){
+    const record = normalizeEvent({id:genEventId(),createdAt:today(),startDate:h.date,endDate:h.date,grade:'all',classNo:'all',scope:'day',period:null,name:h.name,status:'적용'});
+    try{
+      const result = await apiPost('addEvent',{password:getAdminPassword(),record});
+      if(result.ok){ applyServerBundle(result,{silent:true}); ok++; } else fail++;
+    }catch(e){ fail++; }
+  }
+  btn.disabled=false;
+  btn.innerHTML='<i class="fa-solid fa-calendar-plus"></i> 일괄 등록';
+  alert(`등록 완료!\n성공: ${ok}개${fail?`\n실패: ${fail}개`:''}`);
+  _fetchedHolidays=[];
+  document.getElementById('holidayList').style.display='none';
+  document.getElementById('holidayRegisterBtn').style.display='none';
+  document.getElementById('holidayPreviewBox').textContent='등록 완료!';
+  renderEvents();
 }
 
 async function saveSemesterConfig(){
