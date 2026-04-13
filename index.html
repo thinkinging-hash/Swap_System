@@ -1321,9 +1321,276 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 ══════════════════════════════════════════ */
 /* ── 유틸 ────── */
 .topbar{background:linear-gradient(135deg,#1E3A8A 0%,#1D4ED8 55%,#2563EB 100%);box-shadow:0 4px 24px rgba(30,64,175,.35);position:sticky;top:0;z-index:10;}
+
+/* ══════════════════════════════════════════
+   로그인 / 마이페이지 / 회원관리 스타일
+══════════════════════════════════════════ */
+#loginScreen{
+  display:none;position:fixed;inset:0;
+  background:linear-gradient(135deg,#1E3A8A 0%,#1D4ED8 50%,#2563EB 100%);
+  z-index:9999;align-items:center;justify-content:center;
+  flex-direction:column;
+}
+#loginScreen.show{display:flex;}
+.login-box{
+  background:#fff;border-radius:24px;
+  padding:40px 36px 32px;
+  width:min(400px,90vw);
+  box-shadow:0 32px 80px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;align-items:center;
+}
+.login-logo{
+  width:64px;height:64px;border-radius:20px;
+  background:linear-gradient(135deg,#1E3A8A,#2563EB);
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;color:#fff;margin-bottom:16px;
+  box-shadow:0 8px 24px rgba(37,99,235,.35);
+}
+.login-school{font-size:11px;font-weight:700;color:#94A3B8;letter-spacing:.5px;margin-bottom:4px;}
+.login-title{font-size:20px;font-weight:900;color:#0F172A;margin-bottom:28px;text-align:center;}
+.login-field{width:100%;margin-bottom:14px;}
+.login-field label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:5px;}
+.login-field input{
+  width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:12px;
+  font-size:14px;font-family:'Noto Sans KR',sans-serif;outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+.login-field input:focus{border-color:#2563EB;box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+.login-btn{
+  width:100%;padding:14px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#1D4ED8,#1E40AF);color:#fff;
+  font-size:15px;font-weight:800;cursor:pointer;margin-top:6px;
+  font-family:'Noto Sans KR',sans-serif;
+  box-shadow:0 6px 20px rgba(29,78,216,.35);
+  transition:all .15s;
+}
+.login-btn:hover{background:linear-gradient(135deg,#1E40AF,#1E3A8A);transform:translateY(-1px);}
+.login-err{
+  color:#DC2626;font-size:12px;font-weight:700;
+  background:#FEE2E2;border-radius:8px;padding:8px 12px;
+  margin-top:10px;text-align:center;display:none;width:100%;
+}
+.login-err.show{display:block;}
+.user-badge{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.2);
+  padding:6px 12px;border-radius:12px;
+  font-size:12px;font-weight:700;color:#fff;
+  cursor:pointer;transition:background .14s;
+}
+.user-badge:hover{background:rgba(255,255,255,.25);}
+.user-badge i{font-size:14px;opacity:.9;}
+.mypage-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(15,23,42,.55);backdrop-filter:blur(4px);
+  z-index:500;align-items:center;justify-content:center;
+}
+.mypage-overlay.show{display:flex;}
+.mypage-modal{
+  background:#fff;border-radius:24px;
+  width:min(440px,90vw);
+  box-shadow:0 32px 80px rgba(0,0,0,.22);
+  overflow:hidden;
+}
+.mypage-head{
+  padding:18px 22px;
+  background:linear-gradient(135deg,#1E3A8A,#1D4ED8);
+  color:#fff;display:flex;align-items:center;justify-content:space-between;
+}
+.mypage-head h3{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.mypage-body{padding:22px;}
+.mypage-info-row{
+  display:flex;align-items:center;gap:14px;
+  background:#F0F7FF;border-radius:14px;padding:16px;margin-bottom:20px;
+}
+.mypage-avatar{
+  width:48px;height:48px;border-radius:16px;
+  background:linear-gradient(135deg,#1E3A8A,#2563EB);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:#fff;flex:0 0 48px;
+}
+.mypage-name{font-size:18px;font-weight:900;color:#0F172A;}
+.mypage-role{font-size:11px;color:#64748B;font-weight:600;margin-top:2px;}
+.mypage-section{margin-bottom:18px;}
+.mypage-section-title{font-size:12px;font-weight:700;color:#64748B;margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.mypage-field{margin-bottom:12px;}
+.mypage-field label{display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;}
+.mypage-field input{
+  width:100%;padding:10px 12px;border:1.5px solid #E2E8F0;border-radius:10px;
+  font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;transition:border-color .15s;
+}
+.mypage-field input:focus{border-color:#2563EB;}
+.mypage-foot{padding:14px 22px;border-top:1px solid #E2E8F0;background:#F8FAFC;display:flex;gap:8px;justify-content:flex-end;}
+.mypage-btn{
+  padding:9px 18px;border-radius:10px;border:none;
+  font-size:13px;font-weight:700;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;transition:all .14s;
+}
+.mypage-btn.primary{background:linear-gradient(135deg,#1D4ED8,#1E40AF);color:#fff;}
+.mypage-btn.primary:hover{background:linear-gradient(135deg,#1E40AF,#1E3A8A);}
+.mypage-btn.secondary{background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;}
+.mypage-btn.secondary:hover{background:#E2E8F0;}
+.mypage-btn.danger{background:#FEE2E2;color:#DC2626;}
+.mypage-btn.danger:hover{background:#FECACA;}
+.pw-msg{font-size:11px;margin-top:6px;font-weight:700;display:none;}
+.pw-msg.ok{color:#059669;display:block;}
+.pw-msg.err{color:#DC2626;display:block;}
+.member-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+.member-toolbar .search-inp{
+  flex:1;min-width:160px;padding:9px 12px;
+  border:1px solid var(--border);border-radius:var(--r);
+  font-size:12px;font-family:'Noto Sans KR',sans-serif;
+}
+.member-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:16px;background:#fff;box-shadow:var(--shadow);}
+.member-table{width:100%;border-collapse:collapse;min-width:560px;}
+.member-table th{
+  background:linear-gradient(180deg,#F1F5F9,#E8EDF5);
+  font-size:11px;font-weight:700;color:#475569;
+  padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);
+}
+.member-table td{padding:10px 12px;border-bottom:1px solid #F1F5F9;font-size:12px;vertical-align:middle;}
+.member-table tr:last-child td{border-bottom:none;}
+.member-table tr:hover td{background:#F8FAFF;}
+.pw-dot{color:#94A3B8;letter-spacing:2px;font-size:16px;}
+.badge-admin{background:#FEF3C7;color:#92400E;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:800;}
+.badge-teacher{background:#EFF6FF;color:#1E40AF;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:800;}
+.badge-role-clickable{cursor:pointer;transition:filter .14s,box-shadow .14s;user-select:none;}
+.badge-role-clickable:hover{filter:brightness(.9);box-shadow:0 0 0 2.5px rgba(0,0,0,.15);}
+.badge-role-clickable::after{content:' ✎';font-size:9px;opacity:.55;}
+.member-btn{padding:4px 10px;border-radius:8px;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .13s;}
+.member-btn.reset{background:#FEE2E2;color:#DC2626;}
+.member-btn.reset:hover{background:#FECACA;}
+.member-btn.del{background:#F1F5F9;color:#64748B;}
+.member-btn.del:hover{background:#E2E8F0;color:#DC2626;}
+/* 역할 변경 팝업 */
+.role-popup-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(3px);z-index:700;align-items:center;justify-content:center;}
+.role-popup-overlay.show{display:flex;}
+.role-popup{background:#fff;border-radius:20px;width:min(300px,88vw);box-shadow:0 24px 60px rgba(0,0,0,.22);overflow:hidden;}
+.role-popup-head{padding:15px 18px;background:linear-gradient(135deg,#1E3A8A,#1D4ED8);color:#fff;display:flex;align-items:center;justify-content:space-between;}
+.role-popup-head h4{font-size:14px;font-weight:800;display:flex;align-items:center;gap:7px;}
+.role-popup-body{padding:20px;}
+.role-popup-name{font-size:16px;font-weight:900;color:#0F172A;text-align:center;margin-bottom:6px;}
+.role-popup-cur{font-size:11px;color:#94A3B8;text-align:center;margin-bottom:16px;}
+.role-popup-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.role-option-btn{border:2px solid transparent;border-radius:14px;padding:16px 10px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:6px;background:#F8FAFC;color:#64748B;}
+.role-option-btn i{font-size:22px;}
+.role-option-btn.opt-teacher{background:#EFF6FF;color:#1E40AF;border-color:#BFDBFE;}
+.role-option-btn.opt-admin{background:#FEF3C7;color:#92400E;border-color:#FDE68A;}
+.role-option-btn.is-current{opacity:.38;cursor:default;pointer-events:none;border-style:dashed;}
+.role-option-btn:not(.is-current):hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.12);}
+.role-popup-foot{padding:12px 18px;border-top:1px solid #E2E8F0;background:#F8FAFC;text-align:right;}
+
+.member-add-form{background:#F8FAFC;border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:16px;}
+.member-add-form h4{font-size:13px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:6px;color:#0F172A;}
+.member-add-grid{display:grid;grid-template-columns:1fr 1fr auto auto;gap:10px;align-items:end;}
+.role-toggle{display:flex;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;height:40px;}
+.role-toggle-btn{flex:1;border:none;background:#F8FAFC;font-size:12px;font-weight:700;cursor:pointer;padding:0 14px;font-family:'Noto Sans KR',sans-serif;transition:all .14s;white-space:nowrap;color:#64748B;}
+.role-toggle-btn.active.teacher{background:#EFF6FF;color:#1E40AF;}
+.role-toggle-btn.active.admin{background:#FEF3C7;color:#92400E;}
+.role-toggle-btn:not(.active):hover{background:#F1F5F9;}
+.member-add-grid .field label{display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;}
+.member-add-grid .field input{
+  width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;
+  font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none;transition:border-color .15s;
+}
+.member-add-grid .field input:focus{border-color:#2563EB;}
+.import-xlsx-area{
+  border:2px dashed #CBD5E1;border-radius:12px;padding:18px;
+  text-align:center;color:#94A3B8;cursor:pointer;background:#F8FAFC;
+  transition:all .14s;margin-bottom:12px;
+}
+.import-xlsx-area:hover{border-color:#93C5FD;background:#F0F7FF;}
+.import-xlsx-area i{font-size:28px;display:block;margin-bottom:8px;color:#CBD5E1;}
 </style>
 </head>
 <body>
+
+<!-- ══ 로그인 화면 ══ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo"><i class="fa-solid fa-school"></i></div>
+    <div class="login-school">대전생활과학고등학교</div>
+    <div class="login-title">수업 교환 시스템<br>로그인</div>
+    <div class="login-field">
+      <label><i class="fa-solid fa-user"></i> 아이디 (이름)</label>
+      <input type="text" id="loginId" placeholder="예: 홍길동" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('loginPw').focus()">
+    </div>
+    <div class="login-field">
+      <label><i class="fa-solid fa-lock"></i> 비밀번호</label>
+      <input type="password" id="loginPw" placeholder="비밀번호 입력" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()"><i class="fa-solid fa-right-to-bracket"></i> 로그인</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ══ 마이페이지 모달 ══ -->
+<div class="mypage-overlay" id="mypageOverlay" onclick="if(event.target===this)closeMypageModal()">
+  <div class="mypage-modal">
+    <div class="mypage-head">
+      <h3><i class="fa-solid fa-user-circle"></i> 마이페이지</h3>
+      <button class="panel-close" onclick="closeMypageModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="mypage-body">
+      <div class="mypage-info-row">
+        <div class="mypage-avatar"><i class="fa-solid fa-user-tie"></i></div>
+        <div>
+          <div class="mypage-name" id="mpName">-</div>
+          <div class="mypage-role" id="mpRole">교사</div>
+        </div>
+      </div>
+      <div class="mypage-section">
+        <div class="mypage-section-title"><i class="fa-solid fa-key"></i> 비밀번호 변경</div>
+        <div class="mypage-field">
+          <label>현재 비밀번호</label>
+          <input type="password" id="mpCurPw" placeholder="현재 비밀번호">
+        </div>
+        <div class="mypage-field">
+          <label>새 비밀번호</label>
+          <input type="password" id="mpNewPw" placeholder="새 비밀번호 (4자 이상)">
+        </div>
+        <div class="mypage-field">
+          <label>새 비밀번호 확인</label>
+          <input type="password" id="mpNewPw2" placeholder="새 비밀번호 재입력">
+        </div>
+        <div class="pw-msg" id="mpPwMsg"></div>
+      </div>
+    </div>
+    <div class="mypage-foot">
+      <button class="mypage-btn danger" onclick="doLogout()"><i class="fa-solid fa-right-from-bracket"></i> 로그아웃</button>
+      <button class="mypage-btn secondary" onclick="closeMypageModal()">닫기</button>
+      <button class="mypage-btn primary" onclick="saveMyPassword()"><i class="fa-solid fa-floppy-disk"></i> 비밀번호 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 역할 변경 팝업 ══ -->
+<div class="role-popup-overlay" id="rolePopupOverlay" onclick="if(event.target===this)closeRolePopup()">
+  <div class="role-popup">
+    <div class="role-popup-head">
+      <h4><i class="fa-solid fa-user-gear"></i> 권한 변경</h4>
+      <button class="panel-close" onclick="closeRolePopup()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="role-popup-body">
+      <div class="role-popup-name" id="rolePopupName"></div>
+      <div class="role-popup-cur" id="rolePopupCur"></div>
+      <div class="role-popup-options">
+        <button class="role-option-btn opt-teacher" id="roleOptTeacher" onclick="confirmRoleChange('teacher')">
+          <i class="fa-solid fa-chalkboard-user"></i>
+          교사
+        </button>
+        <button class="role-option-btn opt-admin" id="roleOptAdmin" onclick="confirmRoleChange('admin')">
+          <i class="fa-solid fa-shield-halved"></i>
+          관리자
+        </button>
+      </div>
+    </div>
+    <div class="role-popup-foot">
+      <button class="mypage-btn secondary" onclick="closeRolePopup()">취소</button>
+    </div>
+  </div>
+</div>
 
 <div class="topbar">
   <div class="topbar-brand">
@@ -1356,6 +1623,20 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <span id="todayTxt"></span>
       <span id="reqCntBadge" class="badge-cnt" style="display:none"></span>
     </div>
+    <div class="user-badge" id="userBadge" onclick="openMypageModal()" style="display:none">
+      <i class="fa-solid fa-user-circle"></i>
+      <span id="userBadgeName"></span>
+    </div>
+    <button id="logoutBtn" onclick="doLogout()" style="
+      display:none;border:none;background:rgba(255,255,255,.15);
+      border:1px solid rgba(255,255,255,.25);color:#fff;
+      font-size:12px;font-weight:700;padding:6px 12px;border-radius:12px;
+      cursor:pointer;font-family:'Noto Sans KR',sans-serif;
+      display:none;align-items:center;gap:5px;transition:background .14s;
+    " onmouseover="this.style.background='rgba(255,255,255,.28)'"
+       onmouseout="this.style.background='rgba(255,255,255,.15)'">
+      <i class="fa-solid fa-right-from-bracket" style="font-size:12px;"></i> 로그아웃
+    </button>
   </div>
 </div>
 
@@ -1366,6 +1647,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <div class="tab" onclick="goTab('hist')"><i class="fa-solid fa-chart-bar"></i> 수업 결·보강 현황</div>
   <div class="tab" onclick="goTab('event')"><i class="fa-solid fa-star"></i> 행사 추가 <span id="eventCnt"></span></div>
   <div class="tab" onclick="goTab('block')"><i class="fa-solid fa-ban"></i> 교환 불가 과목 <span id="blockCnt"></span></div>
+  <div class="tab" id="tabMember" onclick="goTab('member')" style="display:none"><i class="fa-solid fa-users-gear"></i> 회원관리</div>
 </div>
 
 <div class="body">
@@ -1602,6 +1884,57 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
     <div class="m-ct-wrap" id="mCTWrap"></div>
   </div>
 
+  <!-- 회원관리 탭 (관리자 전용) -->
+  <div class="page" id="page-member">
+    <div class="page-title"><i class="fa-solid fa-users-gear"></i> 회원관리</div>
+    <div class="page-subtitle">교사 계정을 추가·삭제하고 비밀번호를 초기화할 수 있습니다. 관리자만 접근 가능합니다.</div>
+    <div class="member-add-form">
+      <h4><i class="fa-solid fa-user-plus" style="color:#2563EB;"></i> 계정 추가</h4>
+      <div class="member-add-grid">
+        <div class="field"><label>이름 (아이디)</label><input type="text" id="newMemberId" placeholder="예: 홍길동"></div>
+        <div class="field"><label>초기 비밀번호</label><input type="text" id="newMemberPw" placeholder="기본값: 1234" value="1234"></div>
+        <div class="field">
+          <label>권한</label>
+          <div class="role-toggle" id="roleToggle">
+            <button class="role-toggle-btn teacher active" id="roleTeacherBtn" onclick="setRoleToggle('teacher')">👨‍🏫 교사</button>
+            <button class="role-toggle-btn admin" id="roleAdminBtn" onclick="setRoleToggle('admin')">🛡 관리자</button>
+          </div>
+        </div>
+        <button class="btn btn-blue" style="white-space:nowrap;padding:10px 18px;height:40px;" onclick="addMember()">
+          <i class="fa-solid fa-plus"></i> 추가
+        </button>
+      </div>
+    </div>
+    <div class="member-add-form" style="margin-top:-4px;">
+      <h4><i class="fa-solid fa-file-excel" style="color:#059669;"></i> 엑셀로 일괄 추가</h4>
+      <div class="import-xlsx-area" id="xlsxDropArea" onclick="document.getElementById('xlsxFileInput').click()">
+        <i class="fa-solid fa-file-arrow-up"></i>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px;">엑셀 파일을 클릭하거나 드래그하여 업로드</div>
+        <div style="font-size:11px;">A열: 이름(아이디), B열: 비밀번호 형식의 .xlsx/.xls/.csv 파일</div>
+      </div>
+      <input type="file" id="xlsxFileInput" style="display:none" accept=".xlsx,.xls,.csv" onchange="importMembersFromFile(this)">
+      <div id="xlsxPreview" style="display:none;"></div>
+    </div>
+    <div class="member-toolbar">
+      <input class="search-inp" type="text" id="memberSearch" placeholder="이름 검색..." oninput="renderMemberTable()">
+      <span id="memberCntBadge" style="font-size:12px;font-weight:700;color:#64748B;"></span>
+    </div>
+    <div class="member-table-wrap">
+      <table class="member-table">
+        <thead>
+          <tr>
+            <th style="width:32px;">No</th>
+            <th>이름 (아이디)</th>
+            <th>비밀번호</th>
+            <th>역할</th>
+            <th style="width:220px;text-align:center;">관리</th>
+          </tr>
+        </thead>
+        <tbody id="memberTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 <!-- 출력 모달 -->
@@ -1722,7 +2055,17 @@ function normalizeBlockedItem(item){
     status: item.status || '적용'
   };
 }
-function save(){}
+function save(){
+  // 로컬(file://) 환경에서는 localStorage에 exchanges/events/blocked 저장
+  if(window.location.protocol === 'file:' || !isApiConfigured()){
+    try{
+      localStorage.setItem('school_exchanges', JSON.stringify(exchanges));
+      localStorage.setItem('school_events',    JSON.stringify(events));
+      localStorage.setItem('school_blocked',   JSON.stringify(blockedSubjects));
+      localStorage.setItem('school_semester',  JSON.stringify(semesterConfig));
+    }catch(e){}
+  }
+}
 
 function isApiConfigured(){
   return APPS_SCRIPT_URL && !APPS_SCRIPT_URL.includes('PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE');
@@ -1733,12 +2076,12 @@ async function apiGet(action){
   const res = await fetch(url, {method:'GET'});
   return await res.json();
 }
-async function apiPost(action, payload={}){
+async function apiPost(action, payload={}, signal){
   if(!isApiConfigured()) throw new Error('Apps Script URL을 먼저 넣어주세요.');
   const body = new URLSearchParams();
   body.set('action', action);
   Object.entries(payload).forEach(([k,v])=> body.set(k, typeof v === 'string' ? v : JSON.stringify(v)));
-  const res = await fetch(APPS_SCRIPT_URL, {method:'POST', body});
+  const res = await fetch(APPS_SCRIPT_URL, {method:'POST', body, ...(signal?{signal}:{})});
   return await res.json();
 }
 function applyServerData(data){
@@ -1783,7 +2126,26 @@ async function fetchRemoteMeta(){
   return meta;
 }
 async function refreshRemoteData(opts={}){
-  if(!isApiConfigured() || syncInFlight) return;
+  // 로컬(file://) 환경: localStorage에서 데이터 로드
+  if(window.location.protocol === 'file:' || !isApiConfigured()){
+    if(!opts._localLoaded){
+      try{
+        const ex  = localStorage.getItem('school_exchanges');
+        const ev  = localStorage.getItem('school_events');
+        const bl  = localStorage.getItem('school_blocked');
+        const sem = localStorage.getItem('school_semester');
+        if(ex)  exchanges       = JSON.parse(ex);
+        if(ev)  events          = JSON.parse(ev).map(normalizeEvent).filter(Boolean);
+        if(bl)  blockedSubjects = JSON.parse(bl).map(normalizeBlockedItem).filter(Boolean);
+        if(sem){ semesterConfig = {...semesterConfig, ...JSON.parse(sem)}; applySemesterConfig(); }
+        countCache.clear();
+      }catch(e){}
+      opts._localLoaded = true;
+    }
+    if(!opts.silent) scheduleRenderAll();
+    return;
+  }
+  if(syncInFlight) return;
   syncInFlight = true;
   try{
     if(!opts.force && lastServerRevision){
@@ -1841,9 +2203,17 @@ function renderAdminControls(){
     box.style.zIndex='999';
     document.body.appendChild(box);
   }
-  box.innerHTML = isAdminMode
-    ? `<div style="display:flex;gap:8px;align-items:center;background:#111827;color:#fff;padding:10px 12px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:12px;font-weight:700;"><span>관리자 모드</span><button onclick="logoutAdminMode()" style="border:none;background:#ef4444;color:#fff;border-radius:999px;padding:7px 10px;cursor:pointer;font-weight:700;">종료</button></div>`
-    : `<button onclick="requestAdminLogin()" style="border:none;background:#1d4ed8;color:#fff;border-radius:999px;padding:12px 16px;cursor:pointer;font-weight:800;box-shadow:0 10px 30px rgba(29,78,216,.28);">관리자</button>`;
+  // 로그인 시스템과 통합: 관리자로 로그인한 경우에만 FAB 표시
+  if(isAdminMode && currentUser){
+    box.innerHTML = `<div style="display:flex;gap:8px;align-items:center;background:#111827;color:#fff;padding:10px 12px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:12px;font-weight:700;"><i class="fa-solid fa-shield-halved"></i><span>관리자 모드</span></div>`;
+    // 회원관리 탭 표시
+    const tm = document.getElementById('tabMember');
+    if(tm) tm.style.display = '';
+  } else {
+    box.innerHTML = '';
+    const tm = document.getElementById('tabMember');
+    if(tm) tm.style.display = 'none';
+  }
 }
 
 function today(){ return formatDateISO(new Date()); }
@@ -1877,21 +2247,19 @@ function getSemesterDateRange(){
   return { start: semesterConfig.start || '2026-03-01', end: semesterConfig.end || '2026-07-18' };
 }
 function applySemesterConfig(){
-  // 헤더 타이틀 업데이트
   const h1 = document.querySelector('.topbar h1');
   if(h1 && semesterConfig.label) h1.textContent = '수업 교환 시스템 — ' + semesterConfig.label;
-  // 월 셀렉터 재초기화
   const monthSel = document.getElementById('monthSelect');
   if(monthSel){
     const months = getSemesterMonths();
     monthSel.innerHTML = months.map(m=>`<option value="${m}">${m}월</option>`).join('');
-    if(!months.includes(selectedMonth)){
-      selectedMonth = months[0];
-      monthSel.value = String(selectedMonth);
-      syncWeekOptions();
-    }
+    // 항상 오늘 날짜 기준으로 월/주차 설정
+    const todaySel = getTodaySelection();
+    selectedMonth = months.includes(todaySel.month) ? todaySel.month : months[0];
+    selectedWeek  = todaySel.week;
+    monthSel.value = String(selectedMonth);
+    syncWeekOptions(selectedWeek);
   }
-  // 학기 설정 UI 값 동기화
   const si = document.getElementById('semesterStartInput');
   const ei = document.getElementById('semesterEndInput');
   const li = document.getElementById('semesterLabelInput');
@@ -1970,7 +2338,7 @@ function initSelectors(){
   monthSel.innerHTML = getSemesterMonths().map(m=>`<option value="${m}">${m}월</option>`).join('');
   const initial = getTodaySelection();
   selectedMonth = initial.month;
-  selectedWeek = initial.week;
+  selectedWeek  = initial.week;
   monthSel.value = String(selectedMonth);
   syncWeekOptions(selectedWeek);
 }
@@ -2546,7 +2914,8 @@ function renderTT(){
             const isNonSwap = (!isMondayJaYul) && (merged.cell.subject.includes('창체') || merged.cell.subject.includes('자율'));
             const isBlocked = (!isNonSwap && !merged.applied && !merged.eventApplied && isBlockedSubject(t.name, merged.cell.subject, 6, d));
             const cellClass = merged.eventApplied ? 'cell event locked day-merged' : merged.makeup ? 'cell candidate makeup-display locked day-merged' : merged.applied ? 'cell applied day-merged' : isBlocked ? 'cell blocked day-merged' : isNonSwap ? 'cell has locked day-merged' : 'cell has day-merged';
-            const clickAttr = (!isNonSwap && !merged.applied && !merged.eventApplied) ? `onclick="onCellClick('${t.name}','${d}',6,'${String(merged.cell.subject).replace(/'/g,"&#39;")}','${String(merged.cell.class||'').replace(/'/g,"&#39;")}',${isBlocked})"` : '';
+            const _canClick1 = isAdminMode || (currentUser && currentUser.id === t.name);
+            const clickAttr = (_canClick1 && !isNonSwap && !merged.applied && !merged.eventApplied) ? `onclick="onCellClick('${t.name}','${d}',6,'${String(merged.cell.subject).replace(/'/g,"&#39;")}','${String(merged.cell.class||'').replace(/'/g,"&#39;")}',${isBlocked})"` : '';
             const blockTip6 = isBlocked ? getBlockedReason(t.name, merged.cell.subject, 6, d) : '';
             const mergedTooltip = tooltipFor(merged, merged.cell, isBlocked, blockTip6, false);
             const noteInCell = isBlocked ? '' : (merged.note ? `<div class="merge-note">${escapeHtml(merged.note.length>12?merged.note.slice(0,12)+'…':merged.note)}</div>` : '<div class="merge-note" style="opacity:.5;font-size:7.5px;">6·7통합</div>');
@@ -2563,7 +2932,8 @@ function renderTT(){
           const isBlocked = isMon1Jaul || (!applied && !eventApplied && isBlockedSubject(t.name, cell.subject, p, d));
           const cellClass = eventApplied ? 'cell event locked' : makeup ? 'cell candidate makeup-display locked' : applied ? 'cell applied' : isBlocked ? 'cell blocked' : 'cell has';
           const makeupOnly = isMon1Jaul ? `'makeup_only'` : 'false';
-          const clickAttr = (!eventApplied) ? `onclick="onCellClick('${t.name}','${d}',${p},'${String(cell.subject).replace(/'/g,"&#39;")}','${String(cell.class || '').replace(/'/g,"&#39;")}',${isBlocked},${makeupOnly})"` : '';
+          const _canClick2 = isAdminMode || (currentUser && currentUser.id === t.name);
+          const clickAttr = (_canClick2 && !eventApplied) ? `onclick="onCellClick('${t.name}','${d}',${p},'${String(cell.subject).replace(/'/g,"&#39;")}','${String(cell.class || '').replace(/'/g,"&#39;")}',${isBlocked},${makeupOnly})"` : '';
           const blockTip = isMon1Jaul ? '' : getBlockedReason(t.name, cell.subject, p, d);
           const dispInfo = getExchangeDisplayCell(t.name, d, p, getDateForDay(d));
           const cellTooltip = tooltipFor(dispInfo, cell, isBlocked, blockTip, isMon1Jaul);
@@ -2684,6 +3054,11 @@ function getTeacherDepartmentHint(teacher){
 }
 
 function onCellClick(teacher, day, period, subject, cls, isBlocked, makeupOnly){
+  // 관리자는 모든 셀 클릭 가능
+  // 교사는 본인 이름의 수업만 클릭 가능
+  if(!isAdminMode && currentUser && currentUser.id !== teacher){
+    return; // 조용히 무시 (다른 교사 수업 클릭 시 아무 반응 없음)
+  }
   selA = {teacher, day, period, subject, class:cls, isBlocked:!!isBlocked, makeupOnly: makeupOnly==='makeup_only'};
   openActionMenu();
 }
@@ -2851,13 +3226,14 @@ async function submitMakeup(){
   if(conflict){ alert(`해당 시간에는 이미 처리된 교환/보강이 있습니다. (${conflict.id})`); return; }
   const mk = { id: genMakeupId(), kind: 'makeup', createdAt: today(), date, day: selA.day, period: selA.period, originalTeacher: selA.teacher, subTeacher: selB.teacher, subject: selA.subject, cls: selA.class || '', status: '보강대기' };
 
-  // ── 낙관적 업데이트: 서버 응답 전 로컬 즉시 반영 ──
   exchanges.push(mk);
   countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
   closePanel();
   goTab('req');
 
-  // 백그라운드 서버 동기화
+  const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
+  if(isLocal){ save(); scheduleRenderAll(); return; }
+
   apiPost('submitMakeup', {record: mk}).then(result=>{
     if(!result.ok){
       exchanges = exchanges.filter(e=>e.id!==mk.id);
@@ -3129,13 +3505,14 @@ async function submitFinal(){
   const dB=document.getElementById('dB').value;
   const ex={ id:genId(), createdAt:today(), tA:selA.teacher, dateA:dA, dayA:selA.day, pA:selA.period, subA:selA.subject, clsA:selA.class, tB:selB.teacher, dateB:dB, dayB:selB.day, pB:selB.period, subB:selB.subject, clsB:selB.class, status:'대기중' };
 
-  // ── 낙관적 업데이트: 서버 응답 전 로컬 즉시 반영 ──
   exchanges.push(ex);
   countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
   closePanel();
   goTab('req');
 
-  // 백그라운드 서버 동기화
+  const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
+  if(isLocal){ save(); scheduleRenderAll(); return; }
+
   apiPost('submitExchange', {record: ex}).then(result=>{
     if(!result.ok){
       exchanges = exchanges.filter(e=>e.id!==ex.id);
@@ -3154,17 +3531,46 @@ async function submitFinal(){
 }
 
 // ─── 승인 탭 ─────────────────────────────────────
+// 교환: tB(상대방)이거나 관리자 → 승인 가능
+// 보강: subTeacher(보강 담당자)이거나 관리자 → 승인 가능
+function canApprove(e){
+  if(isAdminMode) return true;
+  if(!currentUser) return false;
+  if(e.kind === 'makeup') return currentUser.id === e.subTeacher;
+  return currentUser.id === e.tB;
+}
+
 function renderReq(){
   const list = exchanges.filter(e=>(e.kind==='makeup' && e.status==='보강대기') || (e.kind!=='makeup' && e.status==='대기중'));
   const el = document.getElementById('reqList');
   if(!list.length){el.innerHTML='<div class="empty-msg">승인 대기 중인 신청이 없습니다.</div>';return;}
   el.innerHTML = list.map(e=>{
+    const myTurn   = canApprove(e);
+    const conflict = e.kind !== 'makeup' ? getExchangeConflictEvent(e) : null;
+    // 신청자만 취소 가능
+    const isMine = currentUser && (e.kind==='makeup' ? currentUser.id===e.originalTeacher : currentUser.id===e.tA);
+    const cancelBtn = isMine ? `<button class="btn-sm btn-cancel" onclick="cancelExchange('${e.id}')">↺ 취소</button>` : '';
+    // 승인 대기 상대 표시
+    const waitLabel = e.kind==='makeup'
+      ? `<span class="req-restore" style="color:#F59E0B;font-weight:700;">⏳ ${e.subTeacher} 선생님 승인 대기중</span>`
+      : `<span class="req-restore" style="color:#F59E0B;font-weight:700;">⏳ ${e.tB} 선생님 승인 대기중</span>`;
+    const myTurnBadge = myTurn
+      ? (e.kind==='makeup'
+          ? `<span style="font-size:11px;font-weight:800;color:#7C3AED;background:#F5F3FF;padding:2px 8px;border-radius:999px;margin-left:4px;">✋ 내가 승인</span>`
+          : `<span style="font-size:11px;font-weight:800;color:#1E40AF;background:#EFF6FF;padding:2px 8px;border-radius:999px;margin-left:4px;">✋ 내가 승인</span>`)
+      : '';
+    const approveSection = myTurn
+      ? (e.kind==='makeup'
+          ? `<button class="btn-sm btn-approve" onclick="approve('${e.id}')">✅ 승인</button><button class="btn-sm btn-reject" onclick="reject('${e.id}')">✖ 거절</button>`
+          : `${conflict?'<span class="conflict-note">행사 충돌</span>':''}<button class="btn-sm btn-approve" ${conflict?'disabled style="opacity:.45;cursor:not-allowed;"':''} onclick="approve('${e.id}')">✅ 승인</button><button class="btn-sm btn-reject" onclick="reject('${e.id}')">✖ 거절</button>`)
+      : waitLabel;
+
     if(e.kind==='makeup'){
       return `
       <div class="req-item">
         <div class="req-header">
-          <div class="req-head-left"><span class="req-type-badge makeup">🟣 보강</span><span class="status-badge s-wait">🕒 보강대기</span></div>
-          <div class="req-action-inline"><span class="req-id">${e.id} · ${e.createdAt}</span><button class="btn-sm btn-print" onclick="openPrintModal('${e.id}')"><i class="fa-solid fa-print"></i> 출력</button><button class="btn-sm btn-cancel" onclick="cancelExchange('${e.id}')">↺ 취소</button></div>
+          <div class="req-head-left"><span class="req-type-badge makeup">🟣 보강</span><span class="status-badge s-wait">🕒 보강대기</span>${myTurnBadge}</div>
+          <div class="req-action-inline"><span class="req-id">${e.id} · ${e.createdAt}</span><button class="btn-sm btn-print" onclick="openPrintModal('${e.id}')"><i class="fa-solid fa-print"></i> 출력</button>${cancelBtn}</div>
         </div>
         <div class="req-body">
           <div class="req-slot">
@@ -3179,17 +3585,15 @@ function renderReq(){
         </div>
         <div class="req-foot">
           <span class="req-restore">완료 예정: ${getMakeupRestoreDate(e.date)}</span>
-          <div class="btn-row">
-            ${isAdminMode ? `<button class="btn-sm btn-approve" onclick="approve('${e.id}')">✅ 승인</button><button class="btn-sm btn-reject" onclick="reject('${e.id}')">✖ 거절</button>` : '<span class="req-restore">관리자 승인 필요</span>'}
-          </div>
+          <div class="btn-row">${approveSection}</div>
         </div>
       </div>`;
     }
     return `
     <div class="req-item">
       <div class="req-header">
-        <div class="req-head-left"><span class="req-type-badge exchange">🔁 교환</span><span class="status-badge s-wait">🕒 대기중</span></div>
-        <div class="req-action-inline"><span class="req-id">${e.id} · ${e.createdAt}</span><button class="btn-sm btn-print" onclick="openPrintModal('${e.id}')"><i class="fa-solid fa-print"></i> 출력</button><button class="btn-sm btn-cancel" onclick="cancelExchange('${e.id}')">↺ 취소</button></div>
+        <div class="req-head-left"><span class="req-type-badge exchange">🔁 교환</span><span class="status-badge s-wait">🕒 대기중</span>${myTurnBadge}</div>
+        <div class="req-action-inline"><span class="req-id">${e.id} · ${e.createdAt}</span><button class="btn-sm btn-print" onclick="openPrintModal('${e.id}')"><i class="fa-solid fa-print"></i> 출력</button>${cancelBtn}</div>
       </div>
       <div class="req-body">
         <div class="req-slot">
@@ -3204,9 +3608,7 @@ function renderReq(){
       </div>
       <div class="req-foot">
         <span class="req-restore">복원 예정: ${getRestoreDate(e.dateA,e.dateB)}</span>
-        <div class="btn-row">
-          ${isAdminMode ? `${getExchangeConflictEvent(e)?'<span class="conflict-note">행사 충돌</span>':''}<button class="btn-sm btn-approve" ${getExchangeConflictEvent(e)?'disabled style="opacity:.45;cursor:not-allowed;"':''} onclick="approve('${e.id}')">✅ 승인</button><button class="btn-sm btn-reject" onclick="reject('${e.id}')">✖ 거절</button>` : '<span class="req-restore">관리자 승인 필요</span>'}
-        </div>
+        <div class="btn-row">${approveSection}</div>
       </div>
     </div>`;
   }).join('');
@@ -3250,16 +3652,22 @@ function _renderGroupPrintBar(list, barId){
 }
 
 async function approve(id){
-  if(!ensureAdmin()) return;
-  const e=exchanges.find(x=>x.id===id);
-  if(!e)return;
+  const e = exchanges.find(x=>x.id===id);
+  if(!e) return;
+  if(!canApprove(e)){ alert('승인 권한이 없습니다.'); return; }
   const prevStatus = e.status;
 
-  // 낙관적 업데이트
   e.status = e.kind==='makeup' ? '보강중' : '교환중';
   countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
-  scheduleRenderAll();
 
+  const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
+  if(isLocal){
+    save(); // ← localStorage에 즉시 저장
+    scheduleRenderAll();
+    return;
+  }
+
+  scheduleRenderAll();
   apiPost('approveExchange', {password:getAdminPassword(), id}).then(result=>{
     if(!result.ok){
       e.status = prevStatus;
@@ -3276,18 +3684,25 @@ async function approve(id){
     alert(err.message || '승인에 실패했습니다.');
   });
 }
+
 async function reject(id){
-  if(!ensureAdmin()) return;
-  if(!confirm('거절하시겠습니까?'))return;
-  const e=exchanges.find(x=>x.id===id);
-  if(!e)return;
+  const e = exchanges.find(x=>x.id===id);
+  if(!e) return;
+  if(!canApprove(e)){ alert('거절 권한이 없습니다.'); return; }
+  if(!confirm('거절하시겠습니까?')) return;
   const prevStatus = e.status;
 
-  // 낙관적 업데이트
   e.status = e.kind==='makeup' ? '보강반려' : '반려';
   countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
-  scheduleRenderAll();
 
+  const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
+  if(isLocal){
+    save(); // ← localStorage에 즉시 저장
+    scheduleRenderAll();
+    return;
+  }
+
+  scheduleRenderAll();
   apiPost('rejectExchange', {password:getAdminPassword(), id}).then(result=>{
     if(!result.ok){
       e.status = prevStatus;
@@ -3370,20 +3785,27 @@ function renderHist(){
 let _lastBadgeHash = '';
 function updateBadges(){
   autoRestore();
-  const wc=exchanges.filter(e=>(e.kind!=='makeup' && e.status==='대기중') || (e.kind==='makeup' && e.status==='보강대기')).length;
+  const allWaiting = exchanges.filter(e=>(e.kind!=='makeup' && e.status==='대기중') || (e.kind==='makeup' && e.status==='보강대기'));
+  const wc  = allWaiting.length; // 전체 대기 수
+  const myc = allWaiting.filter(e=>canApprove(e)).length; // 내가 승인해야 할 수
   const ec=getActiveEvents().length;
   const bc=getBlockedSubjects().length;
-  const bHash = wc+'|'+ec+'|'+bc+'|'+selectedMonth+'|'+selectedWeek;
+  const bHash = wc+'|'+myc+'|'+ec+'|'+bc+'|'+selectedMonth+'|'+selectedWeek;
   const el=document.getElementById('waitCnt');
   if(bHash !== _lastBadgeHash){
     _lastBadgeHash = bHash;
-    el.innerHTML=wc?`<span class="badge-cnt" style="font-size:10px;padding:1px 6px;">${wc}</span>`:'';
+    // 탭 뱃지: 내가 승인할 건이 있으면 강조
+    el.innerHTML = myc
+      ? `<span class="badge-cnt" style="font-size:10px;padding:1px 6px;background:#EF4444;">${myc}</span>`
+      : (wc ? `<span class="badge-cnt" style="font-size:10px;padding:1px 6px;background:#F59E0B;">${wc}</span>` : '');
     const eventBadge=document.getElementById('eventCnt');
     if(eventBadge) eventBadge.innerHTML=(ec && isAdminMode)?`<span class="badge-cnt" style="font-size:10px;padding:1px 6px;">${ec}</span>`:'';
     const blockBadge=document.getElementById('blockCnt');
     if(blockBadge) blockBadge.innerHTML=(bc && isAdminMode)?`<span class="badge-cnt" style="font-size:10px;padding:1px 6px;">${bc}</span>`:'';
     const rb=document.getElementById('reqCntBadge');
-    if(wc){rb.textContent=wc+' 건 대기';rb.style.display='';}else rb.style.display='none';
+    if(myc){rb.textContent=myc+' 건 내 승인 필요';rb.style.display='';}
+    else if(wc){rb.textContent=wc+' 건 대기중';rb.style.display='';}
+    else rb.style.display='none';
     const info = getSelectedWeekInfo();
     document.getElementById('todayTxt').textContent=`오늘 기준 ${today()} · ${selectedMonth}월 ${info.index}주차 (${getWeekRangeText(info)})`;
   }
@@ -3404,12 +3826,15 @@ function closePanel(){
 }
 
 function goTab(name){
+  const TAB_NAMES = ['tt','classtable','req','hist','event','block','member'];
   document.querySelectorAll('.tab').forEach((t,i)=>{
-    t.classList.toggle('on',['tt','classtable','req','hist','event','block'][i]===name);
+    t.classList.toggle('on', TAB_NAMES[i]===name);
   });
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   if((name==='event' || name==='block') && !isAdminMode){ alert('행사 추가와 교환 불가 과목 관리는 관리자만 가능합니다.'); name='tt'; }
-  document.getElementById('page-'+name).classList.add('on');
+  if(name==='member' && !isAdminMode){ alert('회원관리는 관리자만 접근할 수 있습니다.'); name='tt'; }
+  const pg = document.getElementById('page-'+name);
+  if(pg) pg.classList.add('on');
   if(name==='req')renderReq();
   if(name==='hist')renderHist();
   if(name==='event'){
@@ -3426,7 +3851,9 @@ function goTab(name){
     renderBlockedSubjects();
     initSemesterUI();
   }
+  if(name==='member') loadAndRenderMembers();
 }
+
 
 
 
@@ -3535,12 +3962,14 @@ async function cancelExchange(id){
   if(e.status==='취소'){ alert(`이미 취소된 ${e.kind==='makeup' ? '보강' : '교환'}입니다.`); return; }
   if(!confirm(`이 ${e.kind==='makeup' ? '보강' : '교환'}(${id})을 취소 처리할까요? 기록은 남고 상태만 '취소'로 변경됩니다.`)) return;
 
-  // 낙관적 업데이트
   const prevStatus = e.status;
   e.status = '취소';
   countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
-  scheduleRenderAll();
 
+  const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
+  if(isLocal){ save(); scheduleRenderAll(); return; }
+
+  scheduleRenderAll();
   const payload = {id};
   if(isAdminMode) payload.password = getAdminPassword();
   apiPost('cancelExchange', payload).then(result=>{
@@ -4516,7 +4945,8 @@ function renderMobileTT(filtered){
         else if(item.applied){ boxClass='applied'; subjClass='applied'; tag=`<span class="m-cell-tag exchange">↔ 교환됨</span>`; }
         else if(item.isBlocked){ boxClass='blocked'; subjClass='blocked'; tag=`<span class="m-cell-tag" style="color:#94A3B8;">${item.isMon1Jaul?'보강전용':'교환불가'}</span>`; }
 
-        const click = (!item.eventApplied)
+        const _canClickMobile = isAdminMode || (currentUser && currentUser.id === item.teacher);
+        const click = (_canClickMobile && !item.eventApplied)
           ? `onclick="onCellClick('${item.teacher}','${item.day}',${item.p},'${String(item.subject).replace(/'/g,"&#39;")}','${String(item.cls).replace(/'/g,"&#39;")}',${item.isBlocked},${item.isMon1Jaul?`'makeup_only'`:'false'})"`
           : '';
 
@@ -4618,6 +5048,568 @@ function renderMobileCT(){
   wrap.innerHTML = html;
 }
 
+
+// ═══════════════════════════════════════════════════════════
+// ██  로그인 / 마이페이지 / 회원관리 시스템
+// ═══════════════════════════════════════════════════════════
+
+const USER_SESSION_KEY  = 'school_user_v1';
+const USER_ROLE_KEY     = 'school_role_v1';
+let currentUser = null;   // { id, role }
+let _memberCache = [];    // 회원 목록 캐시 (관리자용)
+
+// ── 세션 초기화 ─────────────────────────────────────────
+function initAuth(){
+  const savedId   = sessionStorage.getItem(USER_SESSION_KEY);
+  const savedRole = sessionStorage.getItem(USER_ROLE_KEY);
+  if(savedId){
+    currentUser = { id: savedId, role: savedRole || 'teacher' };
+    onLoginSuccess(currentUser, true);
+  } else {
+    showLoginScreen();
+  }
+}
+
+function showLoginScreen(){
+  document.getElementById('loginScreen').classList.add('show');
+  document.querySelector('.topbar').style.display = 'none';
+  document.querySelector('.tabs').style.display   = 'none';
+  document.querySelector('.body').style.display   = 'none';
+  setTimeout(()=>document.getElementById('loginId').focus(), 100);
+}
+
+function hideLoginScreen(){
+  document.getElementById('loginScreen').classList.remove('show');
+  document.querySelector('.topbar').style.display = '';
+  document.querySelector('.tabs').style.display   = '';
+  document.querySelector('.body').style.display   = '';
+}
+
+// ── 로그인 실행 ──────────────────────────────────────────
+async function doLogin(){
+  const id = document.getElementById('loginId').value.trim();
+  const pw = document.getElementById('loginPw').value;
+  const errEl = document.getElementById('loginErr');
+  errEl.classList.remove('show');
+  if(!id || !pw){ showLoginErr('아이디와 비밀번호를 입력해 주세요.'); return; }
+  const btn = document.querySelector('.login-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 확인 중...';
+  try{
+    let res = null;
+    const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
+
+    if(!isLocal){
+      try {
+        const ctrl = new AbortController();
+        const tid  = setTimeout(()=>ctrl.abort(), 5000);
+        const raw  = await apiPost('verifyUser', {id, pw}, ctrl.signal);
+        clearTimeout(tid);
+        // verifyUser 액션을 Apps Script가 정상 처리한 경우만 사용
+        // (ok:true 또는 ok:false + message 가 명확히 있어야 함)
+        if(raw && typeof raw.ok === 'boolean') res = raw;
+      } catch(e){ res = null; }
+    }
+
+    // API 미사용 or 실패 or verifyUser 미구현 → 로컬 폴백
+    if(res === null) res = localVerifyUser(id, pw);
+
+    if(res && res.ok){
+      currentUser = { id: res.id, role: res.role };
+      sessionStorage.setItem(USER_SESSION_KEY, res.id);
+      sessionStorage.setItem(USER_ROLE_KEY,   res.role);
+      if(res.role === 'admin'){
+        isAdminMode = true;
+        sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
+      }
+      onLoginSuccess(currentUser, false);
+    } else {
+      showLoginErr((res && res.message) || '아이디 또는 비밀번호가 올바르지 않습니다.');
+    }
+  } catch(e){
+    showLoginErr('오류: ' + (e.message || '알 수 없는 오류'));
+  } finally {
+    btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> 로그인';
+  }
+}
+
+// ── 로컬 폴백: TT 교사 목록 + 초기 비번 1234, 관리자는 admin/admin1234 ──
+function localVerifyUser(id, pw){
+  // 관리자 기본 계정
+  if(id === 'admin'){
+    const storedPw = localStorage.getItem('school_pw_admin') || 'admin1234';
+    if(pw === storedPw) return { ok:true, id:'admin', role:'admin' };
+    return { ok:false, message:'비밀번호가 올바르지 않습니다.' };
+  }
+  // localStorage에 저장된 비번·역할 우선
+  const storedPw   = localStorage.getItem('school_pw_'   + id);
+  const storedRole = localStorage.getItem('school_role_' + id);
+  const validPw    = storedPw || '1234';
+  // TT 배열 교사이거나 localStorage에 역할이 등록된 계정
+  const inTT    = typeof TT !== 'undefined' && TT.some(t => t.name === id);
+  const inLocal = !!storedRole; // 수동/엑셀로 추가된 계정
+  if(inTT || inLocal){
+    if(pw === validPw){
+      const role = storedRole || 'teacher';
+      return { ok:true, id, role };
+    }
+    return { ok:false, message:'비밀번호가 올바르지 않습니다.' };
+  }
+  return { ok:false, message:'등록되지 않은 아이디입니다.' };
+}
+
+function showLoginErr(msg){
+  const el = document.getElementById('loginErr');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+// ── 로그인 성공 후 처리 ──────────────────────────────────
+function onLoginSuccess(user, silent){
+  hideLoginScreen();
+  const badge  = document.getElementById('userBadge');
+  const nameEl = document.getElementById('userBadgeName');
+  const logBtn = document.getElementById('logoutBtn');
+  if(badge){  badge.style.display  = 'flex'; }
+  if(nameEl){ nameEl.textContent   = user.id; }
+  if(logBtn){ logBtn.style.display = 'flex'; }
+  if(user.role === 'admin'){
+    isAdminMode = true;
+    sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
+    const tabMember = document.getElementById('tabMember');
+    if(tabMember) tabMember.style.display = '';
+    renderAdminControls();
+  }
+
+  // 로그인 직후 오늘 날짜 기준 주차로 셀렉터 맞추고 시간표 즉시 렌더
+  const initial = getTodaySelection();
+  selectedMonth = initial.month;
+  selectedWeek  = initial.week;
+  const monthSel = document.getElementById('monthSelect');
+  if(monthSel) monthSel.value = String(selectedMonth);
+  syncWeekOptions(selectedWeek);
+  lastRenderDataHash = ''; // 캐시 무효화 → 강제 재렌더
+  renderTT();
+  updateBadges();
+
+  if(!silent){
+    // 서버 데이터 받아온 뒤 한 번 더 렌더
+    refreshRemoteData({force:true}).then(()=>{
+      lastRenderDataHash = '';
+      renderTT();
+      updateBadges();
+    }).catch(()=>{
+      // 로컬 환경 등 실패해도 이미 위에서 렌더됨
+    });
+  }
+}
+
+// ── 로그아웃 ────────────────────────────────────────────
+function doLogout(){
+  if(!confirm('로그아웃 하시겠습니까?')) return;
+  currentUser = null;
+  isAdminMode = false;
+  sessionStorage.removeItem(USER_SESSION_KEY);
+  sessionStorage.removeItem(USER_ROLE_KEY);
+  sessionStorage.removeItem(ADMIN_SESSION_KEY);
+  sessionStorage.removeItem(ADMIN_SESSION_KEY + '_pw');
+  closeMypageModal();
+  const tabMember = document.getElementById('tabMember');
+  if(tabMember) tabMember.style.display = 'none';
+  const badge  = document.getElementById('userBadge');
+  const logBtn = document.getElementById('logoutBtn');
+  if(badge)  badge.style.display  = 'none';
+  if(logBtn) logBtn.style.display = 'none';
+  renderAdminControls();
+  showLoginScreen();
+  document.getElementById('loginId').value = '';
+  document.getElementById('loginPw').value = '';
+}
+
+// ── 마이페이지 모달 ──────────────────────────────────────
+function openMypageModal(){
+  if(!currentUser) return;
+  document.getElementById('mpName').textContent = currentUser.id;
+  document.getElementById('mpRole').textContent = currentUser.role === 'admin' ? '관리자' : '교사';
+  document.getElementById('mpCurPw').value = '';
+  document.getElementById('mpNewPw').value = '';
+  document.getElementById('mpNewPw2').value = '';
+  const msg = document.getElementById('mpPwMsg');
+  msg.className = 'pw-msg'; msg.textContent = '';
+  document.getElementById('mypageOverlay').classList.add('show');
+}
+
+function closeMypageModal(){
+  document.getElementById('mypageOverlay').classList.remove('show');
+}
+
+async function saveMyPassword(){
+  const curPw  = document.getElementById('mpCurPw').value;
+  const newPw  = document.getElementById('mpNewPw').value;
+  const newPw2 = document.getElementById('mpNewPw2').value;
+  const msg    = document.getElementById('mpPwMsg');
+  msg.className = 'pw-msg'; msg.textContent = '';
+  if(!curPw || !newPw || !newPw2){ setMpMsg('err','모든 항목을 입력해 주세요.'); return; }
+  if(newPw.length < 4){ setMpMsg('err','새 비밀번호는 4자 이상이어야 합니다.'); return; }
+  if(newPw !== newPw2){ setMpMsg('err','새 비밀번호가 일치하지 않습니다.'); return; }
+
+  const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
+  if(isLocal){
+    // 로컬: 현재 비번 확인 후 localStorage에 저장
+    const stored = localStorage.getItem('school_pw_' + currentUser.id);
+    const valid  = stored || '1234';
+    if(curPw !== valid && !(currentUser.id==='admin' && curPw==='admin1234' && !stored)){
+      setMpMsg('err','현재 비밀번호가 올바르지 않습니다.'); return;
+    }
+    localStorage.setItem('school_pw_' + currentUser.id, newPw);
+    setMpMsg('ok','✓ 비밀번호가 변경되었습니다. (로컬 저장)');
+    document.getElementById('mpCurPw').value = '';
+    document.getElementById('mpNewPw').value = '';
+    document.getElementById('mpNewPw2').value = '';
+    return;
+  }
+  try{
+    const res = await apiPost('changePassword', {id: currentUser.id, curPw, newPw});
+    if(res.ok){
+      localStorage.setItem('school_pw_' + currentUser.id, newPw); // 로컬에도 동기화
+      setMpMsg('ok','✓ 비밀번호가 변경되었습니다.');
+      document.getElementById('mpCurPw').value = '';
+      document.getElementById('mpNewPw').value = '';
+      document.getElementById('mpNewPw2').value = '';
+    } else {
+      setMpMsg('err', res.message || '비밀번호 변경에 실패했습니다.');
+    }
+  } catch(e){ setMpMsg('err','서버 오류가 발생했습니다.'); }
+}
+
+function setMpMsg(type, text){
+  const el = document.getElementById('mpPwMsg');
+  el.className = 'pw-msg ' + type;
+  el.textContent = text;
+}
+
+// ── 회원관리 ─────────────────────────────────────────────
+async function loadAndRenderMembers(){
+  if(!isAdminMode) return;
+  const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
+  if(isLocal){
+    // 로컬: TT 배열 교사 + admin 계정으로 목록 구성
+    _memberCache = buildLocalMemberList();
+  } else {
+    try{
+      const ctrl = new AbortController();
+      setTimeout(()=>ctrl.abort(), 5000);
+      const res = await apiGet('getMembers');
+      if(res && res.ok){ _memberCache = res.members || []; }
+      else { _memberCache = buildLocalMemberList(); }
+    } catch(e){ _memberCache = buildLocalMemberList(); }
+  }
+  renderMemberTable();
+}
+
+// TT 배열 기반으로 로컬 회원 목록 구성
+function buildLocalMemberList(){
+  const list = [{ id:'admin', pw: localStorage.getItem('school_pw_admin') || 'admin1234', role:'admin' }];
+  if(typeof TT !== 'undefined'){
+    TT.forEach(t => {
+      const storedPw   = localStorage.getItem('school_pw_'   + t.name) || '1234';
+      const storedRole = localStorage.getItem('school_role_' + t.name) || 'teacher';
+      list.push({ id: t.name, pw: storedPw, role: storedRole });
+    });
+  }
+  // localStorage에만 있는 추가 계정 (엑셀/수동 추가)
+  for(let i = 0; i < localStorage.length; i++){
+    const key = localStorage.key(i);
+    if(key && key.startsWith('school_role_')){
+      const uid = key.replace('school_role_', '');
+      if(uid !== 'admin' && !list.some(m => m.id === uid)){
+        list.push({
+          id:   uid,
+          pw:   localStorage.getItem('school_pw_' + uid) || '1234',
+          role: localStorage.getItem('school_role_' + uid) || 'teacher'
+        });
+      }
+    }
+  }
+  return list;
+}
+
+function renderMemberTable(){
+  const q   = (document.getElementById('memberSearch')||{value:''}).value.trim().toLowerCase();
+  const tbody = document.getElementById('memberTableBody');
+  if(!tbody) return;
+  const filtered = _memberCache.filter(m=> !q || m.id.toLowerCase().includes(q));
+  document.getElementById('memberCntBadge').textContent = `전체 ${_memberCache.length}명`;
+  if(filtered.length === 0){
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#94A3B8;">등록된 계정이 없습니다.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map((m,i)=>{
+    const isAdmin = m.role === 'admin';
+    const isSelf  = currentUser && m.id === currentUser.id;
+    const roleBadge = isSelf
+      ? `<span class="${isAdmin?'badge-admin':'badge-teacher'}">${isAdmin?'🛡 관리자':'👨‍🏫 교사'}</span>`
+      : `<span class="${isAdmin?'badge-admin':'badge-teacher'} badge-role-clickable"
+           onclick="openRolePopup('${escapeHtml(m.id)}','${m.role}')"
+           title="클릭하여 권한 변경">
+           ${isAdmin?'🛡 관리자':'👨‍🏫 교사'}
+         </span>`;
+    return `<tr>
+      <td style="color:#94A3B8;font-size:11px;">${i+1}</td>
+      <td style="font-weight:700;">${escapeHtml(m.id)}</td>
+      <td><span style="font-family:monospace;font-size:13px;">${escapeHtml(m.pw || '')}</span></td>
+      <td>${roleBadge}</td>
+      <td style="text-align:center;">
+        <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap;">
+          <button class="member-btn reset" onclick="resetMemberPw('${escapeHtml(m.id)}')">
+            <i class="fa-solid fa-rotate-right"></i> 비번초기화
+          </button>
+          ${!isSelf ? `<button class="member-btn del" onclick="deleteMemberConfirm('${escapeHtml(m.id)}')">
+            <i class="fa-solid fa-trash"></i> 삭제
+          </button>` : `<span style="font-size:10px;color:#94A3B8;padding:4px 6px;">(본인)</span>`}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// 권한 토글 상태
+let _selectedRole = 'teacher';
+function setRoleToggle(role){
+  _selectedRole = role;
+  document.getElementById('roleTeacherBtn').classList.toggle('active', role === 'teacher');
+  document.getElementById('roleAdminBtn').classList.toggle('active',  role === 'admin');
+}
+
+async function addMember(){
+  if(!isAdminMode) return;
+  const id   = document.getElementById('newMemberId').value.trim();
+  const pw   = document.getElementById('newMemberPw').value.trim() || '1234';
+  const role = _selectedRole || 'teacher';
+  if(!id){ alert('이름(아이디)을 입력해 주세요.'); return; }
+
+  const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
+  if(isLocal){
+    // 로컬: localStorage에 저장
+    if(_memberCache.some(m => m.id === id)){ alert('이미 존재하는 아이디입니다.'); return; }
+    localStorage.setItem('school_pw_' + id, pw);
+    localStorage.setItem('school_role_' + id, role);
+    await loadAndRenderMembers();
+    const roleLabel = role === 'admin' ? '관리자' : '교사';
+    alert(`✓ '${id}' ${roleLabel} 계정이 추가되었습니다.`);
+    document.getElementById('newMemberId').value = '';
+    document.getElementById('newMemberPw').value = '1234';
+    setRoleToggle('teacher');
+    return;
+  }
+  try{
+    const res = await apiPost('addMember', {id, pw, role});
+    if(res.ok){
+      document.getElementById('newMemberId').value = '';
+      document.getElementById('newMemberPw').value = '1234';
+      setRoleToggle('teacher');
+      await loadAndRenderMembers();
+      const roleLabel = role === 'admin' ? '관리자' : '교사';
+      alert(`✓ '${id}' ${roleLabel} 계정이 추가되었습니다.`);
+    } else { alert(res.message || '추가에 실패했습니다.'); }
+  } catch(e){ alert('서버 오류가 발생했습니다.'); }
+}
+
+async function resetMemberPw(id){
+  if(!isAdminMode) return;
+  if(!confirm(`'${id}' 교사의 비밀번호를 1234로 초기화하시겠습니까?`)) return;
+  try{
+    const res = await apiPost('resetPassword', {id});
+    if(res.ok){
+      await loadAndRenderMembers();
+      alert(`✓ '${id}' 교사의 비밀번호가 1234로 초기화되었습니다.`);
+    } else { alert(res.message || '초기화에 실패했습니다.'); }
+  } catch(e){ alert('서버 오류가 발생했습니다.'); }
+}
+
+// ── 역할 변경 팝업 ────────────────────────────────────────
+let _rolePopupTarget = null; // { id, currentRole }
+
+function openRolePopup(id, currentRole){
+  if(!isAdminMode) return;
+  _rolePopupTarget = { id, currentRole };
+  document.getElementById('rolePopupName').textContent = id;
+  document.getElementById('rolePopupCur').textContent  = `현재 권한: ${currentRole === 'admin' ? '🛡 관리자' : '👨‍🏫 교사'}`;
+  // 현재 역할 버튼은 비활성화
+  document.getElementById('roleOptTeacher').classList.toggle('is-current', currentRole === 'teacher');
+  document.getElementById('roleOptAdmin').classList.toggle('is-current',   currentRole === 'admin');
+  document.getElementById('rolePopupOverlay').classList.add('show');
+}
+
+function closeRolePopup(){
+  document.getElementById('rolePopupOverlay').classList.remove('show');
+  _rolePopupTarget = null;
+}
+
+async function confirmRoleChange(newRole){
+  if(!_rolePopupTarget) return;
+  const { id } = _rolePopupTarget;
+  closeRolePopup();
+  await changeMemberRole(id, newRole);
+}
+
+async function changeMemberRole(id, newRole){
+  if(!isAdminMode) return;
+  const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
+  if(isLocal){
+    localStorage.setItem('school_role_' + id, newRole);
+    await loadAndRenderMembers();
+    return;
+  }
+  try{
+    const res = await apiPost('changeMemberRole', {id, role: newRole});
+    if(res.ok){ await loadAndRenderMembers(); }
+    else { alert(res.message || '권한 변경에 실패했습니다.'); }
+  } catch(e){ alert('서버 오류가 발생했습니다.'); }
+}
+
+async function deleteMemberConfirm(id){
+  if(!isAdminMode) return;
+  if(!confirm(`'${id}' 계정을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) return;
+  const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
+  if(isLocal){
+    localStorage.removeItem('school_pw_'   + id);
+    localStorage.removeItem('school_role_' + id);
+    await loadAndRenderMembers();
+    return;
+  }
+  try{
+    const res = await apiPost('deleteMember', {id});
+    if(res.ok){ await loadAndRenderMembers(); }
+    else { alert(res.message || '삭제에 실패했습니다.'); }
+  } catch(e){ alert('서버 오류가 발생했습니다.'); }
+}
+
+// ── 엑셀/CSV 일괄 업로드 ─────────────────────────────────
+function importMembersFromFile(input){
+  const file = input.files[0];
+  if(!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  const reader = new FileReader();
+
+  if(ext === 'csv'){
+    reader.onload = e => parseAndPreviewCSV(e.target.result);
+    reader.readAsText(file, 'UTF-8');
+  } else {
+    // xlsx/xls → SheetJS
+    reader.onload = e => {
+      try{
+        const data = new Uint8Array(e.target.result);
+        const wb   = XLSX.read(data, {type:'array'});
+        const ws   = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+        previewImportRows(rows);
+      } catch(err){ alert('파일을 읽는 데 실패했습니다. 형식을 확인해 주세요.'); }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+  input.value = '';
+}
+
+function parseAndPreviewCSV(text){
+  const rows = text.trim().split('\n').map(r=>r.split(',').map(c=>c.trim().replace(/^"|"$/g,'')));
+  previewImportRows(rows);
+}
+
+function previewImportRows(rows){
+  let start = 0;
+  if(rows[0] && (String(rows[0][0]).match(/^(id|이름|아이디|name)/i))) start = 1;
+
+  const preview = document.getElementById('xlsxPreview');
+  const valid   = [];
+  for(let i = start; i < rows.length; i++){
+    const id   = String(rows[i][0]||'').trim();
+    const pw   = String(rows[i][1]||'').trim() || '1234';
+    // C열: 관리자/admin 이면 admin, 나머지는 teacher
+    const roleRaw = String(rows[i][2]||'').trim().toLowerCase();
+    const role = (roleRaw === '관리자' || roleRaw === 'admin') ? 'admin' : 'teacher';
+    if(id) valid.push({id, pw, role});
+  }
+  if(valid.length === 0){ alert('유효한 데이터가 없습니다.'); return; }
+
+  preview.style.display = 'block';
+  preview.innerHTML = `
+    <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:14px;margin-bottom:10px;">
+      <div style="font-size:13px;font-weight:800;color:#1E40AF;margin-bottom:8px;">
+        <i class="fa-solid fa-list-check"></i> 미리보기 — ${valid.length}명
+        <span style="font-size:11px;font-weight:500;color:#64748B;margin-left:8px;">C열에 '관리자' 입력 시 관리자 권한 부여</span>
+      </div>
+      <div style="max-height:160px;overflow-y:auto;">
+        ${valid.map((m,i)=>`<div style="font-size:12px;padding:4px 0;border-bottom:1px solid #DBEAFE;display:flex;align-items:center;gap:8px;">
+          <strong>${i+1}.</strong>
+          <span>${escapeHtml(m.id)}</span>
+          <span style="color:#94A3B8;">/ 비번: ${escapeHtml(m.pw)}</span>
+          <span class="${m.role==='admin'?'badge-admin':'badge-teacher'}">${m.role==='admin'?'관리자':'교사'}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+    <button class="btn btn-blue" style="padding:10px 18px;" onclick="bulkAddMembers(${JSON.stringify(valid).replace(/"/g,'&quot;')})">
+      <i class="fa-solid fa-users-medical"></i> ${valid.length}명 일괄 추가
+    </button>
+    <button class="mypage-btn secondary" style="margin-left:8px;" onclick="document.getElementById('xlsxPreview').style.display='none'">취소</button>
+  `;
+}
+
+async function bulkAddMembers(list){
+  if(!isAdminMode || !list || !list.length) return;
+  let ok = 0, skip = 0;
+  const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
+  for(const m of list){
+    if(isLocal){
+      if(_memberCache.some(c => c.id === m.id)){ skip++; continue; }
+      localStorage.setItem('school_pw_'   + m.id, m.pw);
+      localStorage.setItem('school_role_' + m.id, m.role || 'teacher');
+      ok++;
+    } else {
+      try{
+        const res = await apiPost('addMember', {id: m.id, pw: m.pw, role: m.role || 'teacher'});
+        if(res.ok) ok++; else skip++;
+      } catch(e){ skip++; }
+    }
+  }
+  document.getElementById('xlsxPreview').style.display = 'none';
+  await loadAndRenderMembers();
+  alert(`✓ 추가 완료\n성공: ${ok}명 / 중복 등 실패: ${skip}명`);
+}
+
+// ── SheetJS CDN 동적 로드 ────────────────────────────────
+(function loadSheetJS(){
+  if(window.XLSX) return;
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  document.head.appendChild(s);
+})();
+
+// ── 엑셀 드래그앤드롭 ────────────────────────────────────
+document.addEventListener('DOMContentLoaded', ()=>{
+  const drop = document.getElementById('xlsxDropArea');
+  if(!drop) return;
+  drop.addEventListener('dragover', e=>{ e.preventDefault(); drop.style.borderColor='#2563EB'; });
+  drop.addEventListener('dragleave', ()=>{ drop.style.borderColor=''; });
+  drop.addEventListener('drop', e=>{
+    e.preventDefault(); drop.style.borderColor='';
+    const file = e.dataTransfer.files[0];
+    if(!file) return;
+    const fake = { files:[file] };
+    importMembersFromFile(fake);
+  });
+});
+
+// ── 앱 시작 시 인증 초기화 ──────────────────────────────
+// 기존 DOMContentLoaded 이후에 실행되도록 setTimeout 사용
+setTimeout(()=>{
+  // 기존 admin 세션이 있어도 user 세션 없으면 로그인 필요
+  initAuth();
+  // 관리자 탭 표시 여부 초기 설정
+  const tabMember = document.getElementById('tabMember');
+  if(tabMember){
+    tabMember.style.display = (currentUser && currentUser.role==='admin') ? '' : 'none';
+  }
+}, 0);
 
 </script>
 </body>
