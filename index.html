@@ -1644,9 +1644,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <div class="tab on" onclick="goTab('tt')"><i class="fa-regular fa-calendar-days"></i> 전체 시간표</div>
   <div class="tab" onclick="goTab('classtable')"><i class="fa-solid fa-chalkboard"></i> 교실별 시간표</div>
   <div class="tab" onclick="goTab('req')"><i class="fa-regular fa-clock"></i> 승인 대기 <span id="waitCnt"></span></div>
-  <div class="tab" id="tabHist" onclick="goTab('hist')" style="display:none"><i class="fa-solid fa-chart-bar"></i> 수업 결·보강 현황</div>
-  <div class="tab" id="tabEvent" onclick="goTab('event')" style="display:none"><i class="fa-solid fa-star"></i> 행사 추가 <span id="eventCnt"></span></div>
-  <div class="tab" id="tabBlock" onclick="goTab('block')" style="display:none"><i class="fa-solid fa-ban"></i> 교환 불가 과목 <span id="blockCnt"></span></div>
+  <div class="tab" onclick="goTab('hist')"><i class="fa-solid fa-chart-bar"></i> 수업 결·보강 현황</div>
+  <div class="tab" onclick="goTab('event')"><i class="fa-solid fa-star"></i> 행사 추가 <span id="eventCnt"></span></div>
+  <div class="tab" onclick="goTab('block')"><i class="fa-solid fa-ban"></i> 교환 불가 과목 <span id="blockCnt"></span></div>
   <div class="tab" id="tabMember" onclick="goTab('member')" style="display:none"><i class="fa-solid fa-users-gear"></i> 회원관리</div>
 </div>
 
@@ -1925,6 +1925,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
           <tr>
             <th style="width:32px;">No</th>
             <th>이름 (아이디)</th>
+            <th>비밀번호</th>
             <th>역할</th>
             <th style="width:220px;text-align:center;">관리</th>
           </tr>
@@ -3416,7 +3417,6 @@ function openDateStep(){
         ${buildDateButtons('dB', selB.day)}
       </div>
     </div>
-    <div id="restoreInfo" style="font-size:11px;color:var(--green);background:var(--green2);padding:8px 10px;border-radius:6px;display:none;margin-top:10px;"></div>
     <div id="conflictWarn" style="font-size:11px;color:var(--red);background:var(--red2);padding:8px 10px;border-radius:6px;display:none;margin-top:6px;"></div>`;
 
   document.getElementById('panelFoot').innerHTML =
@@ -3446,7 +3446,6 @@ function selectDateBtn(fieldId, date, el){
 function updateRestoreInfo(){
   const dA=document.getElementById('dA').value;
   const dB=document.getElementById('dB').value;
-  const ri=document.getElementById('restoreInfo');
   const cw=document.getElementById('conflictWarn');
   const btn=document.getElementById('btnSubmit');
 
@@ -3469,7 +3468,7 @@ function updateRestoreInfo(){
   }
 
   cw.style.display='none';
-  if(!dA||!dB){ri.style.display='none'; btn.disabled=true; return;}
+  if(!dA||!dB){ btn.disabled=true; return;}
 
   const eventConflictA = hasEventOnExchangeSlot(selA.teacher, dA, selA.day, selA.period);
   if(eventConflictA){
@@ -3498,9 +3497,6 @@ function updateRestoreInfo(){
     btn.disabled=true; return;
   }
 
-  const rd = getRestoreDate(dA,dB);
-  ri.style.display='block';
-  ri.textContent=`복원 예정: ${rd} 자정에 자동으로 원래 시간표로 복원됩니다.`;
   btn.disabled=false;
 }
 
@@ -3611,7 +3607,6 @@ function renderReq(){
         </div>
       </div>
       <div class="req-foot">
-        <span class="req-restore">복원 예정: ${getRestoreDate(e.dateA,e.dateB)}</span>
         <div class="btn-row">${approveSection}</div>
       </div>
     </div>`;
@@ -3763,9 +3758,8 @@ function renderHist(){
         <div class="req-foot"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">${extra}<span style="font-size:11px;color:var(--text3);">등록: ${e.createdAt}</span></div><div class="btn-row"></div></div>
       </div>`;
     }
-    const rd=getRestoreDate(e.dateA,e.dateB);
     const conflictEvt=getExchangeConflictEvent(e);
-    const extra = e.status==='교환중'?`<span class="req-restore">복원 예정: ${rd}</span>`:
+    const extra = e.status==='교환중'?'':
                 e.status==='복원완료'?`<span style="font-size:11px;color:var(--purple);">복원일: ${e.restoredAt||rd}</span>`:
                 e.status==='취소'?`<span style="font-size:11px;color:#6B7280;background:#F3F4F6;padding:3px 8px;border-radius:4px;">취소일: ${e.canceledAt||today()}</span>`:'';
     const cancelBtn = e.status==='취소' ? '' : `<button class="btn-sm btn-cancel" onclick="cancelExchange('${e.id}')">↺ 취소</button>`;
@@ -5189,10 +5183,8 @@ function onLoginSuccess(user, silent){
   if(user.role === 'admin'){
     isAdminMode = true;
     sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
-    ['tabHist','tabEvent','tabBlock','tabMember'].forEach(id=>{
-      const el = document.getElementById(id);
-      if(el) el.style.display = '';
-    });
+    const tabMember = document.getElementById('tabMember');
+    if(tabMember) tabMember.style.display = '';
     renderAdminControls();
   }
 
@@ -5229,10 +5221,8 @@ function doLogout(){
   sessionStorage.removeItem(ADMIN_SESSION_KEY);
   sessionStorage.removeItem(ADMIN_SESSION_KEY + '_pw');
   closeMypageModal();
-  ['tabHist','tabEvent','tabBlock','tabMember'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.style.display = 'none';
-  });
+  const tabMember = document.getElementById('tabMember');
+  if(tabMember) tabMember.style.display = 'none';
   const badge  = document.getElementById('userBadge');
   const logBtn = document.getElementById('logoutBtn');
   if(badge)  badge.style.display  = 'none';
@@ -5355,7 +5345,7 @@ function renderMemberTable(){
   const filtered = _memberCache.filter(m=> !q || m.id.toLowerCase().includes(q));
   document.getElementById('memberCntBadge').textContent = `전체 ${_memberCache.length}명`;
   if(filtered.length === 0){
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:24px;color:#94A3B8;">등록된 계정이 없습니다.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#94A3B8;">등록된 계정이 없습니다.</td></tr>`;
     return;
   }
   tbody.innerHTML = filtered.map((m,i)=>{
@@ -5371,6 +5361,7 @@ function renderMemberTable(){
     return `<tr>
       <td style="color:#94A3B8;font-size:11px;">${i+1}</td>
       <td style="font-weight:700;">${escapeHtml(m.id)}</td>
+      <td><span style="font-family:monospace;font-size:13px;">${escapeHtml(m.pw || '')}</span></td>
       <td>${roleBadge}</td>
       <td style="text-align:center;">
         <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap;">
@@ -5616,13 +5607,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
 // ── 앱 시작 시 인증 초기화 ──────────────────────────────
 // 기존 DOMContentLoaded 이후에 실행되도록 setTimeout 사용
 setTimeout(()=>{
+  // 기존 admin 세션이 있어도 user 세션 없으면 로그인 필요
   initAuth();
   // 관리자 탭 표시 여부 초기 설정
-  const isAdmin = currentUser && currentUser.role === 'admin';
-  ['tabHist','tabEvent','tabBlock','tabMember'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.style.display = isAdmin ? '' : 'none';
-  });
+  const tabMember = document.getElementById('tabMember');
+  if(tabMember){
+    tabMember.style.display = (currentUser && currentUser.role==='admin') ? '' : 'none';
+  }
 }, 0);
 
 </script>
