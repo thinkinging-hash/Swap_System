@@ -5131,6 +5131,8 @@ async function doLogin(){
       currentUser = { id: res.id, role: res.role };
       sessionStorage.setItem(USER_SESSION_KEY, res.id);
       sessionStorage.setItem(USER_ROLE_KEY,   res.role);
+      // 비밀번호를 localStorage에 저장 → 비밀번호 변경 시 현재 비번 확인에 사용
+      localStorage.setItem('school_pw_' + res.id, pw);
       if(res.role === 'admin'){
         isAdminMode = true;
         sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
@@ -5289,11 +5291,12 @@ async function saveMyPassword(){
       localStorage.setItem('school_pw_' + currentUser.id, newPw);
       setMpMsg('ok','✓ 비밀번호가 변경되었습니다.');
       ['mpCurPw','mpNewPw','mpNewPw2'].forEach(id=>{ document.getElementById(id).value=''; });
-    } else if(res.message && (res.message.includes('등록되지 않은') || res.message.includes('찾을 수 없'))){
-      // Members 시트 미등록 → 로컬 처리
-      applyLocalChange();
+    } else if(res.message && res.message.includes('현재 비밀번호')){
+      // 서버에서 명확히 현재 비밀번호 불일치 → 그대로 표시
+      setMpMsg('err', res.message);
     } else {
-      setMpMsg('err', res.message || '비밀번호 변경에 실패했습니다.');
+      // Members 미등록, 네트워크 오류 등 → 로컬 처리
+      applyLocalChange();
     }
   } catch(e){ applyLocalChange(); }
 }
