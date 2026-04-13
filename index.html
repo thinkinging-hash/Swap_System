@@ -5267,65 +5267,46 @@ async function saveMyPassword(){
   if(newPw.length < 4){ setMpMsg('err','새 비밀번호는 4자 이상이어야 합니다.'); return; }
   if(newPw !== newPw2){ setMpMsg('err','새 비밀번호가 일치하지 않습니다.'); return; }
 
-  const uid       = currentUser.id;
-  const defaultPw = uid === 'admin' ? 'admin1234' : '1234';
-
-  // ── 로컬(file://) 환경 ─────────────────────────────────
+  const uid = currentUser.id;
   const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
+
   if(isLocal){
-    const storedPw = localStorage.getItem('school_pw_' + uid) || defaultPw;
+    // 로컬 환경: localStorage 비밀번호와 비교
+    const storedPw = localStorage.getItem('school_pw_' + uid) || (uid==='admin' ? 'admin1234' : '1234');
     if(curPw !== storedPw){ setMpMsg('err','현재 비밀번호가 올바르지 않습니다.'); return; }
     localStorage.setItem('school_pw_' + uid, newPw);
     setMpMsg('ok','✓ 비밀번호가 변경되었습니다.');
-    ['mpCurPw','mpNewPw','mpNewPw2'].forEach(i=>{ document.getElementById(i).value=''; });
+    ['mpCurPw','mpNewPw','mpNewPw2'].forEach(i=>document.getElementById(i).value='');
     return;
   }
 
-  // ── GitHub Pages (서버 환경) ───────────────────────────
+  // GitHub Pages: 서버가 현재 비밀번호 검증 담당
+  // Members 시트에 없으면 자동 등록 후 변경
   const btn = document.querySelector('.mypage-btn.primary');
-  if(btn){ btn.disabled = true; btn.textContent = '저장 중...'; }
-  const resetBtn = () => {
-    if(btn){ btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> 비밀번호 저장'; }
-  };
-
+  if(btn){ btn.disabled=true; btn.textContent='저장 중...'; }
   try{
-    // 1차 시도: 서버에서 현재 비번 확인 후 변경
     const res = await apiPost('changePassword', {id: uid, curPw, newPw});
-
     if(res.ok){
-      // 서버 저장 성공
       localStorage.setItem('school_pw_' + uid, newPw);
-      resetBtn();
       setMpMsg('ok','✓ 비밀번호가 변경되었습니다.');
-      ['mpCurPw','mpNewPw','mpNewPw2'].forEach(i=>{ document.getElementById(i).value=''; });
-      return;
-    }
-
-    // Members 시트에 없음 → 현재 비번이 기본값인지 확인 후 서버에 자동 등록
-    if(res.message && res.message.includes('등록되지 않은')){
-      const storedPw = localStorage.getItem('school_pw_' + uid) || defaultPw;
-      if(curPw !== storedPw){
-        resetBtn();
-        setMpMsg('err','현재 비밀번호가 올바르지 않습니다.');
-        return;
+      ['mpCurPw','mpNewPw','mpNewPw2'].forEach(i=>document.getElementById(i).value='');
+    } else if(res.message && res.message.includes('등록되지 않은')){
+      // Members 시트에 없음 → addMember로 새 비밀번호로 자동 등록
+      const r2 = await apiPost('addMember', {id: uid, pw: newPw, role: currentUser.role||'teacher'});
+      if(r2.ok){
+        localStorage.setItem('school_pw_' + uid, newPw);
+        setMpMsg('ok','✓ 비밀번호가 변경되었습니다.');
+        ['mpCurPw','mpNewPw','mpNewPw2'].forEach(i=>document.getElementById(i).value='');
+      } else {
+        setMpMsg('err', r2.message || '비밀번호 변경에 실패했습니다.');
       }
-      // 서버에 계정 등록 (현재 비번으로 등록 후 새 비번으로 변경)
-      const role = currentUser.role || 'teacher';
-      await apiPost('addMember', {id: uid, pw: newPw, role});
-      localStorage.setItem('school_pw_' + uid, newPw);
-      resetBtn();
-      setMpMsg('ok','✓ 비밀번호가 변경되었습니다.');
-      ['mpCurPw','mpNewPw','mpNewPw2'].forEach(i=>{ document.getElementById(i).value=''; });
-      return;
+    } else {
+      setMpMsg('err', res.message || '비밀번호 변경에 실패했습니다.');
     }
-
-    // 현재 비밀번호 불일치 등 그 외 오류
-    resetBtn();
-    setMpMsg('err', res.message || '비밀번호 변경에 실패했습니다.');
-
   } catch(e){
-    resetBtn();
-    setMpMsg('err','서버 연결 오류. 잠시 후 다시 시도해 주세요.');
+    setMpMsg('err','서버 연결 오류가 발생했습니다.');
+  } finally {
+    if(btn){ btn.disabled=false; btn.innerHTML='<i class="fa-solid fa-floppy-disk"></i> 비밀번호 저장'; }
   }
 }
 
