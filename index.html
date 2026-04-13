@@ -1644,9 +1644,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <div class="tab on" onclick="goTab('tt')"><i class="fa-regular fa-calendar-days"></i> 전체 시간표</div>
   <div class="tab" onclick="goTab('classtable')"><i class="fa-solid fa-chalkboard"></i> 교실별 시간표</div>
   <div class="tab" onclick="goTab('req')"><i class="fa-regular fa-clock"></i> 승인 대기 <span id="waitCnt"></span></div>
-  <div class="tab" onclick="goTab('hist')"><i class="fa-solid fa-chart-bar"></i> 수업 결·보강 현황</div>
-  <div class="tab" onclick="goTab('event')"><i class="fa-solid fa-star"></i> 행사 추가 <span id="eventCnt"></span></div>
-  <div class="tab" onclick="goTab('block')"><i class="fa-solid fa-ban"></i> 교환 불가 과목 <span id="blockCnt"></span></div>
+  <div class="tab" id="tabHist" onclick="goTab('hist')" style="display:none"><i class="fa-solid fa-chart-bar"></i> 수업 결·보강 현황</div>
+  <div class="tab" id="tabEvent" onclick="goTab('event')" style="display:none"><i class="fa-solid fa-star"></i> 행사 추가 <span id="eventCnt"></span></div>
+  <div class="tab" id="tabBlock" onclick="goTab('block')" style="display:none"><i class="fa-solid fa-ban"></i> 교환 불가 과목 <span id="blockCnt"></span></div>
   <div class="tab" id="tabMember" onclick="goTab('member')" style="display:none"><i class="fa-solid fa-users-gear"></i> 회원관리</div>
 </div>
 
@@ -1925,7 +1925,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
           <tr>
             <th style="width:32px;">No</th>
             <th>이름 (아이디)</th>
-            <th>비밀번호</th>
             <th>역할</th>
             <th style="width:220px;text-align:center;">관리</th>
           </tr>
@@ -5190,8 +5189,10 @@ function onLoginSuccess(user, silent){
   if(user.role === 'admin'){
     isAdminMode = true;
     sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
-    const tabMember = document.getElementById('tabMember');
-    if(tabMember) tabMember.style.display = '';
+    ['tabHist','tabEvent','tabBlock','tabMember'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.style.display = '';
+    });
     renderAdminControls();
   }
 
@@ -5228,8 +5229,10 @@ function doLogout(){
   sessionStorage.removeItem(ADMIN_SESSION_KEY);
   sessionStorage.removeItem(ADMIN_SESSION_KEY + '_pw');
   closeMypageModal();
-  const tabMember = document.getElementById('tabMember');
-  if(tabMember) tabMember.style.display = 'none';
+  ['tabHist','tabEvent','tabBlock','tabMember'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.style.display = 'none';
+  });
   const badge  = document.getElementById('userBadge');
   const logBtn = document.getElementById('logoutBtn');
   if(badge)  badge.style.display  = 'none';
@@ -5352,7 +5355,7 @@ function renderMemberTable(){
   const filtered = _memberCache.filter(m=> !q || m.id.toLowerCase().includes(q));
   document.getElementById('memberCntBadge').textContent = `전체 ${_memberCache.length}명`;
   if(filtered.length === 0){
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#94A3B8;">등록된 계정이 없습니다.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:24px;color:#94A3B8;">등록된 계정이 없습니다.</td></tr>`;
     return;
   }
   tbody.innerHTML = filtered.map((m,i)=>{
@@ -5368,7 +5371,6 @@ function renderMemberTable(){
     return `<tr>
       <td style="color:#94A3B8;font-size:11px;">${i+1}</td>
       <td style="font-weight:700;">${escapeHtml(m.id)}</td>
-      <td><span style="font-family:monospace;font-size:13px;">${escapeHtml(m.pw || '')}</span></td>
       <td>${roleBadge}</td>
       <td style="text-align:center;">
         <div style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap;">
@@ -5614,13 +5616,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
 // ── 앱 시작 시 인증 초기화 ──────────────────────────────
 // 기존 DOMContentLoaded 이후에 실행되도록 setTimeout 사용
 setTimeout(()=>{
-  // 기존 admin 세션이 있어도 user 세션 없으면 로그인 필요
   initAuth();
   // 관리자 탭 표시 여부 초기 설정
-  const tabMember = document.getElementById('tabMember');
-  if(tabMember){
-    tabMember.style.display = (currentUser && currentUser.role==='admin') ? '' : 'none';
-  }
+  const isAdmin = currentUser && currentUser.role === 'admin';
+  ['tabHist','tabEvent','tabBlock','tabMember'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.style.display = isAdmin ? '' : 'none';
+  });
 }, 0);
 
 </script>
