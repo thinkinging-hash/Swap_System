@@ -2080,12 +2080,12 @@ async function apiPost(action, payload={}, signal){
   if(!isApiConfigured()) throw new Error('Apps Script URL을 먼저 넣어주세요.');
   const body = new URLSearchParams();
   body.set('action', action);
-  // 관리자 인증 정보 자동 주입: password 없으면 현재 유저 정보 함께 전송
+  // 관리자 액션이면 _adminId 자동 주입 (새 인증 방식)
+  const adminActions = ['resetExchanges','approveExchange','rejectExchange','addEvent','removeEvent',
+    'addBlockedSubject','removeBlockedSubject','setSemesterConfig','registerHolidays'];
   const enriched = {...payload};
-  if(!enriched.password) enriched.password = getAdminPassword();
-  if(currentUser && currentUser.role === 'admin'){
-    enriched._userId = currentUser.id;
-    enriched._userRole = currentUser.role;
+  if(adminActions.includes(action) && currentUser && currentUser.role === 'admin'){
+    enriched._adminId = currentUser.id;
   }
   Object.entries(enriched).forEach(([k,v])=> body.set(k, typeof v === 'string' ? v : JSON.stringify(v)));
   const res = await fetch(APPS_SCRIPT_URL, {method:'POST', body, ...(signal?{signal}:{})});
@@ -2168,7 +2168,6 @@ async function refreshRemoteData(opts={}){
 }
 function ensureAdmin(){
   if(isAdminMode) return true;
-  // 로그인된 유저가 admin 역할이면 isAdminMode 동기화 후 허용
   if(currentUser && currentUser.role === 'admin'){
     isAdminMode = true;
     sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
@@ -2203,15 +2202,15 @@ function logoutAdminMode(){
   _lastBadgeHash = ''; updateBadges(); // 뱃지 즉시 갱신
 }
 function getAdminPassword(){
-  // 우선순위: 1) sessionStorage에 저장된 비번, 2) 현재 로그인 유저의 로컬 비번
-  const stored = sessionStorage.getItem(ADMIN_SESSION_KEY + '_pw');
-  if(stored) return stored;
-  // 로그인 유저가 관리자면 localStorage에 저장된 비번 사용
-  if(currentUser && currentUser.role === 'admin'){
-    const localPw = localStorage.getItem('school_pw_' + currentUser.id);
-    if(localPw) return localPw;
-  }
-  return '';
+  // 구버전 호환: sessionStorage에 비밀번호가 있으면 그것 사용
+  return sessionStorage.getItem(ADMIN_SESSION_KEY + '_pw') || '';
+}
+// 새 인증 방식: 현재 로그인한 관리자 ID를 함께 전송
+function getAdminAuth(){
+  return {
+    password: getAdminPassword(),           // 구버전 호환
+    _adminId: currentUser ? currentUser.id : '',  // 새 인증
+  };
 }
 function renderAdminControls(){
   let box = document.getElementById('adminFab');
@@ -4158,7 +4157,6 @@ async function resetExchanges(){
   if(!ensureAdmin()) return;
   if(!exchanges.length){ alert('초기화할 수업 결·보강 현황이 없습니다.'); return; }
   if(!confirm('모든 수업 결·보강 현황을 초기화할까요? 이 작업은 되돌릴 수 없습니다.')) return;
-
   const isLocal = window.location.protocol === 'file:' || !isApiConfigured();
   if(isLocal){
     exchanges = [];
@@ -4173,18 +4171,7 @@ async function resetExchanges(){
     if(!result.ok) throw new Error(result.message || '초기화에 실패했습니다.');
     applyServerBundle(result);
     alert('모든 수업 결·보강 현황이 초기화되었습니다.');
-  }catch(err){
-    // 서버 인증 실패해도 로컬에서 초기화 후 다음 sync에서 반영
-    if(err.message && err.message.includes('비밀번호')){
-      if(confirm('서버 인증 실패. 로컬에서만 초기화할까요?\n(다음 새로고침 시 서버 데이터로 복원될 수 있습니다)')){
-        exchanges = [];
-        countCache.clear(); lastRenderDataHash=''; _lastBadgeHash='';
-        scheduleRenderAll();
-      }
-    } else {
-      alert(err.message || '초기화에 실패했습니다.');
-    }
-  }
+  }catch(err){ alert(err.message || '초기화에 실패했습니다.'); }
 }
 
 async function initApp(){
@@ -5162,8 +5149,7 @@ async function doLogin(){
       if(res.role === 'admin'){
         isAdminMode = true;
         sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
-        // Apps Script API 호출 시 관리자 비밀번호로 사용
-        sessionStorage.setItem(ADMIN_SESSION_KEY + '_pw', pw);
+        sessionStorage.setItem(ADMIN_SESSION_KEY + '_pw', pw); // 구버전 호환
       }
       onLoginSuccess(currentUser, false);
     } else {
