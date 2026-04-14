@@ -1647,9 +1647,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <div class="tab on" onclick="goTab('tt')"><i class="fa-regular fa-calendar-days"></i> 전체 시간표</div>
   <div class="tab" onclick="goTab('classtable')"><i class="fa-solid fa-chalkboard"></i> 교실별 시간표</div>
   <div class="tab" onclick="goTab('req')"><i class="fa-regular fa-clock"></i> 승인 대기 <span id="waitCnt"></span></div>
-  <div class="tab" onclick="goTab('hist')"><i class="fa-solid fa-chart-bar"></i> 수업 결·보강 현황</div>
-  <div class="tab" onclick="goTab('event')"><i class="fa-solid fa-star"></i> 행사 추가 <span id="eventCnt"></span></div>
-  <div class="tab" onclick="goTab('block')"><i class="fa-solid fa-ban"></i> 교환 불가 과목 <span id="blockCnt"></span></div>
+  <div class="tab" id="tabHist" onclick="goTab('hist')" style="display:none"><i class="fa-solid fa-chart-bar"></i> 수업 결·보강 현황</div>
+  <div class="tab" id="tabEvent" onclick="goTab('event')" style="display:none"><i class="fa-solid fa-star"></i> 행사 추가 <span id="eventCnt"></span></div>
+  <div class="tab" id="tabBlock" onclick="goTab('block')" style="display:none"><i class="fa-solid fa-ban"></i> 교환 불가 과목 <span id="blockCnt"></span></div>
   <div class="tab" id="tabMember" onclick="goTab('member')" style="display:none"><i class="fa-solid fa-users-gear"></i> 회원관리</div>
 </div>
 
@@ -2212,15 +2212,15 @@ function renderAdminControls(){
     document.body.appendChild(box);
   }
   // 로그인 시스템과 통합: 관리자로 로그인한 경우에만 FAB 표시
+  const adminTabs = ['tabHist','tabEvent','tabBlock','tabMember'];
   if(isAdminMode && currentUser){
     box.innerHTML = `<div style="display:flex;gap:8px;align-items:center;background:#111827;color:#fff;padding:10px 12px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:12px;font-weight:700;"><i class="fa-solid fa-shield-halved"></i><span>관리자 모드</span></div>`;
-    // 회원관리 탭 표시
-    const tm = document.getElementById('tabMember');
-    if(tm) tm.style.display = '';
+    // 관리자 전용 탭 모두 표시
+    adminTabs.forEach(id=>{ const t=document.getElementById(id); if(t) t.style.display=''; });
   } else {
     box.innerHTML = '';
-    const tm = document.getElementById('tabMember');
-    if(tm) tm.style.display = 'none';
+    // 관리자 전용 탭 모두 숨김
+    adminTabs.forEach(id=>{ const t=document.getElementById(id); if(t) t.style.display='none'; });
   }
 }
 
@@ -5195,8 +5195,8 @@ function onLoginSuccess(user, silent){
   if(user.role === 'admin'){
     isAdminMode = true;
     sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
-    const tabMember = document.getElementById('tabMember');
-    if(tabMember) tabMember.style.display = '';
+    const adminTabs = ['tabHist','tabEvent','tabBlock','tabMember'];
+    adminTabs.forEach(id=>{ const t=document.getElementById(id); if(t) t.style.display=''; });
     renderAdminControls();
   }
 
@@ -5233,8 +5233,8 @@ function doLogout(){
   sessionStorage.removeItem(ADMIN_SESSION_KEY);
   sessionStorage.removeItem(ADMIN_SESSION_KEY + '_pw');
   closeMypageModal();
-  const tabMember = document.getElementById('tabMember');
-  if(tabMember) tabMember.style.display = 'none';
+  const adminTabs = ['tabHist','tabEvent','tabBlock','tabMember'];
+  adminTabs.forEach(id=>{ const t=document.getElementById(id); if(t) t.style.display='none'; });
   const badge  = document.getElementById('userBadge');
   const logBtn = document.getElementById('logoutBtn');
   if(badge)  badge.style.display  = 'none';
@@ -5622,10 +5622,9 @@ setTimeout(()=>{
   // 기존 admin 세션이 있어도 user 세션 없으면 로그인 필요
   initAuth();
   // 관리자 탭 표시 여부 초기 설정
-  const tabMember = document.getElementById('tabMember');
-  if(tabMember){
-    tabMember.style.display = (currentUser && currentUser.role==='admin') ? '' : 'none';
-  }
+  const adminTabs = ['tabHist','tabEvent','tabBlock','tabMember'];
+  const isAdmin = currentUser && currentUser.role==='admin';
+  adminTabs.forEach(id=>{ const t=document.getElementById(id); if(t) t.style.display=isAdmin?'':'none'; });
 }, 0);
 
 </script>
